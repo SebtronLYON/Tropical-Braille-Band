@@ -340,6 +340,17 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .mfUp b{position:relative;font-size:calc(1.6rem * var(--zoom));color:#000;mix-blend-mode:normal}.lv0 .mfUp b,.lv1 .mfUp b{color:var(--ink)}
 .mfPad.on .mfUp i{background:var(--pink);opacity:1}
 .mfDn{border:0;border-top:2px solid var(--line);background:var(--panel);color:var(--ink);font-weight:700;min-height:40px;cursor:pointer;font-size:.85rem;padding:4px 2px}
+.mfConsole{display:flex;flex-direction:column;gap:12px}
+.mfVis{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
+.mfVis .mfDialBox,.mfVis .mfCircBox{width:100%;margin:0}
+.mfBar{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.mfBar2 .chip{min-height:48px}@media (max-width:520px){.mfHint{display:none}.mfConsole{gap:8px}.mfUp{height:calc(60px * var(--zoom))}.mfConsole .mfLab{margin:0}.mfBar2{gap:6px}.mfBar2 .chip{padding:6px 9px}.mfBar2 .mfTap{min-width:64px;padding:6px 10px}.mfPlay{width:84px;height:84px}}
+.mfVn{font-size:17px;font-weight:700;fill:var(--muted);font-family:inherit}.mfVnP{font-size:12px;fill:var(--pink)}
+.mfCNum{font-size:40px;font-weight:700;fill:var(--ink);font-family:inherit}.mfCPoly{font-size:16px;font-weight:700;fill:var(--pink);font-family:inherit}
+.mfAcc{padding:0}.mfAcc>summary{cursor:pointer;padding:16px;font-size:calc(1.2rem * var(--zoom));font-weight:700;color:var(--sun);list-style:none;display:flex;align-items:center;gap:10px}
+.mfAcc>summary::-webkit-details-marker{display:none}.mfAcc>summary::before{content:"▸";color:var(--pink)}.mfAcc[open]>summary::before{content:"▾"}
+.mfAcc>.field{padding:0 16px 16px}
+@media (min-width:900px){.mfConsole{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-areas:"vis bar" "vis bar2" "vis lab" "pads pads" "pick pick";align-items:center}.mfVis{grid-area:vis}.mfBar{grid-area:bar}.mfBar2{grid-area:bar2}.mfConsole .mfLab{grid-area:lab}.mfPads{grid-area:pads}.mfPick{grid-area:pick}}
 .mfCircBox{width:min(300px,78vw);margin:0 auto 12px}.mfCirc{width:100%;height:auto;display:block}.mfCirc .mfBd.on{fill:var(--pink)}.mfDn svg{width:26px;height:26px}.mfDn{display:flex;align-items:center;justify-content:center;gap:2px}.mfPick{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;padding:10px;border:2px solid var(--pink);border-radius:14px;background:var(--panel)}.mfPickT{width:100%}.mfSp{width:52px;height:52px;border:2px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:4px}.mfSp svg{width:22px;height:22px}.mfSp.on{border-color:var(--sun);color:var(--sun)}.mfSnds{display:flex;flex-wrap:wrap;gap:6px}.mfLab2{font-weight:700;margin:10px 0 6px}
 .mfGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}.mfCard h3{margin:0 0 8px;color:var(--sun)}
 .mfRow2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.mfRow2 select,.mfRow2 input{flex:1;min-width:0}.mfPolyN{flex:1;text-align:center}
@@ -395,7 +406,6 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
       <button class="tab" role="tab" id="tab-tuner" aria-selected="false" aria-controls="vTuner">Accordeur</button>
       <button class="tab" role="tab" id="tab-settings" aria-selected="false" aria-controls="vSettings">Accessibilité</button>
       <button class="tab" role="tab" id="tab-instr" aria-selected="false" aria-controls="vInstr">Instrument</button>
-      <button class="tab" role="tab" id="tab-metro" aria-selected="false" aria-controls="vMetro">Métronome</button>
       <button class="tab" role="tab" id="tab-help" aria-selected="false" aria-controls="vHelp">Aide</button>
       <button class="tab" role="tab" id="tab-credits" aria-selected="false" aria-controls="vCredits">Infos / Crédits</button>
     </nav>
@@ -522,6 +532,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     <button class="tg" data-k="repeats" id="tgRep">Suivre les reprises</button>
     <button class="tg" data-k="acc" id="tgAcc">Accompagnement</button>
     <button class="tg" data-k="stepSound">Son en pas à pas</button>
+    <button class="tg" data-k="countIn">Décompte avant la lecture</button>
     </div>
     <small>Ces options sont gardées pour chaque morceau. La boucle, le tempo, le métronome, la mélodie et les accords restent sur l’écran Jouer.</small>
   </div>
@@ -554,24 +565,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
   </div>
 </section>
 
-<section class="view wrap" id="vMetro" role="tabpanel" aria-labelledby="tab-metro" hidden>
-  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Métronome</span><button class="btn snHome" aria-label="Jouer : revenir à l’écran Jouer"><svg class="snTr" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Jouer</span></button></div>
-  <div class="card field">
-    <div class="toggles">
-      <button class="tg" data-k="metro" aria-keyshortcuts="M">Métronome</button>
-      <button class="tg" data-k="metroAcc">Accentuer le 1er temps</button>
-      <button class="tg" data-k="countIn">Décompte avant la lecture</button>
-    </div>
-    <label for="sMetroSnd" style="margin-top:12px">Son</label>
-    <select id="sMetroSnd"><option value="click">Clic</option><option value="wood">Bois</option><option value="rock">Batterie simple</option><option value="bossa">Batterie bossa</option></select>
-    <div id="subBox"><label for="sSub" style="margin-top:12px">Subdivision</label>
-    <select id="sSub"><option value="1">Noires (1 par temps)</option><option value="2">Croches (2 par temps)</option><option value="3">Triolets (3 par temps)</option><option value="4">Doubles croches (4 par temps)</option><option value="6">Sextolets (6 par temps)</option><option value="8">Triples croches (8 par temps)</option></select></div>
-    <label for="sMetroVol" style="margin-top:12px">Volume : <b id="metroVolVal">100 %</b></label>
-    <input type="range" id="sMetroVol" min="0" max="150" step="5" value="100">
-    <div class="row" style="margin-top:12px"><button class="btn pri" id="metroTest">Écouter une mesure</button></div>
-    <small>Le métronome se met en marche ou s’arrête aussi depuis l’écran Jouer (bouton Métronome, touche M).</small>
-  </div>
-</section>
+
 
 <section class="view wrap" id="vSettings" role="tabpanel" aria-labelledby="tab-settings" hidden>
   <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Accessibilité</span><button class="btn snHome" aria-label="Jouer : revenir à l’écran Jouer"><svg class="snTr" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Jouer</span></button></div>
@@ -807,41 +801,37 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
 <div id="metFull" class="metFull" hidden role="dialog" aria-modal="true" aria-labelledby="mfTitle">
   <div class="kHead"><h2 id="mfTitle">Métronome</h2><span class="mfCount" id="mfCount" aria-live="off">Mesures : 0</span><button class="btn mfSmall" id="mfCountReset" aria-label="Remettre le compteur de mesures à zéro">↺</button><button class="btn kClose" id="mfClose" aria-label="Fermer le métronome">✕</button></div>
   <div class="mfBody">
-    <div class="mfTop">
-      <div class="mfDialBox">
-        <svg id="mfDial" class="mfDial" viewBox="0 0 200 200" role="slider" tabindex="0" aria-label="Couronne du tempo" aria-valuemin="30" aria-valuemax="220" aria-valuenow="100" aria-valuetext="100 noires par minute">
-          <path id="mfArcBg" fill="none" stroke="var(--line)" stroke-width="14" stroke-linecap="round"/>
-          <path id="mfArc" fill="none" stroke="var(--sun)" stroke-width="14" stroke-linecap="round"/>
-          <circle id="mfKnob" r="13" fill="var(--pink)" stroke="var(--bg)" stroke-width="3"/>
-          <text x="100" y="104" text-anchor="middle" class="mfBpm" id="mfBpm">100</text>
-          <text x="100" y="130" text-anchor="middle" class="mfUnit">noires / min</text>
-        </svg>
-      </div>
-      <div class="mfTempo">
-        <div class="mfRow">
-          <button class="big mfPm" id="mfMinus" aria-label="Ralentir de 1 (appui long pour défiler)">−</button>
-          <button class="mfPlay" id="mfPlay" aria-pressed="false" aria-label="Lancer le métronome">▶</button>
-          <button class="big mfPm" id="mfPlus" aria-label="Accélérer de 1 (appui long pour défiler)">+</button>
+    <div class="card mfConsole">
+      <div class="mfVis">
+        <div class="mfDialBox">
+          <svg id="mfDial" class="mfDial" viewBox="0 0 200 200" role="slider" tabindex="0" aria-label="Molette du tempo" aria-valuemin="30" aria-valuemax="220" aria-valuenow="100" aria-valuetext="100 noires par minute">
+            <path id="mfArcBg" fill="none" stroke="var(--line)" stroke-width="14" stroke-linecap="round"/>
+            <path id="mfArc" fill="none" stroke="var(--sun)" stroke-width="14" stroke-linecap="round"/>
+            <circle id="mfFl1" class="mfFl" cx="100" cy="100" r="58" fill="var(--sun)" opacity="0"/>
+            <circle id="mfKnob" r="13" fill="var(--pink)" stroke="var(--bg)" stroke-width="3"/>
+            <text x="100" y="116" text-anchor="middle" class="mfBpm" id="mfBpm">100</text>
+            <text x="100" y="142" text-anchor="middle" class="mfUnit" id="mfUnit">BPM</text>
+          </svg>
         </div>
-        <div class="mfRow">
-          <button class="btn mfTap" id="mfTap" aria-label="Taper le tempo : touchez en rythme, au moins deux fois">TAP</button>
-          <div class="chips" id="mfPct">
-            <button class="chip" data-p="50">50 %</button><button class="chip" data-p="75">75 %</button><button class="chip" data-p="100">100 %</button>
-          </div>
-        </div>
+        <div class="mfCircBox"><svg id="mfCirc" class="mfCirc" viewBox="0 0 240 240" aria-hidden="true" focusable="false"></svg></div>
       </div>
-    </div>
-
-    <div class="card mfCard">
-      <div class="mfLab"><b id="mfMeterLab">4/4</b><span class="mfHint">Haut du pad : accent, normal, muet. Bas du pad : le son suivant (appui long : choisir dans la liste).</span></div>
-      <div class="mfCircBox"><svg id="mfCirc" class="mfCirc" viewBox="0 0 240 240" aria-hidden="true" focusable="false"></svg></div>
+      <div class="mfBar">
+        <button class="big mfPm" id="mfMinus" aria-label="Ralentir de 1 (appui long pour défiler)">−</button>
+        <button class="mfPlay" id="mfPlay" aria-pressed="false" aria-label="Lancer le métronome">▶</button>
+        <button class="big mfPm" id="mfPlus" aria-label="Accélérer de 1 (appui long pour défiler)">+</button>
+      </div>
+      <div class="mfBar mfBar2">
+        <button class="btn mfTap" id="mfTap" aria-label="Taper le tempo : touchez en rythme, au moins deux fois">TAP</button>
+        <button class="chip" data-p="50">50 %</button><button class="chip" data-p="75">75 %</button><button class="chip" data-p="100">100 %</button>
+        <button class="chip" id="mfFlash" aria-pressed="true">Flash</button>
+      </div>
+      <div class="mfLab"><b id="mfMeterLab">4/4</b><span class="mfHint">Haut du pad : accent, normal, muet. Bas : le son (appui long : la liste).</span></div>
       <div class="mfPads" id="mfPads"></div>
       <div class="mfPick" id="mfPick" hidden role="group" aria-label="Choisir le son"></div>
     </div>
 
     <div class="mfGrid">
-      <div class="card field mfCard">
-        <h3>Métrique</h3>
+      <details class="card mfCard mfAcc"><summary><span>Métrique</span></summary><div class="field">
         <div class="mfRow2">
           <label for="mfX">Temps</label><select id="mfX"></select>
           <label for="mfY">sur</label><select id="mfY"><option value="2">2</option><option value="4">4</option><option value="8">8</option></select>
@@ -849,10 +839,8 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
         <label for="mfGrp" style="margin-top:10px">Mesure composée (groupes, par exemple 2+2+3)</label>
         <div class="mfRow2"><input id="mfGrp" inputmode="numeric" placeholder="2+2+3" autocomplete="off"><button class="btn" id="mfGrpOk">Appliquer</button></div>
         <label for="mfSub" style="margin-top:10px">Subdivision</label>
-        <select id="mfSub"><option value="1">Aucune (1 par temps)</option><option value="2">Croches (2 par temps)</option><option value="3">Triolets (3 par temps)</option><option value="4">Doubles croches (4 par temps)</option><option value="6">Sextolets (6 par temps)</option><option value="8">Triples croches (8 par temps)</option></select>
-      </div>
-      <div class="card field mfCard">
-        <h3>Son et voix</h3>
+        <select id="mfSub"><option value="1">Aucune (1 par temps)</option><option value="2">Croches (2 par temps)</option><option value="3">Triolets (3 par temps)</option><option value="4">Doubles croches (4 par temps)</option><option value="6">Sextolets (6 par temps)</option><option value="8">Triples croches (8 par temps)</option></select></div></details>
+      <details class="card mfCard mfAcc"><summary><span>Son et voix</span></summary><div class="field">
         <label for="mfSnd">Son par défaut</label>
         <select id="mfSnd"><option value="click">Clic</option><option value="wood">Bois</option><option value="rock">Batterie simple</option><option value="bossa">Batterie bossa</option></select>
         <label for="mfVol" style="margin-top:10px">Volume du métronome : <b id="mfVolVal">100 %</b></label>
@@ -862,10 +850,8 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
           <button class="tg" id="mfKon" aria-pressed="false">Konnakol (ta ka di mi)</button>
         </div>
         <label for="mfVoxVol" style="margin-top:10px">Volume de la voix : <b id="mfVoxVolVal">100 %</b></label>
-        <input type="range" id="mfVoxVol" min="0" max="150" step="5" value="100">
-      </div>
-      <div class="card field mfCard">
-        <h3>Polyrythmie</h3>
+        <input type="range" id="mfVoxVol" min="0" max="150" step="5" value="100"></div></details>
+      <details class="card mfCard mfAcc"><summary><span>Polyrythmie</span></summary><div class="field">
         <div class="toggles"><button class="tg" id="mfPoly" aria-pressed="false">Second rythme</button></div>
         <div class="mfRow2" style="margin-top:10px">
           <button class="btn mfSmall" id="mfPolyM" aria-label="Un coup de moins">−</button>
@@ -873,21 +859,18 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
           <button class="btn mfSmall" id="mfPolyP" aria-label="Un coup de plus">+</button>
         </div>
         <small>N coups répartis sur la mesure (par exemple 3 contre 4), dessinés dans le petit cercle.</small>
+        <label for="mfPolyVol" style="margin-top:10px">Volume du second rythme : <b id="mfPolyVolVal">100 %</b></label>
+        <input type="range" id="mfPolyVol" min="0" max="150" step="5" value="100">
         <div class="mfLab2">Son du second rythme</div>
-        <div class="mfSnds" id="mfPolySnds" role="radiogroup" aria-label="Son du second rythme"></div>
-      </div>
-      <div class="card field mfCard">
-        <h3>Motifs prêts à jouer</h3>
-        <div class="mfMotifs" id="mfMotifs"></div>
-      </div>
-      <div class="card field mfCard">
-        <h3>Mes métronomes</h3>
+        <div class="mfSnds" id="mfPolySnds" role="radiogroup" aria-label="Son du second rythme"></div></div></details>
+      <details class="card mfCard mfAcc"><summary><span>Motifs prêts à jouer</span></summary><div class="field">
+        <div class="mfMotifs" id="mfMotifs"></div></div></details>
+      <details class="card mfCard mfAcc"><summary><span>Mes métronomes</span></summary><div class="field">
         <div class="mfRow2"><button class="btn" id="mfUndo" aria-label="Annuler">↶ Annuler</button><button class="btn" id="mfRedo" aria-label="Rétablir">↷ Rétablir</button></div>
         <label for="mfName" style="margin-top:10px">Nom</label>
         <div class="mfRow2"><input id="mfName" placeholder="Ex. Chambacú cumbia" autocomplete="off"><button class="btn pri" id="mfSave">Enregistrer</button></div>
         <label for="mfList" style="margin-top:10px">Enregistrés</label>
-        <div class="mfRow2"><select id="mfList"></select><button class="btn" id="mfLoad">Ouvrir</button><button class="btn" id="mfDel" aria-label="Supprimer le métronome choisi">Supprimer</button></div>
-      </div>
+        <div class="mfRow2"><select id="mfList"></select><button class="btn" id="mfLoad">Ouvrir</button><button class="btn" id="mfDel" aria-label="Supprimer le métronome choisi">Supprimer</button></div></div></details>
     </div>
   </div>
 </div>
@@ -1729,7 +1712,7 @@ function click(t,accent){
 /* metronome voices: click, wood block, simple drum kit, bossa */
 let noiseBuf=null;
 function noise(){ if(!noiseBuf){ noiseBuf=ctx.createBuffer(1,ctx.sampleRate*0.5,ctx.sampleRate); const d=noiseBuf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; } return noiseBuf; }
-const MV=()=>Math.max(0.0001,(+(S.metroVol??100))/100);
+let _mfg=1; const MV=()=>Math.max(0.0001,(+(S.metroVol??100))/100*_mfg);
 function nHit(t,type,freq,vol,dec){ vol=Math.max(0.0002,vol*MV()); const s=ctx.createBufferSource(), f=ctx.createBiquadFilter(), g=ctx.createGain(); s.buffer=noise(); f.type=type; f.frequency.value=freq;
   g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dec); s.connect(f).connect(g).connect(master); s.start(t); s.stop(t+dec+0.02); }
 function tHit(t,type,f0,f1,vol,dec){ vol=Math.max(0.0002,vol*MV()); const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(f0,t); if(f1) o.frequency.exponentialRampToValueAtTime(f1,t+dec*0.6);
@@ -1740,7 +1723,7 @@ const hat=(t,v)=>nHit(t,'highpass',7000,(v||0.13)*2.5,0.05);
 const rim=t=>{tHit(t,'square',1750,0,0.12,0.03); nHit(t,'bandpass',3000,0.25,0.025);};
 const wood=(t,acc,soft)=>tHit(t,'sine',acc?1250:900,0,soft?0.18:(acc?0.6:0.42),0.07);
 function softClick(t){ const o=ctx.createOscillator(),g=ctx.createGain(); o.type='square';o.frequency.value=1000; g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(0.0002,0.08*MV()),t+0.002);g.gain.exponentialRampToValueAtTime(0.0001,t+0.035); o.connect(g).connect(master);o.start(t);o.stop(t+0.05); }
-function metroHit(t,beat,dur,beats){
+function metroHit0(t,beat,dur,beats){
   const acc=beat===0&&S.metroAcc!==false, st=S.metroSnd||'click', sub=+S.sub||1;
   if(st==='rock'){ const k=beats===3?beat===0:beat%2===0; if(k) kick(t); else snare(t); hat(t,beat===0?0.16:0.12); for(let s=1;s<sub;s++) hat(t+s*dur/sub,0.08); return; }
   if(st==='bossa'){ const h=dur/2; hat(t,0.07); for(let s=1;s<sub;s++) hat(t+s*dur/sub,0.05);
@@ -2183,7 +2166,7 @@ function renderLib(){
 /* ---------- UI wiring ---------- */
 function applySettingsUi(){
   document.documentElement.style.setProperty('--zoom',S.zoom);
-  document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white'; $('sMetroSnd').value=S.metroSnd||'click'; $('sSub').value=String(S.sub||1); $('sMetroVol').value=S.metroVol||100; $('metroVolVal').textContent=(S.metroVol||100)+' %'; $('sLoopN').value=String(S.loopN||1);
+  document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white';     $('sLoopN').value=String(S.loopN||1);
   const ln=+S.loopN||1; $('tgLoop').textContent=S.loopN==='sec'?'Boucler la partie':(ln===1?'Boucler la mesure':'Boucler '+ln+' mesures');
   if(S.loopN==='sec'&&!sections().length){S.loopN='1';$('sLoopN').value='1';}
   $('secBox').hidden=!sections().length;
@@ -2201,7 +2184,7 @@ function toggle(k){
   say((TG_SAY[k]||k)+(S[k]?' activé':' désactivé'));
 }
 document.querySelectorAll('.tg[data-k]').forEach(b=>b.addEventListener('click',()=>toggle(b.dataset.k)));
-const VIEWS={pupitre:'vPupitre',lib:'vLib',import:'vImport',train:'vTrain',tuner:'vTuner',metro:'vMetro',settings:'vSettings',instr:'vInstr',help:'vHelp',credits:'vCredits'};
+const VIEWS={pupitre:'vPupitre',lib:'vLib',import:'vImport',train:'vTrain',tuner:'vTuner',settings:'vSettings',instr:'vInstr',help:'vHelp',credits:'vCredits'};
 function showView(v){
   for(const k in VIEWS){ $(VIEWS[k]).hidden=k!==v; $('tab-'+k).setAttribute('aria-selected',String(k===v)); }
   curView=v;
@@ -2233,6 +2216,7 @@ $('menuClose').onclick=()=>{ closeMenu(); if(curView!=='pupitre'){showView('pupi
 $('menu').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeMenu();if(curView!=='pupitre'){showView('pupitre');say('Jouer');}$('menuBtn').focus();} });
 document.querySelectorAll('#menu .mItem').forEach(b=>b.addEventListener('click',()=>{ b.classList.add('mOn'); setTimeout(()=>{ b.classList.remove('mOn'); menuGo(b); },180); }));
 function menuGo(b){ const g=b.dataset.go; closeMenu();
+  if(g==='metro'){ openMetFull(); return; }
   if(g==='import'){ openImport(); return; } if(g==='lib'){ openLib(); return; } showView(g);
   const t={pupitre:'Jouer',train:'Entraînement',lib:'Mes morceaux',tuner:'Accordeur',metro:'Métronome',settings:'Accessibilité',instr:'Instrument',help:'Aide',credits:'Infos et crédits'}[g]; if(t&&g!=='tuner') say(t); }
 function toggleView(){ if(!VF){toast('Partition indisponible (bibliothèque non chargée)');return;} S.view=S.view==='staff'?'roll':'staff'; saveS(); if(song){renderMeasure();} say(S.view==='staff'?'Affichage partition classique':'Affichage en blocs de notes'); }
@@ -2328,13 +2312,8 @@ $('sStaffCol').onchange=e=>{S.staffCol=e.target.value;saveS();if(song)renderMeas
 $('sSec').onchange=e=>{ if(e.target.value==='all'){ secAll=true; gotoMeasure(0,false); say('Tout lire, depuis la mesure 1'+(S.loop&&S.loopN==='sec'?'. Boucle sur tout le morceau.':'')); startPlay(); return; }
   secAll=false; const sc=sections()[+e.target.value]; if(!sc) return; const was=P.on; gotoMeasure(sc.a,false); say(sc.label+', mesure '+song.measures[sc.a].num+(S.loop&&S.loopN==='sec'?'. Boucle de la partie.':'')); if(was) startPlay(); };
 function fillSections(){ const sel=$('sSec'); sel.innerHTML=''; secAll=false; { const o=document.createElement('option'); o.value='all'; o.textContent='Tout lire (mes. 1 à '+song.measures.length+')'; sel.append(o); } sections().forEach((x,k)=>{const o=document.createElement('option');o.value=k;o.textContent=x.label+' (mes. '+song.measures[x.a].num+' à '+song.measures[x.b].num+')';sel.append(o);}); }
-$('sMetroSnd').onchange=e=>{S.metroSnd=e.target.value;saveS();applySettingsUi();savePrefsSoon();say('Métronome : '+e.target.selectedOptions[0].textContent);};
 document.querySelectorAll('.snBack').forEach(b=>b.onclick=()=>openMenu());
 document.querySelectorAll('.snHome').forEach(b=>b.onclick=()=>{showView('pupitre');say('Jouer');});
-$('sMetroVol').oninput=e=>{S.metroVol=e.target.value;$('metroVolVal').textContent=S.metroVol+' %';saveS();};
-$('sMetroVol').onchange=()=>say('Volume du métronome '+S.metroVol+' pour cent');
-$('metroTest').onclick=()=>{ ac(); const d=60/bpm, t=ctx.currentTime+0.12; for(let j=0;j<4;j++) metroHit(t+j*d,j,d,4); };
-$('sSub').onchange=e=>{S.sub=e.target.value;saveS();savePrefsSoon();say('Subdivision : '+e.target.selectedOptions[0].textContent);};
 $('sLabels').onchange=e=>{S.labels=e.target.value;saveS();applySettingsUi();say(S.labels==='off'?'Pictos seuls':'Mots sous les pictos');};
 $('sLoopN').onchange=e=>{S.loopN=e.target.value;saveS();applySettingsUi();savePrefsSoon();say(S.loopN==='sec'?'Boucle de la partie':'Boucle de '+S.loopN+' mesure'+(S.loopN>1?'s':''));if(P.on&&S.loop){const r=curM;stopPlay();curM=r;startPlay();}};
 $('sTheme').onchange=e=>{S.theme=e.target.value;saveS();applySettingsUi();if(song){renderMeasure();renderNow();}};
@@ -2557,7 +2536,7 @@ const MF_I={kick:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.
  auto:'<path d="M9.2 2h5.6l4.7 20H4.5z"/><path d="M6 17h12M12 17 16.5 5.5"/>'};
 const mfIco=sn=>sn==='kh'?SV(MF_I.kick)+SV(MF_I.hat):sn==='sh'?SV(MF_I.snare)+SV(MF_I.hat):SV(MF_I[sn]||MF_I.auto);
 const MOT=[['Rock',4,4,'kh sh kh sh','2121'],['Rock croches',8,8,'kh h sh h kh h sh h','21212121'],['Pop clap',4,4,'kh p kh p','2121'],['Valse',3,4,'kh h h','211'],['6/8',6,8,'kh h h sh h h','211211'],['Blues 12/8',12,8,'kh h h sh h h kh h h sh h h','211211211211'],['Bossa',4,4,'kh r kh r','2121'],['Samba',4,4,'k sh k sh','2121'],['Cumbia',4,4,'k sh k sh','1212'],['Reggae',4,4,'h sh h sh','1212']];
-const MF=Object.assign({x:4,y:4,g:null,pads:[{lv:2,sn:'kick'},{lv:1,sn:'snare'},{lv:1,sn:'kick'},{lv:1,sn:'snare'}],vox:false,kon:false,voxVol:100,poly:true,polyN:8,polySn:'mara'},S.mf||{});
+const MF=Object.assign({x:4,y:4,g:null,pads:[{lv:2,sn:'kick'},{lv:1,sn:'snare'},{lv:1,sn:'kick'},{lv:1,sn:'snare'}],vox:false,kon:false,voxVol:100,poly:true,polyN:8,polySn:'mara',polyVol:100,flash:true},S.mf||{});
 function mfDefPads(){ const n=MF.x, out=[]; let starts=new Set([0]);
   if(MF.g){let a=0;for(const v of MF.g){starts.add(a);a+=v;}} else if(MF.y===8&&n>=6&&n%3===0){for(let i=0;i<n;i+=3)starts.add(i);}
   for(let i=0;i<n;i++) out.push({lv:i===0?2:(starts.has(i)?2:1),sn:'auto'}); if(starts.size>1) out.forEach((p,i)=>{if(i&&starts.has(i))p.lv=2;}); return out; }
@@ -2565,7 +2544,7 @@ if(!Array.isArray(MF.pads)||MF.pads.length!==MF.x) MF.pads=mfDefPads();
 let mfUndo=[],mfRedo=[];
 const mfSnap=()=>JSON.stringify({x:MF.x,y:MF.y,g:MF.g,pads:MF.pads,vox:MF.vox,kon:MF.kon,poly:MF.poly,polyN:MF.polyN,polySn:MF.polySn,bpm,sub:S.sub,snd:S.metroSnd});
 function mfPush(){ mfUndo.push(mfSnap()); if(mfUndo.length>60) mfUndo.shift(); mfRedo=[]; }
-function mfSave(){ S.mf={x:MF.x,y:MF.y,g:MF.g,pads:MF.pads,vox:MF.vox,kon:MF.kon,voxVol:MF.voxVol,poly:MF.poly,polyN:MF.polyN,polySn:MF.polySn}; saveS(); }
+function mfSave(){ S.mf={x:MF.x,y:MF.y,g:MF.g,pads:MF.pads,vox:MF.vox,kon:MF.kon,voxVol:MF.voxVol,poly:MF.poly,polyN:MF.polyN,polySn:MF.polySn,polyVol:MF.polyVol,flash:MF.flash}; saveS(); }
 function mfApply(js){ const o=JSON.parse(js); Object.assign(MF,{x:o.x,y:o.y,g:o.g||null,pads:o.pads,vox:!!o.vox,kon:!!o.kon,poly:!!o.poly,polyN:o.polyN||3,polySn:o.polySn||'clap'});
   if(o.sub!=null){S.sub=String(o.sub);} if(o.snd){S.metroSnd=o.snd;} if(o.bpm) setBpm(o.bpm); saveS(); mfSave(); mfRender(); syncMetroUi(); }
 const MFR={on:false,t0:0,next:0,k:0,timer:null,q:[],bars:0,poly:0};
@@ -2585,11 +2564,11 @@ function mfSound(t,sn,acc){
   if(sn==='cig'){ for(let k=0;k<6;k++) nHit(t+k*0.013,'bandpass',5600,(acc?0.32:0.22)*(1-k/8),0.012); return; }
   if(sn==='bip') return tHit(t,'triangle',acc?2800:2400,0,acc?0.22:0.16,0.05);
 }
-function mfTick(t,i){
-  const p=MF.pads[i]||{lv:1,sn:'auto'}, dur=mfBeatDur(), sub=+S.sub||1, st=S.metroSnd||'click';
+function mfTick(t,i,dur0,silentQ){
+  const p=MF.pads[i%MF.pads.length]||{lv:1,sn:'auto'}, dur=dur0||mfBeatDur(), sub=+S.sub||1, st=S.metroSnd||'click';
   if(p.lv>0){
     if(p.sn==='auto'){
-      if(st==='rock'||st==='bossa') metroHit(t,i,dur,MF.x);
+      if(st==='rock'||st==='bossa') metroHit0(t,i,dur,MF.x);
       else { mfSound(t,st==='wood'?'wood':'click',p.lv===2); for(let k=1;k<sub;k++) st==='wood'?wood(t+k*dur/sub,false,true):softClick(t+k*dur/sub); }
     } else { mfSound(t,p.sn,p.lv===2); for(let k=1;k<sub;k++) hat(t+k*dur/sub,0.08); }
   }
@@ -2599,22 +2578,25 @@ function mfTick(t,i){
       const pp=KP[MF.x]||(MF.x%3===0?['Ta','Ki','Ta']:MF.x%4===0?['Ta','Ka','Di','Mi']:null); return pp?pp[i%pp.length]:'Ta'; };
     if(p.lv>0||sub>1) for(let j=0;j<Math.max(1,sub);j++) voxPlay(t+j*dur/sub,'kn_'+syl(j).toLowerCase(),vv*(j?0.7:1)); }
   else if(MF.vox&&p.lv>0){ const n=i+1; voxPlay(t,'fr'+(n<=12?n:((n-1)%12)+1),vv); }
-  MFR.q.push({t,i});
+  if(!silentQ) MFR.q.push({t,i});
 }
+function mfPolyBar(t,bar,q){ if(!MF.poly) return; _mfg=(MF.polyVol??100)/100; for(let j=0;j<MF.polyN;j++){ const tt=t+j*bar/MF.polyN; mfSound(tt,MF.polySn||'clap',j===0); if(q) MFR.q.push({t:tt,poly:j}); } _mfg=1; }
+function metroHit(t,beat,dur,beats){ ac(); mfTick(t,beat,dur,true); if(beat===0) mfPolyBar(t,dur*(beats||MF.x),false); }
 function mfSched(){
   if(!MFR.on) return; const ahead=ctx.currentTime+0.15;
   while(MFR.next<ahead){
     const i=MFR.k%MF.x; mfTick(MFR.next,i);
-    if(i===0&&MF.poly){ const bar=mfBeatDur()*MF.x; for(let j=0;j<MF.polyN;j++){ const tt=MFR.next+j*bar/MF.polyN; mfSound(tt,MF.polySn||'clap',j===0); MFR.q.push({t:tt,poly:j}); } }
+    if(i===0) mfPolyBar(MFR.next,mfBeatDur()*MF.x,true);
     MFR.k++; MFR.next+=mfBeatDur();
   }
 }
 function mfStart(){ ac(); if(typeof P!=='undefined'&&P.on) stopPlay(); MFR.on=true; MFR.k=0; MFR.q=[]; MFR.next=ctx.currentTime+0.12; MFR.timer=setInterval(mfSched,25); mfSched(); $('mfPlay').textContent='■'; $('mfPlay').setAttribute('aria-pressed','true'); $('mfPlay').setAttribute('aria-label','Arrêter le métronome'); requestAnimationFrame(mfFrame); }
-function mfStop(){ MFR.on=false; clearInterval(MFR.timer); MFR.q=[]; $('mfPlay').textContent='▶'; $('mfPlay').setAttribute('aria-pressed','false'); $('mfPlay').setAttribute('aria-label','Lancer le métronome'); document.querySelectorAll('#mfPads .mfPad.on,#mfCirc .on').forEach(e=>e.classList.remove('on')); MFR.barT=null; try{mfCircle()}catch(e){} }
+function mfStop(){ MFR.on=false; clearInterval(MFR.timer); MFR.q=[]; $('mfPlay').textContent='▶'; $('mfBpm').textContent=bpm; $('mfUnit').textContent='BPM'; $('mfPlay').setAttribute('aria-pressed','false'); $('mfPlay').setAttribute('aria-label','Lancer le métronome'); document.querySelectorAll('#mfPads .mfPad.on,#mfCirc .on').forEach(e=>e.classList.remove('on')); MFR.barT=null; try{mfCircle()}catch(e){} }
 function mfFrame(){
   if(!MFR.on) return; const now=ctx.currentTime;
   while(MFR.q.length&&MFR.q[0].t<=now){ const e=MFR.q.shift();
-    if(e.poly!=null){ document.querySelectorAll('#mfCirc .mfPd').forEach((d,j)=>d.setAttribute('r',j===e.poly?12:7)); continue; }
+    if(e.poly!=null){ document.querySelectorAll('#mfCirc .mfPd').forEach((d,j)=>d.setAttribute('r',j===e.poly?12:7)); const pn=$('mfCPoly'); if(pn) pn.textContent=e.poly+1; continue; }
+    mfFlash(e.i);
     document.querySelectorAll('#mfPads .mfPad').forEach((d,j)=>d.classList.toggle('on',j===e.i));
     document.querySelectorAll('#mfCirc .mfBd').forEach((d,j)=>{ d.classList.toggle('on',j===e.i); });
     if(e.i===0){ MFR.barT=e.t; MFR.bars++; $('mfCount').textContent='Mesures : '+MFR.bars; }
@@ -2622,6 +2604,11 @@ function mfFrame(){
   const nd=$('mfNeedle'); if(nd&&MFR.barT!=null){ const bar=mfBeatDur()*MF.x, pos=((now-MFR.barT)/bar)%1, a=pos*2*Math.PI-Math.PI/2; nd.setAttribute('x2',120+MFC.R1*Math.cos(a)); nd.setAttribute('y2',120+MFC.R1*Math.sin(a)); nd.setAttribute('opacity',1); }
   requestAnimationFrame(mfFrame);
 }
+function mfFlash(i){ const acc=i===0, col=acc?'var(--pink)':'var(--sun)';
+  const b=$('mfBpm'); if(b){ b.textContent=i+1; } const u=$('mfUnit'); if(u) u.textContent='temps';
+  const cn=$('mfCNum'); if(cn) cn.textContent=i+1;
+  if(MF.flash===false) return;
+  for(const id of ['mfFl1','mfFl2']){ const f=$(id); if(!f) continue; f.setAttribute('fill',col); f.style.transition='none'; f.style.opacity=acc?0.95:0.7; void f.getBoundingClientRect(); f.style.transition='opacity .28s ease-out'; f.style.opacity=0; } }
 function mfPick(i){ const box=$('mfPick'), p=MF.pads[i]; box.hidden=false; box.innerHTML='<b class="mfPickT">Temps '+(i+1)+' :</b>';
   MF_SN.forEach(sn=>{ const b=document.createElement('button'); b.className='mfSp'+(sn===p.sn?' on':''); b.innerHTML=mfIco(sn); b.setAttribute('aria-label',MF_SNL[sn]); b.title=MF_SNL[sn];
     b.onclick=()=>{ mfPush(); p.sn=sn; mfSave(); box.hidden=true; mfRender(); say('Temps '+(i+1)+' : '+MF_SNL[sn]); ac(); mfSound(ctx.currentTime+0.02,sn==='auto'?(S.metroSnd==='wood'?'wood':'click'):sn,p.lv===2); }; box.append(b); });
@@ -2633,7 +2620,7 @@ function mfPolySnds(){ const box=$('mfPolySnds'); box.innerHTML='';
   MF_SN.filter(x=>x!=='auto').concat(['bip']).forEach(sn=>{ const b=document.createElement('button'); b.className='mfSp'+(sn===(MF.polySn||'clap')?' on':''); b.setAttribute('role','radio'); b.setAttribute('aria-checked',String(sn===(MF.polySn||'clap')));
     b.innerHTML=sn==='bip'?SV('<path d="M4 12h3l2-5 3 10 2-5h6"/>'):mfIco(sn); const lab=sn==='bip'?'Bip aigu':MF_SNL[sn]; b.setAttribute('aria-label',lab); b.title=lab;
     b.onclick=()=>{ mfPush(); MF.polySn=sn; mfSave(); mfPolySnds(); ac(); mfSound(ctx.currentTime+0.02,sn,true); say('Second rythme : '+lab); }; box.append(b); }); }
-const MFC={cx:120,cy:120,R1:100,R2:58};
+const MFC={cx:120,cy:120,R1:92,R2:56};
 function mfPts(n,R){ const o=[]; for(let i=0;i<n;i++){ const a=i/n*2*Math.PI-Math.PI/2; o.push([MFC.cx+R*Math.cos(a),MFC.cy+R*Math.sin(a)]); } return o; }
 function mfCircle(){ const sv=$('mfCirc'); const P1=mfPts(MF.x,MFC.R1), col=lv=>lv===2?'var(--sun)':lv===1?'var(--ink)':'var(--line)';
   let h='<circle cx="120" cy="120" r="'+MFC.R1+'" fill="none" stroke="var(--line)" stroke-width="2"/>';
@@ -2642,7 +2629,10 @@ function mfCircle(){ const sv=$('mfCirc'); const P1=mfPts(MF.x,MFC.R1), col=lv=>
   if(MF.poly){ const P2=mfPts(MF.polyN,MFC.R2); if(MF.polyN>1) h+='<polygon points="'+P2.map(p=>p.join(',')).join(' ')+'" fill="rgba(255,95,162,.12)" stroke="var(--pink)" stroke-width="3" stroke-linejoin="round"/>';
     P2.forEach((p,j)=>h+='<circle class="mfPd" data-j="'+j+'" cx="'+p[0]+'" cy="'+p[1]+'" r="7" fill="var(--pink)"/>'); }
   P1.forEach((p,i)=>h+='<circle class="mfBd" data-i="'+i+'" cx="'+p[0]+'" cy="'+p[1]+'" r="'+(MF.pads[i].lv===2?12:9)+'" fill="'+col(MF.pads[i].lv)+'" stroke="var(--bg)" stroke-width="2"/>');
-  h+='<line id="mfNeedle" x1="120" y1="120" x2="120" y2="'+(120-MFC.R1)+'" stroke="var(--pink)" stroke-width="4" stroke-linecap="round" opacity="'+(MFR.on?1:0)+'"/><circle cx="120" cy="120" r="6" fill="var(--pink)"/>';
+  h+='<circle id="mfFl2" cx="120" cy="120" r="34" fill="var(--sun)" opacity="0"/>';
+  P1.forEach((p,i)=>{ const a=i/MF.x*2*Math.PI-Math.PI/2, r=MFC.R1+0; const lx=120+(MFC.R1+19)*Math.cos(a), ly=120+(MFC.R1+19)*Math.sin(a); if(MF.x>1) h+='<text class="mfVn" x="'+lx+'" y="'+(ly+5)+'" text-anchor="middle">'+(i+1)+'</text>'; });
+  if(MF.poly) mfPts(MF.polyN,MFC.R2).forEach((p,j)=>{ const a=j/MF.polyN*2*Math.PI-Math.PI/2, lx=120+(MFC.R2-17)*Math.cos(a), ly=120+(MFC.R2-17)*Math.sin(a); if(MF.polyN<=12) h+='<text class="mfVn mfVnP" x="'+lx+'" y="'+(ly+4)+'" text-anchor="middle">'+(j+1)+'</text>'; });
+  h+='<line id="mfNeedle" x1="120" y1="120" x2="120" y2="'+(120-MFC.R1)+'" stroke="var(--pink)" stroke-width="4" stroke-linecap="round" opacity="'+(MFR.on?1:0)+'"/><text id="mfCNum" class="mfCNum" x="120" y="133" text-anchor="middle">'+(MFR.on?'':MF.x)+'</text>'+(MF.poly?'<text id="mfCPoly" class="mfCPoly" x="120" y="152" text-anchor="middle">'+(MFR.on?'':MF.polyN)+'</text>':'');
   sv.innerHTML=h; }
 function mfLabel(){ return MF.x+'/'+MF.y+(MF.g?' ('+MF.g.join('+')+')':''); }
 function mfRender(){
@@ -2664,7 +2654,7 @@ function mfRender(){
   });
   mfCircle(); mfPolySnds();
   $('mfVox').setAttribute('aria-pressed',String(!!MF.vox)); $('mfKon').setAttribute('aria-pressed',String(!!MF.kon)); $('mfPoly').setAttribute('aria-pressed',String(!!MF.poly));
-  $('mfPolyN').textContent=MF.polyN+' coups par mesure'; $('mfVoxVol').value=MF.voxVol??100; $('mfVoxVolVal').textContent=(MF.voxVol??100)+' %';
+  $('mfPolyN').textContent=MF.polyN+' coups par mesure'; $('mfPolyVol').value=MF.polyVol??100; $('mfPolyVolVal').textContent=(MF.polyVol??100)+' %'; $('mfFlash').setAttribute('aria-pressed',String(MF.flash!==false)); $('mfVoxVol').value=MF.voxVol??100; $('mfVoxVolVal').textContent=(MF.voxVol??100)+' %';
   $('mfSub').value=S.sub||'2'; $('mfSnd').value=S.metroSnd||'click'; $('mfVol').value=S.metroVol??100; $('mfVolVal').textContent=(S.metroVol??100)+' %';
   mfDial(); mfPresets();
 }
@@ -2673,12 +2663,12 @@ function mfDial(){
   const arc=(a,b)=>{const [x0,y0]=pt(a),[x1,y1]=pt(b);return 'M'+x0+' '+y0+' A'+R+' '+R+' 0 '+((b-a)>180?1:0)+' 1 '+x1+' '+y1;};
   const a=A0+fr*(A1-A0); $('mfArcBg').setAttribute('d',arc(A0,A1)); $('mfArc').setAttribute('d',arc(A0,Math.max(A0+0.5,a)));
   const [kx,ky]=pt(a); $('mfKnob').setAttribute('cx',kx); $('mfKnob').setAttribute('cy',ky);
-  $('mfBpm').textContent=bpm; const d=$('mfDial'); d.setAttribute('aria-valuenow',bpm); d.setAttribute('aria-valuetext',bpm+' noires par minute');
-  document.querySelectorAll('#mfPct .chip').forEach(c=>c.setAttribute('aria-pressed',String(!!song&&Math.round(song.tempo*c.dataset.p/100)===bpm)));
+  if(!MFR.on){ $('mfBpm').textContent=bpm; $('mfUnit').textContent='BPM'; } const d=$('mfDial'); d.setAttribute('aria-valuenow',bpm); d.setAttribute('aria-valuetext',bpm+' noires par minute');
+  document.querySelectorAll('.mfBar2 .chip[data-p]').forEach(c=>c.setAttribute('aria-pressed',String(!!song&&Math.round(song.tempo*c.dataset.p/100)===bpm)));
 }
 function mfSetBpm(v,speak){ setBpm(v,speak); mfDial(); }
 function mfPresets(){ let L=[]; try{L=JSON.parse(localStorage.getItem('tbb-metros')||'[]')}catch(e){} const sel=$('mfList'); sel.innerHTML=L.length?'':'<option value="">Aucun pour l’instant</option>'; L.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p.name;sel.append(o);}); return L; }
-function openMetFull(){ $('metFull').hidden=false; $('metBtn').setAttribute('aria-pressed','true'); mfRender(); $('mfPlay').focus(); say('Métronome plein écran. Bouton lecture. Échap pour fermer.'); }
+function openMetFull(){ try{mfFromSong()}catch(e){} $('metFull').hidden=false; $('metBtn').setAttribute('aria-pressed','true'); mfRender(); $('mfPlay').focus(); say('Métronome plein écran. Bouton lecture. Échap pour fermer.'); }
 function closeMetFull(){ mfStop(); $('metFull').hidden=true; $('metBtn').setAttribute('aria-pressed','false'); $('metBtn').focus(); }
 (function(){
   const sx=$('mfX'); for(let i=1;i<=16;i++){const o=document.createElement('option');o.value=i;o.textContent=i;sx.append(o);}
@@ -2695,7 +2685,7 @@ function closeMetFull(){ mfStop(); $('metFull').hidden=true; $('metBtn').setAttr
   let taps=[]; $('mfTap').onclick=()=>{ const n=performance.now(); if(taps.length&&n-taps[taps.length-1]>2000) taps=[]; taps.push(n); taps=taps.slice(-6);
     if(taps.length>1){ const iv=(taps[taps.length-1]-taps[0])/(taps.length-1); mfSetBpm(60000/iv*MF.y/4); } if(ctx){ac(); click(ctx.currentTime+0.005,false);} else {ac();} };
   $('mfTap').addEventListener('blur',()=>{ if(taps.length>1) say('Tempo '+bpm); taps=[]; });
-  document.querySelectorAll('#mfPct .chip').forEach(c=>c.onclick=()=>{ if(!song) return; mfPush(); mfSetBpm(Math.round(song.tempo*c.dataset.p/100),true); });
+  document.querySelectorAll('.mfBar2 .chip[data-p]').forEach(c=>c.onclick=()=>{ if(!song) return; mfPush(); mfSetBpm(Math.round(song.tempo*c.dataset.p/100),true); });
   const dial=$('mfDial'); let drag=false;
   const fromPt=e=>{ const r=dial.getBoundingClientRect(), dx=e.clientX-r.left-r.width/2, dy=e.clientY-r.top-r.height/2; let a=Math.atan2(dx,-dy)*180/Math.PI; a=Math.max(-150,Math.min(150,a)); mfSetBpm(30+(a+150)/300*190); };
   dial.addEventListener('pointerdown',e=>{ drag=true; mfPush(); dial.setPointerCapture(e.pointerId); fromPt(e); });
@@ -2714,6 +2704,8 @@ function closeMetFull(){ mfStop(); $('metFull').hidden=true; $('metBtn').setAttr
   $('mfVox').onclick=()=>{ mfPush(); MF.vox=!MF.vox; if(MF.vox) MF.kon=false; mfSave(); mfRender(); say(MF.vox?'Voix qui compte activée':'Voix coupée'); };
   $('mfKon').onclick=()=>{ mfPush(); MF.kon=!MF.kon; if(MF.kon) MF.vox=false; mfSave(); mfRender(); say(MF.kon?'Konnakol activé':'Konnakol coupé'); };
   $('mfPoly').onclick=()=>{ mfPush(); MF.poly=!MF.poly; mfSave(); mfRender(); say(MF.poly?'Polyrythmie, '+MF.polyN+' coups':'Polyrythmie coupée'); };
+  $('mfPolyVol').oninput=e=>{ MF.polyVol=+e.target.value; $('mfPolyVolVal').textContent=e.target.value+' %'; mfSave(); };
+  $('mfFlash').onclick=()=>{ MF.flash=MF.flash===false; mfSave(); mfRender(); say(MF.flash?'Flash lumineux activé':'Flash lumineux coupé'); };
   $('mfPolyM').onclick=()=>{ mfPush(); MF.polyN=Math.max(2,MF.polyN-1); mfSave(); mfRender(); };
   $('mfPolyP').onclick=()=>{ mfPush(); MF.polyN=Math.min(16,MF.polyN+1); mfSave(); mfRender(); };
   const mm=$('mfMotifs'); const SNM={kh:'kh',sh:'sh',k:'kick',h:'hat',s:'snare',p:'clap',r:'rim'};
@@ -2728,5 +2720,13 @@ function closeMetFull(){ mfStop(); $('metFull').hidden=true; $('metBtn').setAttr
   $('mfDel').onclick=()=>{ const L=mfPresets(), i=+$('mfList').value; const p=L[i]; if(!p) return; L.splice(i,1); try{localStorage.setItem('tbb-metros',JSON.stringify(L))}catch(e){} mfPresets(); say('Supprimé : '+p.name); };
 })();
 
+
+function mfSongPads(x,y){ const out=[]; const comp=y===8&&x>=6&&x%3===0;
+  for(let i=0;i<x;i++){ if(comp) out.push({lv:i===0?2:(i%3===0?2:1),sn:i%3===0?(i===0?'kick':'snare'):'hat'}); else out.push({lv:i===0?2:1,sn:i%2===0?'kick':'snare'}); }
+  if(comp&&x>=6){ for(let i=0;i<x;i+=3) out[i].sn=(i/3)%2===0?'kick':'snare'; } return out; }
+function mfFromSong(){ if(!song||!song.measures||!song.measures.length) return; const m=song.measures[Math.min(curM||0,song.measures.length-1)];
+  if(!m.beats||!m.beatType) return; if(m.beats===MF.x&&m.beatType===MF.y) return;
+  MF.x=m.beats; MF.y=m.beatType; MF.g=null; MF.pads=mfSongPads(MF.x,MF.y); MFR.k=0; mfSave(); if(!$('metFull').hidden) mfRender(); }
+{ const _ss=setSong; setSong=function(){ const r=_ss.apply(this,arguments); try{ mfFromSong(); }catch(e){} return r; }; }
 </script>
 </body></html>
