@@ -258,7 +258,25 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .viewSeg{display:inline-flex;align-items:stretch}
 .viewBtn{height:100%;min-height:0;display:flex;align-items:center;font-size:calc(var(--sf) * .5)}
 @media (max-width:760px){.status{--sh:min(calc(3.4rem * var(--zoom)),15vw);--sf:min(calc(1.8rem * var(--zoom)),7.5vw)}.viewBtn{font-size:calc(var(--sf) * .55)}}
+.noteCard .lyricNow{display:none}
 .lyrLbl{font-size:.55em;letter-spacing:.08em;color:var(--muted);opacity:.75;margin-right:.5em;vertical-align:.15em;font-weight:700}
+/* Karaoke */
+.lyrBtn{height:var(--sh);aspect-ratio:1;box-sizing:border-box;border:2px solid var(--pink);border-radius:14px;background:var(--panel);color:var(--pink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex:none;align-self:center}
+.lyrBtn svg{width:55%;height:55%}
+.lyrBtn[aria-pressed="true"]{background:var(--pink);color:#000}
+.karaoke{position:fixed;left:0;right:0;top:0;bottom:var(--kb,120px);z-index:4;background:var(--bg);display:flex;flex-direction:column;padding:max(12px,env(safe-area-inset-top,0px)) 16px 12px}
+.kHead{display:flex;align-items:center;gap:12px}
+.kHead h2{margin:0;color:var(--pink);font-size:calc(1.4rem * var(--zoom))}
+.kMes{color:var(--muted);font-size:calc(1.1rem * var(--zoom))}
+.kClose{margin-left:auto;font-size:1.6rem;min-width:56px;min-height:56px}
+.kBody{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:calc(1.5rem * var(--zoom));overflow:hidden}
+.kLine{margin:0;font-weight:700;font-size:min(calc(4.6rem * var(--zoom)),13vw);line-height:1.2;color:var(--muted)}
+.kLine span{transition:color .1s}
+.kLine .past{color:var(--ink)}
+.kLine .cur{color:var(--sun);text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.15em}
+.kNext{margin:0;font-weight:700;font-size:min(calc(2.4rem * var(--zoom)),7vw);color:var(--muted);opacity:.55;line-height:1.2}
+@media (max-width:760px){.lyrBtn{margin-left:0}}
+@media (max-width:360px){.status{--sf:6vw;--sh:13vw;gap:5px}.status .viewBtn{font-size:3.3vw;padding:0 4px}.mnum{padding:0 5px}.chordNow{padding:0 5px}.mnum>span:last-child{font-size:.85em}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -300,6 +318,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
       <button class="viewBtn" id="vbNotes" aria-pressed="false" aria-keyshortcuts="V">Notes</button>
       <button class="viewBtn" id="vbStaff" aria-pressed="true" aria-keyshortcuts="V">Partition</button>
     </div>
+    <button class="lyrBtn" id="lyrBtn" aria-label="Paroles en grand, karaoké" title="Paroles en grand (K)" aria-keyshortcuts="K" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5M8.5 21.5h7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
     <div class="keyinfo" id="keyInfo"></div>
   </div>
 
@@ -489,6 +508,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
       <dt><kbd>G</kbd><kbd>&gt;</kbd></dt><dd>Grossir l’affichage</dd>
       <dt><kbd>F</kbd><kbd>&lt;</kbd></dt><dd>Réduire l’affichage</dd>
       <dt><kbd>V</kbd></dt><dd>Basculer entre blocs de notes et partition classique</dd>
+      <dt><kbd>K</kbd></dt><dd>Afficher les paroles en grand (karaoké)</dd>
       <dt><kbd>I</kbd></dt><dd>Importer une partition</dd>
       <dt><kbd>O</kbd></dt><dd>Ouvrir mes morceaux</dd>
       <dt><kbd>Échap</kbd></dt><dd>Tout arrêter (son et voix)</dd>
@@ -543,6 +563,13 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
       <li><b>MIDI</b> (.mid) : mélodie, paroles et tempo, mais pas les accords.</li>
     </ul>
     <p style="margin:0;color:var(--muted)">Depuis Logic Pro : Fichier › Exporter › Partition au format MusicXML.<br>Depuis MuseScore : Fichier › Exporter › MusicXML.<br>Le fichier doit être en ut (son réel) : l’app l’écrit elle-même pour trompette en si♭.</p>
+  </div>
+</div>
+<div id="karaoke" class="karaoke" hidden role="dialog" aria-labelledby="kTitle">
+  <div class="kHead"><h2 id="kTitle">Paroles</h2><span class="kMes" id="kMes"></span><button class="btn kClose" id="kClose" aria-label="Fermer les paroles">✕</button></div>
+  <div class="kBody" aria-hidden="true">
+    <p class="kLine" id="kLine"></p>
+    <p class="kNext" id="kNext"></p>
   </div>
 </div>
 <div id="fsModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="fsTitle">
@@ -1140,7 +1167,7 @@ function renderNow(){
   const sm=document.createElement('small'); sm.textContent=song.chords.length?'accord':'pas d’accords (MIDI)'; $('chordNow').append(sm);
   $('chordNow').setAttribute('aria-label',c?'Accord '+chordSay(c)+'. Appuyer pour corriger':'Pas d’accord');
   $('chordNow').onclick=()=>{if(c)openChordEdit(c);};
-  updateTunerTarget();
+  updateTunerTarget(); renderKaraoke();
 }
 
 /* ---------- Navigation & speech ---------- */
@@ -1642,6 +1669,41 @@ function closeFs(){ $('fsModal').hidden=true; $('fsBtn').focus(); }
 $('fsBtn').onclick=toggleFullscreen; $('fsClose').onclick=closeFs;
 $('fsModal').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();closeFs();} });
 document.addEventListener('fullscreenchange',updateFsBtn); updateFsBtn();
+/* ---------- Karaoke ---------- */
+function hasLyrics(){ return !!(song&&song.notes.some(n=>n.lyric)); }
+function lyricLines(){ // lines of 2 measures that contain lyrics
+  const L=[]; if(!song) return L;
+  for(let a=0;a<song.measures.length;a+=2){ const idx=[]; for(let m=a;m<Math.min(a+2,song.measures.length);m++) for(const i of song.measures[m].noteIdx){ if(song.notes[i].lyric) idx.push(i); }
+    L.push({a,b:Math.min(a+1,song.measures.length-1),idx}); }
+  return L;
+}
+function lineHTML(idx,cur){ let h='',prevHy=true;
+  idx.forEach((i,k)=>{ const t=song.notes[i].lyric, hy=/-$/.test(t), w=t.replace(/-$/,'');
+    const cls=cur==null?'':(i<cur?'past':i===cur?'cur':'');
+    h+=(k&&!prevHy?' ':'')+`<span class="${cls}">${w.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</span>`; prevHy=hy; });
+  return h; }
+function renderKaraoke(){
+  const b=$('lyrBtn'); if(b) b.hidden=!hasLyrics();
+  if($('karaoke').hidden||!song) return;
+  const L=lyricLines(); const li=Math.floor(curM/2); const line=L[li];
+  let cur=curN; if(cur!=null&&!song.notes[cur].lyric){ // last sung syllable at or before current note
+    const prev=(line?line.idx:[]).filter(i=>i<=cur); cur=prev.length?prev[prev.length-1]:null; }
+  $('kLine').innerHTML=line&&line.idx.length?lineHTML(line.idx,cur):'<span>♪</span>';
+  let nx=null; for(let j=li+1;j<L.length;j++) if(L[j].idx.length){nx=L[j];break;}
+  $('kNext').innerHTML=nx?lineHTML(nx.idx,null):'';
+  $('kMes').textContent=line?('mesures '+song.measures[line.a].num+(line.b!==line.a?'–'+song.measures[line.b].num:'')):'';
+}
+function kSize(){ const t=document.querySelector('.transport'); $('karaoke').style.setProperty('--kb',(t?t.offsetHeight:0)+'px'); }
+function toggleKaraoke(force){
+  if(!hasLyrics()){ toast('Ce morceau n’a pas de paroles'); return; }
+  const open=force!=null?force:$('karaoke').hidden;
+  $('karaoke').hidden=!open; $('lyrBtn').setAttribute('aria-pressed',String(open));
+  if(open){ kSize(); renderKaraoke(); $('kClose').focus(); say('Paroles en grand. Touche K ou Échap pour fermer.'); }
+  else $('lyrBtn').focus();
+}
+$('lyrBtn').onclick=()=>toggleKaraoke(); $('kClose').onclick=()=>toggleKaraoke(false);
+$('karaoke').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();toggleKaraoke(false);} });
+window.addEventListener('resize',()=>{ if(!$('karaoke').hidden) kSize(); });
 function openImport(){ $('importModal').hidden=false; $('imPick').focus(); say('Importer une partition. Choisissez le fichier du morceau : MusicXML, conseillé car il garde les accords, ou MIDI. Bouton Choisir le fichier.'); }
 function closeImport(){ $('importModal').hidden=true; }
 $('imPick').onclick=()=>{ closeImport(); $('fileIn').click(); };
@@ -1692,7 +1754,7 @@ $('cmOk').onclick=()=>saveChordEdit(false);
 $('cmReset').onclick=()=>saveChordEdit(true);
 $('cmCancel').onclick=closeChordEdit;
 $('cmInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();saveChordEdit(false);} if(e.key==='Escape'){e.preventDefault();closeChordEdit();}});
-const HELP_SAY='Raccourcis. Espace ou P : lecture ou pause. S : stop. Flèches gauche et droite : note précédente ou suivante. Flèches haut et bas : mesure précédente ou suivante. Touche Début : retour au début. L : lire la mesure. N : redire la note. A : dire l’accord. Plus et moins : tempo. R : dire le tempo. B : boucle. M : métronome. T : accordeur. G : grossir l’affichage. F : réduire l’affichage. V : partition classique ou blocs de notes. I : importer une partition. O : ouvrir mes morceaux. Échap : tout arrêter.';
+const HELP_SAY='Raccourcis. Espace ou P : lecture ou pause. S : stop. Flèches gauche et droite : note précédente ou suivante. Flèches haut et bas : mesure précédente ou suivante. Touche Début : retour au début. L : lire la mesure. N : redire la note. A : dire l’accord. Plus et moins : tempo. R : dire le tempo. B : boucle. M : métronome. T : accordeur. G : grossir l’affichage. F : réduire l’affichage. V : partition classique ou blocs de notes. K : paroles en grand. I : importer une partition. O : ouvrir mes morceaux. Échap : tout arrêter.';
 document.addEventListener('keydown',e=>{
   if(e.ctrlKey||e.metaKey||e.altKey) return;
   if(!$('chordModal').hidden||!$('importModal').hidden||!$('profileModal').hidden||!$('fsModal').hidden) return;
@@ -1714,12 +1776,12 @@ document.addEventListener('keydown',e=>{
     b:()=>toggle('loop'), B:()=>toggle('loop'),
     m:()=>toggle('metro'), M:()=>toggle('metro'),
     t:()=>{showView('tuner');tunerToggle();}, T:()=>{showView('tuner');tunerToggle();},
-    i:openImport, I:openImport, v:toggleView, V:toggleView,
+    i:openImport, I:openImport, v:toggleView, V:toggleView, k:()=>toggleKaraoke(), K:()=>toggleKaraoke(),
     o:()=>openLib(), O:()=>openLib(),
     h:()=>say(HELP_SAY), H:()=>say(HELP_SAY), '?':()=>say(HELP_SAY),
     s:stopAll, S:stopAll,
     '>':()=>zoomStep(1), '<':()=>zoomStep(-1), g:()=>zoomStep(1), G:()=>zoomStep(1), f:()=>zoomStep(-1), F:()=>zoomStep(-1),
-    Escape:()=>{stopPlay();resumeAt=null;try{speechSynthesis.cancel()}catch(e){}}
+    Escape:()=>{if(!$('karaoke').hidden){toggleKaraoke(false);return;} stopPlay();resumeAt=null;try{speechSynthesis.cancel()}catch(e){}}
   };
   map.A=map.a;
   if(map[k]){ e.preventDefault(); map[k](); }
