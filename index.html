@@ -61,6 +61,7 @@ section.view{padding-block:14px;display:flex;flex-direction:column;gap:14px}
 .keyinfo b{color:var(--ink)}
 
 /* Measure strip */
+.mHead{display:flex;justify-content:flex-end;margin-bottom:6px}
 .measure{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:10px 10px 8px;container-type:inline-size}
 .chordsRow,.lyricsRow{position:relative;height:calc(2.2rem * var(--zoom))}
 .chordsRow button{position:absolute;top:0;background:none;border:0;color:var(--leaf);font-family:var(--f-display);font-size:calc(1.5rem * var(--zoom));cursor:pointer;padding:0 4px;white-space:nowrap}
@@ -256,12 +257,14 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 <section class="view wrap" id="vPupitre" role="tabpanel" aria-labelledby="tab-pupitre">
   <div class="status">
     <div class="mnum" aria-live="off"><span>Mesure</span><b id="mNum">–</b><span id="mTot">/ –</span></div>
-    <button class="viewBtn" id="viewBtn" aria-pressed="false" aria-keyshortcuts="V">Partition</button>
     <button class="chordNow" id="chordNow" aria-label="Accord en cours, appuyer pour corriger">–</button>
     <div class="keyinfo" id="keyInfo"></div>
   </div>
 
   <div class="measure" id="measure">
+    <div class="mHead">
+      <button class="viewBtn" id="viewBtn" aria-pressed="false" aria-keyshortcuts="V">Partition</button>
+    </div>
     <div class="chordsRow" id="chordsRow"></div>
     <div class="roll" id="roll" role="group" aria-label="Notes de la mesure"></div>
     <div class="staff" id="staff" hidden aria-label="Partition de la mesure" role="img"></div>
@@ -536,7 +539,7 @@ const ACC_SAY={'-2':' double bémol','-1':' bémol','0':'','1':' dièse','2':' d
 const TRANSP={Bb:{semi:2,steps:1,label:'trompette en si♭'},C:{semi:0,steps:0,label:'en ut'}};
 
 /* ---------- Settings ---------- */
-const S={view:'roll',sound:'real',profile:'',transp:'Bb',naming:'fr',zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
+const S={view:'staff',sound:'real',profile:'',transp:'Bb',naming:'fr',zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
   melody:true,metro:true,chords:false,countIn:true,loop:false,stepSound:true,follow:false,tunerSpeak:true,readFing:false};
 try{Object.assign(S,JSON.parse(localStorage.getItem('tbb-settings')||'{}'))}catch(e){}
 function saveS(){try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
