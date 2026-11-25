@@ -944,10 +944,10 @@ const ACC_SAY={'-2':' double bémol','-1':' bémol','0':'','1':' dièse','2':' d
 const TRANSP={Bb:{semi:2,steps:1,label:'trompette en si♭'},C:{semi:0,steps:0,label:'en ut'}};
 
 /* ---------- Settings ---------- */
-const S={view:'staff',metroVol:'100',metroAcc:true,metroSnd:'click',sub:'2',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'1',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
+const S={view:'staff',metroVol:'100',metroAcc:true,metroSnd:'click',sub:'1',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'1',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
   melody:true,metro:true,chords:false,countIn:true,loop:false,stepSound:true,follow:false,tunerSpeak:true,readFing:false};
 try{Object.assign(S,JSON.parse(localStorage.getItem('tbb-settings')||'{}'))}catch(e){}
-if(S.subV!==2){S.sub='2';S.subV=2;try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
+if(S.subV!==3){S.sub='1';S.subV=3;if(S.mfV!==2){delete S.mf;S.mfV=2;}try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
 function saveS(){try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
 
 /* ---------- Pitch spelling ---------- */
@@ -2089,7 +2089,7 @@ function setSong(s,announce,id){
   if(P.on) stopPlay(); resumeAt=null;
   song=s; curId=id||'demo'; try{localStorage.setItem('tbb-cur',curId)}catch(e){}
   const e=libIndex().find(x=>x.id===curId); const pr=(e&&e.prefs)||{};
-  for(const k of PREF_KEYS) if(pr[k]!=null&&!(k==='sub'&&pr.subV!==2)) S[k]=pr[k];
+  for(const k of PREF_KEYS) if(pr[k]!=null&&!(k==='sub'&&pr.subV!==3)) S[k]=pr[k];
   saveS(); applySettingsUi();
   applyChordEdits();
   curM=Math.max(0,Math.min(song.measures.length-1,(pr.m||1)-1)); curN=firstNoteOfMeasure(curM);
@@ -2126,7 +2126,7 @@ function savePrefsSoon(){
     const idx=libIndex(); let e=idx.find(x=>x.id===curId);
     if(!e&&curId==='demo'){ e={id:'demo',title:song.title,name:'démo',kind:'demo',added:0,prefs:{}}; idx.push(e); }
     if(!e) return;
-    e.prefs={bpm,m:curM+1,subV:2}; for(const k of PREF_KEYS) e.prefs[k]=S[k];
+    e.prefs={bpm,m:curM+1,subV:3}; for(const k of PREF_KEYS) e.prefs[k]=S[k];
     _idx=idx; libSaveIndex();
   },500);
 }
@@ -2553,7 +2553,7 @@ const MF_I={kick:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.
  auto:'<path d="M9.2 2h5.6l4.7 20H4.5z"/><path d="M6 17h12M12 17 16.5 5.5"/>'};
 const mfIco=sn=>sn==='kh'?SV(MF_I.kick)+SV(MF_I.hat):sn==='sh'?SV(MF_I.snare)+SV(MF_I.hat):SV(MF_I[sn]||MF_I.auto);
 const MOT=[['Rock',4,4,'kh sh kh sh','2121'],['Rock croches',8,8,'kh h sh h kh h sh h','21212121'],['Pop clap',4,4,'kh p kh p','2121'],['Valse',3,4,'kh h h','211'],['6/8',6,8,'kh h h sh h h','211211'],['Blues 12/8',12,8,'kh h h sh h h kh h h sh h h','211211211211'],['Bossa',4,4,'kh r kh r','2121'],['Samba',4,4,'k sh k sh','2121'],['Cumbia',4,4,'k sh k sh','1212'],['Reggae',4,4,'h sh h sh','1212']];
-const MF=Object.assign({x:4,y:4,g:null,pads:null,vox:false,kon:false,voxVol:100,poly:false,polyN:3,polySn:'clap'},S.mf||{});
+const MF=Object.assign({x:4,y:4,g:null,pads:[{lv:2,sn:'kick'},{lv:1,sn:'snare'},{lv:1,sn:'kick'},{lv:1,sn:'snare'}],vox:false,kon:false,voxVol:100,poly:true,polyN:8,polySn:'mara'},S.mf||{});
 function mfDefPads(){ const n=MF.x, out=[]; let starts=new Set([0]);
   if(MF.g){let a=0;for(const v of MF.g){starts.add(a);a+=v;}} else if(MF.y===8&&n>=6&&n%3===0){for(let i=0;i<n;i+=3)starts.add(i);}
   for(let i=0;i<n;i++) out.push({lv:i===0?2:(starts.has(i)?2:1),sn:'auto'}); if(starts.size>1) out.forEach((p,i)=>{if(i&&starts.has(i))p.lv=2;}); return out; }
