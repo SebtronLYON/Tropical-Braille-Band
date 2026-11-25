@@ -6,7 +6,7 @@ Application d’entraînement à la trompette du **Tropical Brass Band**, pensé
 
 ## Ce qu’elle fait
 - Importe une partition `.mid`, MusicXML `.xml`/`.musicxml` ou `.mxl` (Logic Pro, MuseScore).
-- Affiche la partition en ut pour trompette en si♭, une mesure à la fois, avec la note en très gros et son doigté.
+- Affiche la partition en ut pour trompette en si♭, une mesure à la fois, avec la note en très gros et son doigté, en blocs de notes ou en partition classique.
 - Lecture, pause, stop, mesure par mesure, tempo réglable (50 % au départ), métronome, accords.
 - Accordeur au micro qui annonce la note jouée et sa justesse.
 - « Mes morceaux » : bibliothèque enregistrée dans le navigateur, avec les réglages de chaque morceau.
@@ -16,5 +16,6 @@ Tout tient dans le seul fichier `index.html`, qui fonctionne aussi hors connexio
 
 ## Crédits
 - Sons de trompette : soundfont **Musyng Kite**, conversion [midi-js-soundfonts](https://github.com/gleitz/midi-js-soundfonts) de Benjamin Gleitzman, licence [Creative Commons BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
+- Partition classique : [VexFlow](https://www.vexflow.com) (licence MIT) et la police musicale Bravura (SIL OFL).
 - Polices : Atkinson Hyperlegible (Braille Institute) et Righteous, via Google Fonts (licence SIL OFL).
 - Logo et visuels : Tropical Brass Band.
