@@ -159,6 +159,10 @@ input[type=range]{width:100%;accent-color:var(--sun);height:36px}
 }
 /* Listen-then-play banner */
 .echoBan{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--pink);color:#000;font-family:var(--f-display);font-size:min(calc(2.6rem * var(--zoom)),12vw);padding:6px 30px;border-radius:999px;z-index:6;box-shadow:0 6px 24px rgba(0,0,0,.45);pointer-events:none;white-space:nowrap}
+.subNav{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.subNav .btn{min-height:52px;font-size:min(calc(1.1rem * var(--zoom)),5vw);font-weight:700;padding:8px 16px;flex:none}
+.subNav .snHome{border-color:var(--sun)}
+.snTitle{flex:1;text-align:center;font-family:var(--f-display);color:var(--sun);font-size:min(calc(1.5rem * var(--zoom)),6.5vw);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tgSel{display:flex;align-items:center;gap:8px;background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:8px 12px;font-weight:700;min-width:0}
 .tgSel select{flex:1;min-width:0;font:inherit;padding:6px;border-radius:10px}
 .tg[hidden],.tgSel[hidden]{display:none}
@@ -245,6 +249,7 @@ input[type=range]{width:100%;accent-color:var(--sun);height:36px}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label,.field .lbl{font-weight:700}
 .field small{color:var(--muted)}
+#subBox{display:flex;flex-direction:column;gap:6px}#subBox[hidden]{display:none}#subBox select{width:100%;min-width:0;box-sizing:border-box}
 select{background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:10px;font-size:1.05rem}
 h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;font-size:1.6rem}
 .help dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;margin:0}
@@ -353,6 +358,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
       <button class="tab" role="tab" id="tab-lib" aria-selected="false" aria-controls="vLib">Mes morceaux</button>
       <button class="tab" role="tab" id="tab-tuner" aria-selected="false" aria-controls="vTuner">Accordeur</button>
       <button class="tab" role="tab" id="tab-settings" aria-selected="false" aria-controls="vSettings">Réglages</button>
+      <button class="tab" role="tab" id="tab-metro" aria-selected="false" aria-controls="vMetro">Métronome</button>
       <button class="tab" role="tab" id="tab-help" aria-selected="false" aria-controls="vHelp">Aide</button>
     </nav>
   </div>
@@ -425,17 +431,15 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
       <button class="tg" data-k="repeats" id="tgRep">Suivre les reprises</button>
       <button class="tg" data-k="acc" id="tgAcc">Accompagnement</button>
       <button class="tg" data-k="metro" aria-keyshortcuts="M">Métronome</button>
-      <div class="tgSel"><label for="sMetroSnd">Son</label><select id="sMetroSnd"><option value="click">Clic</option><option value="wood">Bois</option><option value="rock">Batterie simple</option><option value="bossa">Batterie bossa</option></select></div>
-      <div class="tgSel" id="subBox"><label for="sSub">Subdivision</label><select id="sSub"><option value="1">Noires</option><option value="2">Croches</option><option value="4">Doubles croches</option></select></div>
       <button class="tg" data-k="melody">Mélodie</button>
       <button class="tg" data-k="chords">Accords</button>
-      <button class="tg" data-k="countIn">Décompte</button>
       <button class="tg" data-k="stepSound">Son en pas à pas</button>
     </div>
   </div>
 </section>
 
 <section class="view wrap" id="vLib" role="tabpanel" aria-labelledby="tab-lib" hidden>
+  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Mes morceaux</span><button class="btn snHome" aria-label="Fermer et revenir à Jouer">✕ Jouer</button></div>
   <div class="card">
     <h2 id="libTitle">Mes morceaux</h2>
     <ul class="songs" id="libList" aria-labelledby="libTitle"></ul>
@@ -456,6 +460,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
   </div>
 </section>
 <section class="view wrap" id="vTuner" role="tabpanel" aria-labelledby="tab-tuner" hidden>
+  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Accordeur</span><button class="btn snHome" aria-label="Fermer et revenir à Jouer">✕ Jouer</button></div>
   <div class="card tuner">
     <button class="tBtn" id="tunerBtn" aria-keyshortcuts="T">Démarrer l’accordeur</button>
     <div class="tNote" id="tNote" aria-hidden="true">–</div>
@@ -473,7 +478,27 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
   </div>
 </section>
 
+<section class="view wrap" id="vMetro" role="tabpanel" aria-labelledby="tab-metro" hidden>
+  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Métronome</span><button class="btn snHome" aria-label="Fermer et revenir à Jouer">✕ Jouer</button></div>
+  <div class="card field">
+    <div class="toggles">
+      <button class="tg" data-k="metro" aria-keyshortcuts="M">Métronome</button>
+      <button class="tg" data-k="metroAcc">Accentuer le 1er temps</button>
+      <button class="tg" data-k="countIn">Décompte avant la lecture</button>
+    </div>
+    <label for="sMetroSnd" style="margin-top:12px">Son</label>
+    <select id="sMetroSnd"><option value="click">Clic</option><option value="wood">Bois</option><option value="rock">Batterie simple</option><option value="bossa">Batterie bossa</option></select>
+    <div id="subBox"><label for="sSub" style="margin-top:12px">Subdivision</label>
+    <select id="sSub"><option value="1">Noires (1 par temps)</option><option value="2">Croches (2 par temps)</option><option value="3">Triolets (3 par temps)</option><option value="4">Doubles croches (4 par temps)</option><option value="6">Sextolets (6 par temps)</option><option value="8">Triples croches (8 par temps)</option></select></div>
+    <label for="sMetroVol" style="margin-top:12px">Volume : <b id="metroVolVal">100 %</b></label>
+    <input type="range" id="sMetroVol" min="0" max="150" step="5" value="100">
+    <div class="row" style="margin-top:12px"><button class="btn pri" id="metroTest">Écouter une mesure</button></div>
+    <small>Le métronome se met en marche ou s’arrête aussi depuis l’écran Jouer (bouton Métronome, touche M).</small>
+  </div>
+</section>
+
 <section class="view wrap" id="vSettings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Réglages</span><button class="btn snHome" aria-label="Fermer et revenir à Jouer">✕ Jouer</button></div>
   <div class="grid2">
     <div class="card field">
       <h2>Partition</h2>
@@ -570,6 +595,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 </section>
 
 <section class="view wrap help" id="vHelp" role="tabpanel" aria-labelledby="tab-help" hidden>
+  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Aide</span><button class="btn snHome" aria-label="Fermer et revenir à Jouer">✕ Jouer</button></div>
   <div class="card">
     <h2>Pour travailler</h2>
     <p><b>Parties</b> : l’application lit les repères du fichier (A, B, Thème, Refrain…) ; s’il n’y en a pas, elle découpe le morceau aux doubles barres (Partie 1, 2, 3). Le choix « Partie » permet d’y sauter, et « Longueur : la partie » de la boucler.</p>
@@ -665,6 +691,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
     <button class="mItem" data-go="lib"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="4.5" width="12" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="10" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="10.5" width="12" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="16" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="16.5" width="12" height="3" rx="1.2" fill="currentColor"/></svg><span>Mes morceaux</span></button>
     <button class="mItem mImp" data-go="import"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 5 10h4.5v6h5v-6H19z" fill="currentColor"/><rect x="4" y="18" width="16" height="3" rx="1.2" fill="currentColor"/></svg><span>Importer une partition</span></button>
     <button class="mItem" data-go="tuner"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 2v9a4 4 0 0 0 8 0V2h-2.6v9a1.4 1.4 0 0 1-2.8 0V2z" fill="currentColor"/><rect x="10.7" y="14" width="2.6" height="8" rx="1" fill="currentColor"/></svg><span>Accordeur</span></button>
+    <button class="mItem" data-go="metro"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg><span>Métronome</span></button>
     <button class="mItem" data-go="settings"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.3 2h3.4l.5 2.6 1.7.7 2.2-1.5 2.4 2.4-1.5 2.2.7 1.7 2.6.5v3.4l-2.6.5-.7 1.7 1.5 2.2-2.4 2.4-2.2-1.5-1.7.7-.5 2.6h-3.4l-.5-2.6-1.7-.7-2.2 1.5-2.4-2.4 1.5-2.2-.7-1.7L2 13.7v-3.4l2.6-.5.7-1.7-1.5-2.2 2.4-2.4 2.2 1.5 1.7-.7zM12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6z" fill="currentColor" fill-rule="evenodd"/></svg><span>Réglages</span></button>
     <button class="mItem" data-go="help"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M9.2 9.3a2.9 2.9 0 1 1 4.3 2.5c-.9.5-1.5 1-1.5 2.2" fill="none" stroke="var(--bg)" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17.6" r="1.4" fill="var(--bg)"/></svg><span>Aide</span></button>
   </nav>
@@ -726,7 +753,7 @@ const ACC_SAY={'-2':' double bémol','-1':' bémol','0':'','1':' dièse','2':' d
 const TRANSP={Bb:{semi:2,steps:1,label:'trompette en si♭'},C:{semi:0,steps:0,label:'en ut'}};
 
 /* ---------- Settings ---------- */
-const S={view:'staff',metroSnd:'click',sub:'1',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'1',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
+const S={view:'staff',metroVol:'100',metroAcc:true,metroSnd:'click',sub:'1',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'1',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
   melody:true,metro:true,chords:false,countIn:true,loop:false,stepSound:true,follow:false,tunerSpeak:true,readFing:false};
 try{Object.assign(S,JSON.parse(localStorage.getItem('tbb-settings')||'{}'))}catch(e){}
 function saveS(){try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
@@ -1494,26 +1521,27 @@ function playTone(midi,t,dur,vol=0.22){
 function click(t,accent){
   const o=ctx.createOscillator(),g=ctx.createGain();
   o.type='square';o.frequency.value=accent?1900:1250;
-  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(accent?0.35:0.2,t+0.002);g.gain.exponentialRampToValueAtTime(0.0001,t+0.05);
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(0.0002,(accent?0.35:0.2)*(typeof MV==='function'?MV():1)),t+0.002);g.gain.exponentialRampToValueAtTime(0.0001,t+0.05);
   o.connect(g).connect(master);o.start(t);o.stop(t+0.06);
 }
 /* metronome voices: click, wood block, simple drum kit, bossa */
 let noiseBuf=null;
 function noise(){ if(!noiseBuf){ noiseBuf=ctx.createBuffer(1,ctx.sampleRate*0.5,ctx.sampleRate); const d=noiseBuf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; } return noiseBuf; }
-function nHit(t,type,freq,vol,dec){ const s=ctx.createBufferSource(), f=ctx.createBiquadFilter(), g=ctx.createGain(); s.buffer=noise(); f.type=type; f.frequency.value=freq;
+const MV=()=>Math.max(0.0001,(+(S.metroVol??100))/100);
+function nHit(t,type,freq,vol,dec){ vol=Math.max(0.0002,vol*MV()); const s=ctx.createBufferSource(), f=ctx.createBiquadFilter(), g=ctx.createGain(); s.buffer=noise(); f.type=type; f.frequency.value=freq;
   g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dec); s.connect(f).connect(g).connect(master); s.start(t); s.stop(t+dec+0.02); }
-function tHit(t,type,f0,f1,vol,dec){ const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(f0,t); if(f1) o.frequency.exponentialRampToValueAtTime(f1,t+dec*0.6);
+function tHit(t,type,f0,f1,vol,dec){ vol=Math.max(0.0002,vol*MV()); const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(f0,t); if(f1) o.frequency.exponentialRampToValueAtTime(f1,t+dec*0.6);
   g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.003); g.gain.exponentialRampToValueAtTime(0.0001,t+dec); o.connect(g).connect(master); o.start(t); o.stop(t+dec+0.02); }
 const kick=t=>tHit(t,'sine',150,45,0.9,0.28);
 const snare=t=>{nHit(t,'highpass',1200,0.45,0.17); tHit(t,'triangle',190,0,0.25,0.09);};
 const hat=(t,v)=>nHit(t,'highpass',7500,v||0.13,0.045);
 const rim=t=>{tHit(t,'square',1750,0,0.12,0.03); nHit(t,'bandpass',3000,0.25,0.025);};
 const wood=(t,acc,soft)=>tHit(t,'sine',acc?1250:900,0,soft?0.18:(acc?0.6:0.42),0.07);
-function softClick(t){ const o=ctx.createOscillator(),g=ctx.createGain(); o.type='square';o.frequency.value=1000; g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.08,t+0.002);g.gain.exponentialRampToValueAtTime(0.0001,t+0.035); o.connect(g).connect(master);o.start(t);o.stop(t+0.05); }
+function softClick(t){ const o=ctx.createOscillator(),g=ctx.createGain(); o.type='square';o.frequency.value=1000; g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(0.0002,0.08*MV()),t+0.002);g.gain.exponentialRampToValueAtTime(0.0001,t+0.035); o.connect(g).connect(master);o.start(t);o.stop(t+0.05); }
 function metroHit(t,beat,dur,beats){
-  const acc=beat===0, st=S.metroSnd||'click', sub=+S.sub||1;
-  if(st==='rock'){ const k=beats===3?beat===0:beat%2===0; if(k) kick(t); else snare(t); hat(t,acc?0.16:0.12); hat(t+dur/2,0.08); return; }
-  if(st==='bossa'){ const h=dur/2; hat(t,0.07); hat(t+h,0.05);
+  const acc=beat===0&&S.metroAcc!==false, st=S.metroSnd||'click', sub=+S.sub||1;
+  if(st==='rock'){ const k=beats===3?beat===0:beat%2===0; if(k) kick(t); else snare(t); hat(t,beat===0?0.16:0.12); for(let s=1;s<sub;s++) hat(t+s*dur/sub,0.08); return; }
+  if(st==='bossa'){ const h=dur/2; hat(t,0.07); for(let s=1;s<sub;s++) hat(t+s*dur/sub,0.05);
     if(beat%2===0) kick(t); else kick(t+h);
     if(beat===0||beat===3) rim(t); if(beat===1) rim(t+h); return; }
   if(st==='wood'){ wood(t,acc); for(let k=1;k<sub;k++) wood(t+k*dur/sub,false,true); return; }
@@ -1952,7 +1980,7 @@ function renderLib(){
 /* ---------- UI wiring ---------- */
 function applySettingsUi(){
   document.documentElement.style.setProperty('--zoom',S.zoom);
-  document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white'; $('sMetroSnd').value=S.metroSnd||'click'; $('sSub').value=String(S.sub||1); $('subBox').hidden=S.metroSnd==='rock'||S.metroSnd==='bossa'; $('sLoopN').value=String(S.loopN||1);
+  document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white'; $('sMetroSnd').value=S.metroSnd||'click'; $('sSub').value=String(S.sub||1); $('sMetroVol').value=S.metroVol||100; $('metroVolVal').textContent=(S.metroVol||100)+' %'; $('sLoopN').value=String(S.loopN||1);
   const ln=+S.loopN||1; $('tgLoop').textContent=S.loopN==='sec'?'Boucler la partie':(ln===1?'Boucler la mesure':'Boucler '+ln+' mesures');
   if(S.loopN==='sec'&&!sections().length){S.loopN='1';$('sLoopN').value='1';}
   $('secBox').hidden=!sections().length;
@@ -1961,7 +1989,7 @@ function applySettingsUi(){
   $('sProfile').value=S.profile||'low'; $('sSound').value=S.sound; $('sTransp').value=S.transp; $('sNaming').value=S.naming; $('sZoom').value=S.zoom; $('sTheme').value=S.theme; $('sRate').value=S.rate; $('sRef').value=S.ref;
   document.querySelectorAll('.tg[data-k]').forEach(b=>b.setAttribute('aria-pressed',String(!!S[b.dataset.k])));
 }
-const TG_SAY={ramp:'Tempo qui monte',echo:'Écoute puis joue',echoMic:'Vérification au micro',repeats:'Suivre les reprises',acc:'Accompagnement',loop:'Boucle',metro:'Métronome',melody:'Mélodie',chords:'Accords',countIn:'Décompte',stepSound:'Son en pas à pas',tunerSpeak:'Annonce vocale',follow:'Avancer quand la note est juste',voice:'Voix',alt:'Doigtés alternatifs',readFing:'Lecture des doigtés'};
+const TG_SAY={metroAcc:'Accent sur le 1er temps',ramp:'Tempo qui monte',echo:'Écoute puis joue',echoMic:'Vérification au micro',repeats:'Suivre les reprises',acc:'Accompagnement',loop:'Boucle',metro:'Métronome',melody:'Mélodie',chords:'Accords',countIn:'Décompte',stepSound:'Son en pas à pas',tunerSpeak:'Annonce vocale',follow:'Avancer quand la note est juste',voice:'Voix',alt:'Doigtés alternatifs',readFing:'Lecture des doigtés'};
 function toggle(k){
   S[k]=!S[k]; saveS(); applySettingsUi(); if(PREF_KEYS.includes(k)) savePrefsSoon();
   if(['loop','echo','repeats','acc','echoMic'].includes(k)&&P.on){const r=curM;stopPlay();curM=r;startPlay();}
@@ -1970,7 +1998,7 @@ function toggle(k){
   say((TG_SAY[k]||k)+(S[k]?' activé':' désactivé'));
 }
 document.querySelectorAll('.tg[data-k]').forEach(b=>b.addEventListener('click',()=>toggle(b.dataset.k)));
-const VIEWS={pupitre:'vPupitre',lib:'vLib',tuner:'vTuner',settings:'vSettings',help:'vHelp'};
+const VIEWS={pupitre:'vPupitre',lib:'vLib',tuner:'vTuner',metro:'vMetro',settings:'vSettings',help:'vHelp'};
 function showView(v){
   for(const k in VIEWS){ $(VIEWS[k]).hidden=k!==v; $('tab-'+k).setAttribute('aria-selected',String(k===v)); }
   curView=v;
@@ -1995,14 +2023,14 @@ let sbT=null; window.addEventListener('resize',()=>{clearTimeout(sbT);sbT=setTim
 var curView='pupitre';
 function openMenu(){ const m=$('menu'); m.hidden=false; $('menuBtn').setAttribute('aria-expanded','true');
   m.querySelectorAll('.mItem').forEach(b=>{ if(b.dataset.go===curView) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
-  (m.querySelector('.mItem[aria-current]')||m.querySelector('.mItem')).focus(); say('Menu. Jouer, Mes morceaux, Importer une partition, Accordeur, Réglages, Aide.'); }
+  (m.querySelector('.mItem[aria-current]')||m.querySelector('.mItem')).focus(); say('Menu. Jouer, Mes morceaux, Importer une partition, Accordeur, Métronome, Réglages, Aide.'); }
 function closeMenu(){ $('menu').hidden=true; $('menuBtn').setAttribute('aria-expanded','false'); }
 $('menuBtn').onclick=()=>{ $('menu').hidden?openMenu():closeMenu(); };
 $('menuClose').onclick=()=>{ closeMenu(); if(curView!=='pupitre'){showView('pupitre');say('Jouer');} $('menuBtn').focus(); };
 $('menu').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeMenu();if(curView!=='pupitre'){showView('pupitre');say('Jouer');}$('menuBtn').focus();} });
 document.querySelectorAll('#menu .mItem').forEach(b=>b.addEventListener('click',()=>{ const g=b.dataset.go; closeMenu();
   if(g==='import'){ openImport(); return; } if(g==='lib'){ openLib(); return; } showView(g);
-  const t={pupitre:'Jouer',tuner:'Accordeur',settings:'Réglages',help:'Aide'}[g]; if(t&&g!=='tuner') say(t); }));
+  const t={pupitre:'Jouer',tuner:'Accordeur',metro:'Métronome',settings:'Réglages',help:'Aide'}[g]; if(t&&g!=='tuner') say(t); }));
 function toggleView(){ if(!VF){toast('Partition indisponible (bibliothèque non chargée)');return;} S.view=S.view==='staff'?'roll':'staff'; saveS(); if(song){renderMeasure();} say(S.view==='staff'?'Affichage partition classique':'Affichage en blocs de notes'); }
 $('vbNotes').onclick=()=>{if(S.view!=='roll')toggleView();}; $('vbStaff').onclick=()=>{if(S.view!=='staff')toggleView();};
 let rzT=null; window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(song&&S.view==='staff')renderStaff();},150);});
@@ -2100,6 +2128,11 @@ $('sSec').onchange=e=>{ if(e.target.value==='all'){ secAll=true; gotoMeasure(0,f
   secAll=false; const sc=sections()[+e.target.value]; if(!sc) return; const was=P.on; gotoMeasure(sc.a,false); say(sc.label+', mesure '+song.measures[sc.a].num+(S.loop&&S.loopN==='sec'?'. Boucle de la partie.':'')); if(was) startPlay(); };
 function fillSections(){ const sel=$('sSec'); sel.innerHTML=''; secAll=false; { const o=document.createElement('option'); o.value='all'; o.textContent='Tout lire (mes. 1 à '+song.measures.length+')'; sel.append(o); } sections().forEach((x,k)=>{const o=document.createElement('option');o.value=k;o.textContent=x.label+' (mes. '+song.measures[x.a].num+' à '+song.measures[x.b].num+')';sel.append(o);}); }
 $('sMetroSnd').onchange=e=>{S.metroSnd=e.target.value;saveS();applySettingsUi();savePrefsSoon();say('Métronome : '+e.target.selectedOptions[0].textContent);};
+document.querySelectorAll('.snBack').forEach(b=>b.onclick=()=>openMenu());
+document.querySelectorAll('.snHome').forEach(b=>b.onclick=()=>{showView('pupitre');say('Jouer');});
+$('sMetroVol').oninput=e=>{S.metroVol=e.target.value;$('metroVolVal').textContent=S.metroVol+' %';saveS();};
+$('sMetroVol').onchange=()=>say('Volume du métronome '+S.metroVol+' pour cent');
+$('metroTest').onclick=()=>{ ac(); const d=60/bpm, t=ctx.currentTime+0.12; for(let j=0;j<4;j++) metroHit(t+j*d,j,d,4); };
 $('sSub').onchange=e=>{S.sub=e.target.value;saveS();savePrefsSoon();say('Subdivision : '+e.target.selectedOptions[0].textContent);};
 $('sLabels').onchange=e=>{S.labels=e.target.value;saveS();applySettingsUi();say(S.labels==='off'?'Pictos seuls':'Mots sous les pictos');};
 $('sLoopN').onchange=e=>{S.loopN=e.target.value;saveS();applySettingsUi();savePrefsSoon();say(S.loopN==='sec'?'Boucle de la partie':'Boucle de '+S.loopN+' mesure'+(S.loopN>1?'s':''));if(P.on&&S.loop){const r=curM;stopPlay();curM=r;startPlay();}};
