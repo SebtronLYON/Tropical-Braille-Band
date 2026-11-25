@@ -58,7 +58,7 @@ section.view{padding-block:14px;display:flex;flex-direction:column;gap:14px}
 .chordNow{background:var(--panel);border:2px solid var(--leaf);color:var(--leaf);border-radius:14px;padding:4px 16px;font-family:var(--f-display);font-size:min(calc(2.2rem * var(--zoom)),11vw);cursor:pointer;min-width:3em;line-height:1.1}
 .chordNow small{font-family:var(--f-body);font-size:.4em;display:block;color:var(--muted)}
 .keyinfo{margin-left:auto;align-self:center;color:var(--sun);height:var(--sh,64px);display:flex;align-items:center}
-.keyinfo svg{height:100%;width:auto;aspect-ratio:2/1;display:block}
+.keyinfo svg{height:100%;width:auto;aspect-ratio:234/70;display:block}
 
 /* Measure strip */
 .mHead{display:flex;justify-content:flex-end;margin-bottom:2px}
@@ -481,6 +481,12 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
         <option value="blind">Cécité totale, avec lecteur d’écran</option>
         <option value="low">Malvoyance, avec fort grossissement</option>
       </select>
+      <label for="sStaffCol" style="margin-top:10px">Couleurs de la partition</label>
+      <select id="sStaffCol">
+        <option value="white">Tout en blanc</option>
+        <option value="thin">Lignes fines, notes plus épaisses</option>
+        <option value="yellow">Notes en jaune, note jouée en rose</option>
+      </select>
       <label for="sLabels" style="margin-top:10px">Texte sous les pictos</label>
       <select id="sLabels">
         <option value="on">Toujours afficher les mots</option>
@@ -709,7 +715,7 @@ const ACC_SAY={'-2':' double bémol','-1':' bémol','0':'','1':' dièse','2':' d
 const TRANSP={Bb:{semi:2,steps:1,label:'trompette en si♭'},C:{semi:0,steps:0,label:'en ut'}};
 
 /* ---------- Settings ---------- */
-const S={view:'staff',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'1',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
+const S={view:'staff',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'1',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
   melody:true,metro:true,chords:false,countIn:true,loop:false,stepSound:true,follow:false,tunerSpeak:true,readFing:false};
 try{Object.assign(S,JSON.parse(localStorage.getItem('tbb-settings')||'{}'))}catch(e){}
 function saveS(){try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
@@ -1163,7 +1169,7 @@ function renderHeader(){
   setSongBar();
   const wf=writtenFifths();
   const tl=S.transp==='C'?'Ut':'Si♭';
-  $('keyInfo').innerHTML=`<svg viewBox="0 0 64 32" role="img" aria-label="Affichage pour ${S.transp==='C'?'trompette en ut':'trompette en si bémol'}"><title>${T().label}</title><path d="M1 14.5h4l2-1.6v5.2L5 16.5H1z" fill="currentColor"/><rect x="7" y="14" width="33" height="4" rx="1.2" fill="currentColor"/><rect x="15" y="5" width="3.2" height="10" rx="1" fill="currentColor"/><rect x="20.5" y="5" width="3.2" height="10" rx="1" fill="currentColor"/><rect x="26" y="5" width="3.2" height="10" rx="1" fill="currentColor"/><rect x="14" y="2.5" width="5.2" height="2.6" rx="1" fill="currentColor"/><rect x="19.5" y="2.5" width="5.2" height="2.6" rx="1" fill="currentColor"/><rect x="25" y="2.5" width="5.2" height="2.6" rx="1" fill="currentColor"/><path d="M11 18v6h25v-6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M38 14.2Q46 13 63 2v28Q46 19 38 17.8z" fill="currentColor"/><text x="54.5" y="19.6" text-anchor="middle" font-size="${tl==='Ut'?10:9}" font-weight="700" font-family="Atkinson Hyperlegible, Verdana, sans-serif" fill="var(--panel)">${tl}</text></svg>`;
+  $('keyInfo').innerHTML=`<svg viewBox="0 0 234 70" role="img" aria-label="Affichage pour ${S.transp==='C'?'trompette en ut':'trompette en si bémol'}"><title>${T().label}</title><path d="M6 22.5c-2.2 0-2.2 11 0 11h2l1.6-3.6H24v-3.8H9.6L8 22.5z" fill="currentColor"/><path d="M24 26.6H100" stroke="currentColor" stroke-width="3" fill="none"/><path d="M100 25.2 148 23.6Q170 22 180 5.5Q183 3 184.5 6.5V51.5Q183 55 180 52.5Q170 36 148 33.2H100z" fill="currentColor"/><g fill="none" stroke="currentColor"><path d="M147 32.8Q157 33 157 44.5Q157 56 146 56H101" stroke-width="3"/><path d="M75 33H52Q38 33 38 45.5Q38 58 52 58H75" stroke-width="3"/><path d="M75 50H60Q56.5 50 56.5 52.5Q56.5 55 60 55H75" stroke-width="2.2"/><path d="M101 46.5H133Q136.5 46.5 136.5 49.3Q136.5 52 133 52H101" stroke-width="2.2"/><circle cx="113" cy="41.5" r="3.2" stroke-width="1.8"/><circle cx="108" cy="20.5" r="3.2" stroke-width="1.8"/></g><g fill="currentColor"><rect x="74.5" y="24" width="7" height="40" rx="1.5"/><rect x="83.5" y="24" width="7" height="40" rx="1.5"/><rect x="92.5" y="24" width="7" height="40" rx="1.5"/><rect x="74" y="62" width="8" height="5" rx="2.4"/><rect x="83" y="62" width="8" height="5" rx="2.4"/><rect x="92" y="62" width="8" height="5" rx="2.4"/><rect x="77" y="15" width="2" height="9"/><rect x="86" y="15" width="2" height="9"/><rect x="95" y="15" width="2" height="9"/><rect x="74.6" y="12.5" width="6.8" height="3" rx="1.2"/><rect x="83.6" y="12.5" width="6.8" height="3" rx="1.2"/><rect x="92.6" y="12.5" width="6.8" height="3" rx="1.2"/></g><rect x="192" y="40" width="42" height="26" rx="13" fill="var(--pink)"/><text x="213" y="58.5" text-anchor="middle" font-size="16" font-weight="700" font-family="Atkinson Hyperlegible, Verdana, sans-serif" fill="#000">${tl}</text></svg>`;
   $('mTot').textContent='/ '+song.measures.length;
 }
 const VF=(window.Vex&&Vex.Flow)?Vex.Flow:null;
@@ -1181,7 +1187,7 @@ function renderStaff(){
   const showTs=curM===0||song.measures[curM-1].beats!==m.beats||song.measures[curM-1].beatType!==m.beatType;
   const need=70+Math.abs(wf)*10+(showTs?25:0)+ns.length*30;
   let sc=Math.min(4,2*z); let W=cw/sc; if(W<need){sc=Math.max(0.9,cw/need);W=cw/sc;}
-  const ink=cssVar('--ink'), sun=cssVar('--sun'), leaf=cssVar('--leaf'), muted=cssVar('--muted');
+  const ink=cssVar('--ink'), sun=cssVar('--sun'), leaf=cssVar('--leaf'), muted=cssVar('--muted'), pink=cssVar('--pink'), col=S.staffCol||'white', hi=col==='yellow'?pink:sun;
   const r=new VF.Renderer(box,VF.Renderer.Backends.SVG); r.resize(cw,Math.round(175*sc)); const c=r.getContext(); c.scale(sc,sc); c.setFillStyle(ink); c.setStrokeStyle(ink);
   const st=new VF.Stave(2,42,W-6); st.addClef('treble').addKeySignature(key); if(showTs) st.addTimeSignature(m.beats+'/'+m.beatType);
   try{
@@ -1199,9 +1205,9 @@ function renderStaff(){
     else{const sp=writtenOf(n); const acc={'-2':'bb','-1':'b','0':'','1':'#','2':'##'}[sp.alter]||'';
       note=new VF.StaveNote({keys:[sp.step.toLowerCase()+acc+'/'+sp.oct],duration:d,auto_stem:true});}
     if(dots) VF.Dot.buildAndAttach([note],{all:true});
-    if(n.lyric){const a=new VF.Annotation(n.lyric).setVerticalJustification(VF.Annotation.VerticalJustify.BOTTOM);a.setFont('Atkinson Hyperlegible, Verdana, sans-serif',13,'bold');a.setStyle({fillStyle:curN===n.i?sun:muted});note.addModifier(a,0);}
+    if(n.lyric){const a=new VF.Annotation(n.lyric).setVerticalJustification(VF.Annotation.VerticalJustify.BOTTOM);a.setFont('Atkinson Hyperlegible, Verdana, sans-serif',13,'bold');a.setStyle({fillStyle:curN===n.i?hi:muted});note.addModifier(a,0);}
     for(const ch of m.chords) if(ch.q>=n.q-1e-6&&ch.q<n.q+n.dur-1e-6){const a=new VF.Annotation(chordName(ch)).setVerticalJustification(VF.Annotation.VerticalJustify.TOP);a.setFont('Righteous, Verdana, sans-serif',15,'normal');a.setStyle({fillStyle:leaf});note.addModifier(a,0);}
-    if(curN===n.i) note.setStyle({fillStyle:sun,strokeStyle:sun});
+    if(curN===n.i) note.setStyle({fillStyle:hi,strokeStyle:hi});
     notes.push(note);
   });
   const v=new VF.Voice({num_beats:m.beats,beat_value:m.beatType}).setMode(VF.Voice.Mode.SOFT).addTickables(notes);
@@ -1216,13 +1222,28 @@ function renderStaff(){
   });
   ties.forEach(t=>{try{t.setContext(c).draw();}catch(e){}});
   // high-contrast recolor: everything black/grey becomes ink; keep our own colors
-  const keep=new Set([sun,leaf,muted].map(x=>x.toLowerCase()));
+  const keep=new Set([sun,leaf,muted,pink].map(x=>x.toLowerCase()));
   box.querySelectorAll('svg *').forEach(e=>{
     for(const a of ['fill','stroke']){const v=(e.getAttribute(a)||'').toLowerCase(); if(v&&v!=='none'&&!keep.has(v)) e.setAttribute(a,ink);}
     if(!e.getAttribute('fill')&&/^(path|text|rect|tspan)$/.test(e.tagName)&&!e.closest('[fill]')) e.setAttribute('fill',ink);
     if(e.tagName==='path'&&e.getAttribute('stroke')&&!e.getAttribute('stroke-width')) e.setAttribute('stroke-width','1.4');
   });
   const svg=box.querySelector('svg'); if(svg){svg.setAttribute('aria-hidden','true');
+    // chord names: a little higher and a little to the left
+    svg.querySelectorAll('text').forEach(t=>{ if(/Righteous/.test(t.getAttribute('font-family')||'')){ t.setAttribute('y',+t.getAttribute('y')-7); t.setAttribute('x',+t.getAttribute('x')-7); } });
+    // score colours (Réglages > Couleurs de la partition)
+    const inkL=ink.toLowerCase(), isInk=v=>(v||'').toLowerCase()===inkL;
+    if(col==='thin'){
+      svg.querySelectorAll('.vf-stave > path').forEach(e=>e.setAttribute('stroke-width','0.7'));
+      svg.querySelectorAll('.vf-clef path,.vf-keysignature path,.vf-timesignature path,.vf-stavenote path,.vf-stem path,.vf-beam path').forEach(e=>{
+        if(e.closest('.vf-annotation')) return;
+        const f=getComputedStyle(e).fill; if(f&&f!=='none'){ e.setAttribute('stroke',f); e.setAttribute('stroke-width','1.5'); e.setAttribute('stroke-linejoin','round'); }
+        else e.setAttribute('stroke-width','2.4'); });
+    } else if(col==='yellow'){
+      svg.querySelectorAll('.vf-stavenote,.vf-stavenote *,.vf-stem,.vf-stem *,.vf-beam,.vf-beam *,.vf-stavetie,.vf-stavetie *').forEach(e=>{
+        if(e.closest('.vf-annotation')) return;
+        for(const a of ['fill','stroke']) if(isInk(e.getAttribute(a))) e.setAttribute(a,sun); });
+    }
     const lab=(txt,y)=>{ const t=document.createElementNS('http://www.w3.org/2000/svg','text'); t.setAttribute('x',st.getX()+4); t.setAttribute('y',y);
         t.setAttribute('font-family','Atkinson Hyperlegible, Verdana, sans-serif'); t.setAttribute('font-size','9'); t.setAttribute('font-weight','700'); t.setAttribute('font-style','italic'); t.setAttribute('fill',muted); t.setAttribute('stroke','none'); t.setAttribute('opacity','.85');
         t.textContent=txt; (svg.querySelector('g')||svg).appendChild(t); };
@@ -1237,7 +1258,7 @@ function renderStaff(){
       lab('Notes :',yN);
       ns.forEach((n,i)=>{ if(n.midi==null||n.tieStop) return; const sp=writtenOf(n);
         const t=document.createElementNS('http://www.w3.org/2000/svg','text'); t.setAttribute('x',notes[i].getAbsoluteX()+5); t.setAttribute('y',yN); t.setAttribute('text-anchor','middle');
-        t.setAttribute('font-family','Atkinson Hyperlegible, Verdana, sans-serif'); t.setAttribute('font-size','12'); t.setAttribute('font-weight','700'); t.setAttribute('stroke','none'); t.setAttribute('fill',curN===n.i?sun:ink);
+        t.setAttribute('font-family','Atkinson Hyperlegible, Verdana, sans-serif'); t.setAttribute('font-size','12'); t.setAttribute('font-weight','700'); t.setAttribute('stroke','none'); t.setAttribute('fill',curN===n.i?hi:ink);
         t.textContent=(S.naming==='fr'?FR[sp.step]:sp.step)+(ACC_SYM[sp.alter]||''); (svg.querySelector('g')||svg).appendChild(t); });
     }catch(e){}
     // crop empty space above/below the drawing
@@ -1860,7 +1881,7 @@ function renderLib(){
 /* ---------- UI wiring ---------- */
 function applySettingsUi(){
   document.documentElement.style.setProperty('--zoom',S.zoom);
-  document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sLoopN').value=String(S.loopN||1);
+  document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white'; $('sLoopN').value=String(S.loopN||1);
   const ln=+S.loopN||1; $('tgLoop').textContent=ln===1?'Boucler la mesure':'Boucler '+ln+' mesures';
   $('tgAcc').hidden=!(song&&song.acc&&song.acc.length); $('tgRep').hidden=!hasRepeats();
   $('zVal').textContent=Math.round(S.zoom*100)+' %'; $('zPlus').setAttribute('aria-disabled',String(S.zoom==='2.5')); $('zMinus').setAttribute('aria-disabled',String(S.zoom==='0.8'));
@@ -2000,6 +2021,7 @@ function zoomStep(d){
 }
 $('zPlus').onclick=()=>zoomStep(1);
 $('zMinus').onclick=()=>zoomStep(-1);
+$('sStaffCol').onchange=e=>{S.staffCol=e.target.value;saveS();if(song)renderMeasure();say({white:'Partition tout en blanc',thin:'Lignes fines, notes plus épaisses',yellow:'Notes en jaune, note jouée en rose'}[S.staffCol]);};
 $('sLabels').onchange=e=>{S.labels=e.target.value;saveS();applySettingsUi();say(S.labels==='off'?'Pictos seuls':'Mots sous les pictos');};
 $('sLoopN').onchange=e=>{S.loopN=e.target.value;saveS();applySettingsUi();savePrefsSoon();say('Boucle de '+S.loopN+' mesure'+(S.loopN>1?'s':''));if(P.on&&S.loop){const r=curM;stopPlay();curM=r;startPlay();}};
 $('sTheme').onchange=e=>{S.theme=e.target.value;saveS();applySettingsUi();if(song){renderMeasure();renderNow();}};
