@@ -355,7 +355,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .mfBar{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
 .mfBar2 .chip{min-height:48px}@media (max-width:520px){.mfHint{display:none}.mfConsole{gap:8px}.mfUp{height:calc(60px * var(--zoom))}.mfConsole .mfLab{margin:0}.mfBar2{gap:6px}.mfBar2 .chip{padding:6px 9px}.mfBar2 .mfTap{min-width:64px;padding:6px 10px}.mfPlay{width:84px;height:84px}}
 .mfVn{font-size:17px;font-weight:700;fill:var(--muted);font-family:inherit}.mfVnP{font-size:12px;fill:var(--pink)}
-.mfCNum{font-size:40px;font-weight:700;fill:var(--ink);font-family:inherit}.mfCPoly{font-size:16px;font-weight:700;fill:var(--pink);font-family:inherit}
+.mfCNum{font-size:40px;font-weight:700;fill:var(--ink);font-family:inherit}.mfCNumP{fill:var(--pink)}.mfCPoly{font-size:16px;font-weight:700;fill:var(--pink);font-family:inherit}
 .mfAcc{padding:0}.mfAcc>summary{cursor:pointer;padding:16px;font-size:calc(1.2rem * var(--zoom));font-weight:700;color:var(--sun);list-style:none;display:flex;align-items:center;gap:10px}
 .mfAcc>summary::-webkit-details-marker{display:none}.mfAcc>summary::before{content:"▸";color:var(--pink)}.mfAcc[open]>summary::before{content:"▾"}
 .mfAcc>.field{padding:0 16px 16px}
@@ -864,7 +864,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
           <label for="mfX">Temps</label><select id="mfX"></select>
           <label for="mfY">sur</label><select id="mfY"><option value="2">2</option><option value="4">4</option><option value="8">8</option></select>
         </div>
-        <label for="mfGrp" style="margin-top:10px">Mesure composée (groupes, par exemple 2+2+3)</label>
+        <label for="mfGrp" style="margin-top:10px">Mesure composée en croches (groupes, par exemple 2+2+3 donne 7/8)</label>
         <div class="mfRow2"><input id="mfGrp" inputmode="numeric" placeholder="2+2+3" autocomplete="off"><button class="btn" id="mfGrpOk">Appliquer</button></div>
         <label for="mfSub" style="margin-top:10px">Subdivision</label>
         <select id="mfSub"><option value="1">Aucune (1 par temps)</option><option value="2">Croches (2 par temps)</option><option value="3">Triolets (3 par temps)</option><option value="4">Doubles croches (4 par temps)</option><option value="6">Sextolets (6 par temps)</option><option value="8">Triples croches (8 par temps)</option></select>
@@ -2602,11 +2602,11 @@ function mfTick(t,i,dur0,silentQ){
       else { mfSound(t,st==='wood'?'wood':'click',p.lv===2); for(let k=1;k<sub;k++) st==='wood'?wood(t+k*dur/sub,false,true):softClick(t+k*dur/sub); }
     } else { mfSound(t,p.sn,p.lv===2); for(let k=1;k<sub;k++) hat(t+k*dur/sub,0.08); }
   }
-  const vv=(MF.voxVol??100)/100*0.95;
+  const vv=(MF.voxVol??100)/100*0.95*(p.lv===2?1:p.lv===1?0.5:0);
   if(MF.kon){ const syl=(j)=>{ if(sub>1) return (KS[sub]||[])[j]||'Ta';
       if(MF.g){ let a=0; for(const g of MF.g){ if(i<a+g){ const pp=KP[g]||(g%3===0?['Ta','Ki','Ta']:['Ta','Ka','Di','Mi']); return pp[(i-a)%pp.length]||'Ta'; } a+=g; } }
       const pp=KP[MF.x]||(MF.x%3===0?['Ta','Ki','Ta']:MF.x%4===0?['Ta','Ka','Di','Mi']:null); return pp?pp[i%pp.length]:'Ta'; };
-    if(p.lv>0||sub>1) for(let j=0;j<Math.max(1,sub);j++) voxPlay(t+j*dur/sub,'kn_'+syl(j).toLowerCase(),vv*(j?0.7:1)); }
+    if(p.lv>0) for(let j=0;j<Math.max(1,sub);j++) voxPlay(t+j*dur/sub,'kn_'+syl(j).toLowerCase(),vv*(j?0.7:1)); }
   else if(MF.vox&&p.lv>0){ const n=i+1; voxPlay(t,'fr'+(n<=12?n:((n-1)%12)+1),vv); }
   if(!silentQ) MFR.q.push({t,i});
 }
@@ -2626,7 +2626,7 @@ function mfStop(){ MFR.on=false; clearInterval(MFR.timer); MFR.q=[]; $('mfPlay')
 function mfFrame(){
   if(!MFR.on) return; const now=ctx.currentTime;
   while(MFR.q.length&&MFR.q[0].t<=now){ const e=MFR.q.shift();
-    if(e.poly!=null){ document.querySelectorAll('#mfCirc .mfPd').forEach((d,j)=>d.setAttribute('r',j===e.poly?12:7)); const pn=$('mfCPoly'); if(pn) pn.textContent=e.poly+1; continue; }
+    if(e.poly!=null){ document.querySelectorAll('#mfCirc .mfPd').forEach((d,j)=>d.setAttribute('r',j===e.poly?12:7)); const cn=$('mfCNum'); if(cn) cn.textContent=e.poly+1; continue; }
     mfFlash(e.i);
     document.querySelectorAll('#mfPads .mfPad').forEach((d,j)=>d.classList.toggle('on',j===e.i));
     document.querySelectorAll('#mfCirc .mfBd').forEach((d,j)=>{ d.classList.toggle('on',j===e.i); });
@@ -2637,7 +2637,7 @@ function mfFrame(){
 }
 function mfFlash(i){ const acc=i===0, col=acc?'var(--pink)':'var(--sun)';
   const b=$('mfBpm'); if(b){ b.textContent=i+1; } const u=$('mfUnit'); if(u) u.textContent='temps';
-  const cn=$('mfCNum'); if(cn) cn.textContent=i+1;
+  const cn=$('mfCNum'); if(cn&&!MF.poly) cn.textContent=i+1;
   if(MF.flash===false) return;
   for(const id of ['mfFl1','mfFl2']){ const f=$(id); if(!f) continue; f.setAttribute('fill',col); f.style.transition='none'; f.style.opacity=acc?0.95:0.7; void f.getBoundingClientRect(); f.style.transition='opacity .28s ease-out'; f.style.opacity=0; } }
 function mfPick(i){ const box=$('mfPick'), p=MF.pads[i]; box.hidden=false; box.innerHTML='<b class="mfPickT">Temps '+(i+1)+' :</b>';
@@ -2663,7 +2663,7 @@ function mfCircle(){ const sv=$('mfCirc'); const P1=mfPts(MF.x,MFC.R1), col=lv=>
   h+='<circle id="mfFl2" cx="120" cy="120" r="34" fill="var(--sun)" opacity="0"/>';
   P1.forEach((p,i)=>{ const a=i/MF.x*2*Math.PI-Math.PI/2, r=MFC.R1+0; const lx=120+(MFC.R1+19)*Math.cos(a), ly=120+(MFC.R1+19)*Math.sin(a); if(MF.x>1) h+='<text class="mfVn" x="'+lx+'" y="'+(ly+5)+'" text-anchor="middle">'+(i+1)+'</text>'; });
   if(MF.poly) mfPts(MF.polyN,MFC.R2).forEach((p,j)=>{ const a=j/MF.polyN*2*Math.PI-Math.PI/2, lx=120+(MFC.R2-17)*Math.cos(a), ly=120+(MFC.R2-17)*Math.sin(a); if(MF.polyN<=12) h+='<text class="mfVn mfVnP" x="'+lx+'" y="'+(ly+4)+'" text-anchor="middle">'+(j+1)+'</text>'; });
-  h+='<line id="mfNeedle" x1="120" y1="120" x2="120" y2="'+(120-MFC.R1)+'" stroke="var(--pink)" stroke-width="4" stroke-linecap="round" opacity="'+(MFR.on?1:0)+'"/><text id="mfCNum" class="mfCNum" x="120" y="133" text-anchor="middle">'+(MFR.on?'':MF.x)+'</text>'+(MF.poly?'<text id="mfCPoly" class="mfCPoly" x="120" y="152" text-anchor="middle">'+(MFR.on?'':MF.polyN)+'</text>':'');
+  h+='<line id="mfNeedle" x1="120" y1="120" x2="120" y2="'+(120-MFC.R1)+'" stroke="var(--pink)" stroke-width="4" stroke-linecap="round" opacity="'+(MFR.on?1:0)+'"/><text id="mfCNum" class="mfCNum'+(MF.poly?' mfCNumP':'')+'" x="120" y="134" text-anchor="middle">'+(MFR.on?'':(MF.poly?MF.polyN:MF.x))+'</text>';
   sv.innerHTML=h; }
 function mfLabel(){ return MF.x+'/'+MF.y+(MF.g?' ('+MF.g.join('+')+')':''); }
 function mfRender(){
@@ -2735,7 +2735,7 @@ function closeMetFull(){ mfStop(); $('metFull').hidden=true; $('metBtn').setAttr
   const reMeter=(x,y,g)=>{ mfPush(); MF.x=x; MF.y=y; MF.g=g||null; MF.pads=mfDefPads(); MFR.k=0; mfSave(); mfRender(); say('Mesure '+mfLabel().replace('/',' sur ')); };
   sx.onchange=()=>reMeter(+sx.value,MF.y); $('mfY').onchange=e=>reMeter(MF.x,+e.target.value);
   $('mfGrpOk').onclick=()=>{ const g=$('mfGrp').value.split(/[^0-9]+/).filter(Boolean).map(Number).filter(v=>v>0); const n=g.reduce((a,b)=>a+b,0);
-    if(g.length<2||n<2||n>16){ toast('Écrivez des groupes, par exemple 2+2+3 (16 temps au plus)'); return; } reMeter(n,MF.y,g); };
+    if(g.length<2||n<2||n>16){ toast('Écrivez des groupes, par exemple 2+2+3 (16 temps au plus)'); return; } reMeter(n,8,g); };
   $('mfSub').onchange=e=>{ mfPush(); S.sub=e.target.value; saveS(); savePrefsSoon(); syncMetroUi(); say('Subdivision : '+e.target.selectedOptions[0].textContent); };
   $('mfSnd').onchange=e=>{ mfPush(); S.metroSnd=e.target.value; saveS(); savePrefsSoon(); syncMetroUi(); say('Son : '+e.target.selectedOptions[0].textContent); };
   $('mfVol').oninput=e=>{ S.metroVol=e.target.value; $('mfVolVal').textContent=e.target.value+' %'; saveS(); syncMetroUi(); };
