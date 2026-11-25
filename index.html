@@ -79,8 +79,11 @@ section.view{padding-block:14px;display:flex;flex-direction:column;gap:14px}
 .head{position:absolute;top:0;bottom:0;width:4px;background:var(--pink);border-radius:2px;pointer-events:none}
 .countin{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:calc(5rem * var(--zoom));color:var(--pink);background:rgba(0,0,0,.55);border-radius:12px}
 
-.viewBtn{background:var(--panel);border:2px solid var(--ink);border-radius:14px;padding:4px 14px;font-weight:700;cursor:pointer;min-height:44px}
-.viewBtn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.viewSeg{display:inline-flex;border:2px solid var(--ink);border-radius:14px;overflow:hidden}
+.viewBtn{background:var(--panel);color:var(--ink);border:0;padding:4px 14px;font-weight:700;cursor:pointer;min-height:44px;font-size:calc(1rem * var(--zoom))}
+.viewBtn+.viewBtn{border-left:2px solid var(--ink)}
+.viewBtn[aria-pressed="true"]{background:var(--sun);color:var(--sun-ink)}
+.viewBtn[aria-pressed="false"]{color:var(--muted)}
 .staff{position:relative;overflow:hidden;cursor:pointer}
 .staff svg{display:block}
 /* Current note */
@@ -279,7 +282,10 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 
   <div class="measure" id="measure">
     <div class="mHead">
-      <button class="viewBtn" id="viewBtn" aria-pressed="false" aria-keyshortcuts="V">Partition</button>
+      <div class="viewSeg" role="group" aria-label="Affichage de la mesure">
+        <button class="viewBtn" id="vbNotes" aria-pressed="false" aria-keyshortcuts="V">Notes</button>
+        <button class="viewBtn" id="vbStaff" aria-pressed="true" aria-keyshortcuts="V">Partition</button>
+      </div>
     </div>
     <div class="chordsRow" id="chordsRow"></div>
     <div class="roll" id="roll" role="group" aria-label="Notes de la mesure"></div>
@@ -1015,8 +1021,7 @@ $('staff').addEventListener('click',e=>{
 function applyView(){
   const st=S.view==='staff'&&!!VF;
   $('staff').hidden=!st; $('roll').hidden=st; $('chordsRow').hidden=st; $('lyricsRow').hidden=st;
-  $('viewBtn').setAttribute('aria-pressed',String(st)); $('viewBtn').textContent=st?'Notes':'Partition';
-  $('viewBtn').setAttribute('aria-label',st?'Revenir à l’affichage en blocs de notes':'Afficher la partition classique');
+  $('vbStaff').setAttribute('aria-pressed',String(st)); $('vbNotes').setAttribute('aria-pressed',String(!st));
 }
 function renderMeasure(){
   const m=song.measures[curM];
@@ -1564,7 +1569,7 @@ $('openBtn').onclick=$('openBtn2').onclick=$('libImport').onclick=openImport;
 $('libBtn').onclick=openLib;
 $('tabImport').onclick=openImport;
 function toggleView(){ if(!VF){toast('Partition indisponible (bibliothèque non chargée)');return;} S.view=S.view==='staff'?'roll':'staff'; saveS(); if(song){renderMeasure();} say(S.view==='staff'?'Affichage partition classique':'Affichage en blocs de notes'); }
-$('viewBtn').onclick=toggleView;
+$('vbNotes').onclick=()=>{if(S.view!=='roll')toggleView();}; $('vbStaff').onclick=()=>{if(S.view!=='staff')toggleView();};
 let rzT=null; window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(song&&S.view==='staff')renderStaff();},150);});
 function openImport(){ $('importModal').hidden=false; $('imPick').focus(); say('Importer une partition. Choisissez le fichier du morceau : MusicXML, conseillé car il garde les accords, ou MIDI. Bouton Choisir le fichier.'); }
 function closeImport(){ $('importModal').hidden=true; }
