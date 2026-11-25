@@ -161,7 +161,7 @@ input[type=range]{width:100%;accent-color:var(--sun);height:36px}
 .echoBan{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--pink);color:#000;font-family:var(--f-display);font-size:min(calc(2.6rem * var(--zoom)),12vw);padding:6px 30px;border-radius:999px;z-index:6;box-shadow:0 6px 24px rgba(0,0,0,.45);pointer-events:none;white-space:nowrap}
 .tgSel{display:flex;align-items:center;gap:8px;background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:8px 12px;font-weight:700;min-width:0}
 .tgSel select{flex:1;min-width:0;font:inherit;padding:6px;border-radius:10px}
-.tg[hidden]{display:none}
+.tg[hidden],.tgSel[hidden]{display:none}
 .bandList .li-main b::before{content:"🦩 "}
 .libTools{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 
@@ -425,6 +425,8 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
       <button class="tg" data-k="repeats" id="tgRep">Suivre les reprises</button>
       <button class="tg" data-k="acc" id="tgAcc">Accompagnement</button>
       <button class="tg" data-k="metro" aria-keyshortcuts="M">Métronome</button>
+      <div class="tgSel"><label for="sMetroSnd">Son</label><select id="sMetroSnd"><option value="click">Clic</option><option value="wood">Bois</option><option value="rock">Batterie simple</option><option value="bossa">Batterie bossa</option></select></div>
+      <div class="tgSel" id="subBox"><label for="sSub">Subdivision</label><select id="sSub"><option value="1">Noires</option><option value="2">Croches</option><option value="4">Doubles croches</option></select></div>
       <button class="tg" data-k="melody">Mélodie</button>
       <button class="tg" data-k="chords">Accords</button>
       <button class="tg" data-k="countIn">Décompte</button>
@@ -724,7 +726,7 @@ const ACC_SAY={'-2':' double bémol','-1':' bémol','0':'','1':' dièse','2':' d
 const TRANSP={Bb:{semi:2,steps:1,label:'trompette en si♭'},C:{semi:0,steps:0,label:'en ut'}};
 
 /* ---------- Settings ---------- */
-const S={view:'staff',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'1',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
+const S={view:'staff',metroSnd:'click',sub:'1',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'1',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
   melody:true,metro:true,chords:false,countIn:true,loop:false,stepSound:true,follow:false,tunerSpeak:true,readFing:false};
 try{Object.assign(S,JSON.parse(localStorage.getItem('tbb-settings')||'{}'))}catch(e){}
 function saveS(){try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
@@ -1495,6 +1497,28 @@ function click(t,accent){
   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(accent?0.35:0.2,t+0.002);g.gain.exponentialRampToValueAtTime(0.0001,t+0.05);
   o.connect(g).connect(master);o.start(t);o.stop(t+0.06);
 }
+/* metronome voices: click, wood block, simple drum kit, bossa */
+let noiseBuf=null;
+function noise(){ if(!noiseBuf){ noiseBuf=ctx.createBuffer(1,ctx.sampleRate*0.5,ctx.sampleRate); const d=noiseBuf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; } return noiseBuf; }
+function nHit(t,type,freq,vol,dec){ const s=ctx.createBufferSource(), f=ctx.createBiquadFilter(), g=ctx.createGain(); s.buffer=noise(); f.type=type; f.frequency.value=freq;
+  g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dec); s.connect(f).connect(g).connect(master); s.start(t); s.stop(t+dec+0.02); }
+function tHit(t,type,f0,f1,vol,dec){ const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(f0,t); if(f1) o.frequency.exponentialRampToValueAtTime(f1,t+dec*0.6);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.003); g.gain.exponentialRampToValueAtTime(0.0001,t+dec); o.connect(g).connect(master); o.start(t); o.stop(t+dec+0.02); }
+const kick=t=>tHit(t,'sine',150,45,0.9,0.28);
+const snare=t=>{nHit(t,'highpass',1200,0.45,0.17); tHit(t,'triangle',190,0,0.25,0.09);};
+const hat=(t,v)=>nHit(t,'highpass',7500,v||0.13,0.045);
+const rim=t=>{tHit(t,'square',1750,0,0.12,0.03); nHit(t,'bandpass',3000,0.25,0.025);};
+const wood=(t,acc,soft)=>tHit(t,'sine',acc?1250:900,0,soft?0.18:(acc?0.6:0.42),0.07);
+function softClick(t){ const o=ctx.createOscillator(),g=ctx.createGain(); o.type='square';o.frequency.value=1000; g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.08,t+0.002);g.gain.exponentialRampToValueAtTime(0.0001,t+0.035); o.connect(g).connect(master);o.start(t);o.stop(t+0.05); }
+function metroHit(t,beat,dur,beats){
+  const acc=beat===0, st=S.metroSnd||'click', sub=+S.sub||1;
+  if(st==='rock'){ const k=beats===3?beat===0:beat%2===0; if(k) kick(t); else snare(t); hat(t,acc?0.16:0.12); hat(t+dur/2,0.08); return; }
+  if(st==='bossa'){ const h=dur/2; hat(t,0.07); hat(t+h,0.05);
+    if(beat%2===0) kick(t); else kick(t+h);
+    if(beat===0||beat===3) rim(t); if(beat===1) rim(t+h); return; }
+  if(st==='wood'){ wood(t,acc); for(let k=1;k<sub;k++) wood(t+k*dur/sub,false,true); return; }
+  click(t,acc); for(let k=1;k<sub;k++) softClick(t+k*dur/sub);
+}
 function pad(ch,t,dur){
   const iv=chordIntervals(ch.suffix); if(!iv) return;
   const root=(STEP_PC[STEPS.indexOf(ch.step)]+ch.alter+12)%12; const base=48+root-(root>6?12:0);
@@ -1565,7 +1589,7 @@ function buildEvents(order){
     const m=song.measures[sg.mi], unit=4/m.beatType, base=m.startQ, nx=order[k+1];
     const contNext=nx&&nx.mi===sg.mi+1&&!nx.listen;
     segs.push({mi:sg.mi,t0,len:m.len,listen:sg.listen});
-    for(let j=0;j<m.beats;j++) ev.push({q:t0+j*unit,type:'click',acc:j===0,force:sg.listen});
+    for(let j=0;j<m.beats;j++) ev.push({q:t0+j*unit,type:'click',acc:j===0,force:sg.listen,beat:j,unit,beats:m.beats});
     if(!sg.listen) for(const i of m.noteIdx){
       const n=song.notes[i]; if(n.midi==null||n.tieStop) continue;
       let dur=n.dur, j=i; while(song.notes[j].tieStart&&song.notes[j+1]&&song.notes[j+1].tieStop&&song.notes[j+1].midi===n.midi){j++;dur+=song.notes[j].dur;}
@@ -1593,7 +1617,7 @@ function startPlay(){
   const m=song.measures[a];
   const off=(resumeAt!=null&&resumeAt>=m.startQ&&resumeAt<m.startQ+m.len)?resumeAt-m.startQ:0; resumeAt=null;
   const ci=[]; let cl=0;
-  if(S.countIn){ const unit=4/m.beatType; cl=m.beats*unit; for(let k=0;k<m.beats;k++) ci.push({q:off-cl+k*unit,acc:k===0,n:k+1}); }
+  if(S.countIn){ const unit=4/m.beatType; cl=m.beats*unit; for(let k=0;k<m.beats;k++) ci.push({q:off-cl+k*unit,acc:k===0,n:k+1,unit}); }
   let i0=0; while(i0<ev.length&&ev[i0].q<off-1e-6) i0++;
   Object.assign(P,{on:true,ev,L,segs,a,i:i0,pass:0,off,ci,ciI:0,spq:60/bpm,anchorT:ctx.currentTime+0.12,anchorQ:off-cl,lastM:-1,lastN:-2,lastK:-1,lastPass:0,chk:null,mic:false});
   if(S.echo&&S.echoMic&&!TU.on){ P.mic=true; tunerStart(true); }
@@ -1628,7 +1652,7 @@ const nowQ=()=>P.anchorQ+(ctx.currentTime-P.anchorT)/P.spq;
 function sched(){
   if(!P.on) return;
   const now=ctx.currentTime, hz=now+0.15;
-  while(P.ciI<P.ci.length&&qToT(P.ci[P.ciI].q)<hz){const e=P.ci[P.ciI++];const t=qToT(e.q);if(t>=now-0.02)click(t,e.acc);}
+  while(P.ciI<P.ci.length&&qToT(P.ci[P.ciI].q)<hz){const e=P.ci[P.ciI++];const t=qToT(e.q);if(t>=now-0.02)metroHit(t,e.n-1,e.unit*P.spq,P.ci.length);}
   for(;;){
     if(P.i>=P.ev.length){
       if(S.loop){P.pass++;P.i=0;
@@ -1638,7 +1662,7 @@ function sched(){
     }
     const e=P.ev[P.i], q=e.q+P.pass*P.L, t=qToT(q); if(t>=hz) break;
     if(t>=now-0.03){
-      if(e.type==='click'&&(S.metro||e.force)) click(t,e.acc);
+      if(e.type==='click'&&(S.metro||e.force)) metroHit(t,e.beat,e.unit*P.spq,e.beats);
       else if(e.type==='note'&&S.melody) playTone(e.midi,t,e.dur*P.spq);
       else if(e.type==='acc') accTone(e.midi,t,e.dur*P.spq);
       else if(e.type==='chord'&&S.chords) pad(e.ch,t,e.dur*P.spq);
@@ -1854,7 +1878,7 @@ function loadDemo(announce){ try{ setSong(parseMusicXML(DEMO_XML,'Janela para o 
 
 /* ---------- Library (Mes morceaux) ---------- */
 let curId='demo', restoring=false, prefTimer=null;
-const PREF_KEYS=['transp','loop','loopN','ramp','echo','metro','melody','chords','countIn','acc'];
+const PREF_KEYS=['transp','loop','loopN','ramp','echo','metro','metroSnd','sub','melody','chords','countIn','acc'];
 function libIndex(){ try{return JSON.parse(localStorage.getItem('tbb-lib')||'[]')}catch(e){return []} }
 let _idx=null;
 function libSaveIndex(idx){ if(idx) _idx=idx; try{localStorage.setItem('tbb-lib',JSON.stringify(_idx||libIndex()))}catch(e){} }
@@ -1928,7 +1952,7 @@ function renderLib(){
 /* ---------- UI wiring ---------- */
 function applySettingsUi(){
   document.documentElement.style.setProperty('--zoom',S.zoom);
-  document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white'; $('sLoopN').value=String(S.loopN||1);
+  document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white'; $('sMetroSnd').value=S.metroSnd||'click'; $('sSub').value=String(S.sub||1); $('subBox').hidden=S.metroSnd==='rock'||S.metroSnd==='bossa'; $('sLoopN').value=String(S.loopN||1);
   const ln=+S.loopN||1; $('tgLoop').textContent=S.loopN==='sec'?'Boucler la partie':(ln===1?'Boucler la mesure':'Boucler '+ln+' mesures');
   if(S.loopN==='sec'&&!sections().length){S.loopN='1';$('sLoopN').value='1';}
   $('secBox').hidden=!sections().length;
@@ -2075,6 +2099,8 @@ $('sStaffCol').onchange=e=>{S.staffCol=e.target.value;saveS();if(song)renderMeas
 $('sSec').onchange=e=>{ if(e.target.value==='all'){ secAll=true; gotoMeasure(0,false); say('Tout lire, depuis la mesure 1'+(S.loop&&S.loopN==='sec'?'. Boucle sur tout le morceau.':'')); startPlay(); return; }
   secAll=false; const sc=sections()[+e.target.value]; if(!sc) return; const was=P.on; gotoMeasure(sc.a,false); say(sc.label+', mesure '+song.measures[sc.a].num+(S.loop&&S.loopN==='sec'?'. Boucle de la partie.':'')); if(was) startPlay(); };
 function fillSections(){ const sel=$('sSec'); sel.innerHTML=''; secAll=false; { const o=document.createElement('option'); o.value='all'; o.textContent='Tout lire (mes. 1 à '+song.measures.length+')'; sel.append(o); } sections().forEach((x,k)=>{const o=document.createElement('option');o.value=k;o.textContent=x.label+' (mes. '+song.measures[x.a].num+' à '+song.measures[x.b].num+')';sel.append(o);}); }
+$('sMetroSnd').onchange=e=>{S.metroSnd=e.target.value;saveS();applySettingsUi();savePrefsSoon();say('Métronome : '+e.target.selectedOptions[0].textContent);};
+$('sSub').onchange=e=>{S.sub=e.target.value;saveS();savePrefsSoon();say('Subdivision : '+e.target.selectedOptions[0].textContent);};
 $('sLabels').onchange=e=>{S.labels=e.target.value;saveS();applySettingsUi();say(S.labels==='off'?'Pictos seuls':'Mots sous les pictos');};
 $('sLoopN').onchange=e=>{S.loopN=e.target.value;saveS();applySettingsUi();savePrefsSoon();say(S.loopN==='sec'?'Boucle de la partie':'Boucle de '+S.loopN+' mesure'+(S.loopN>1?'s':''));if(P.on&&S.loop){const r=curM;stopPlay();curM=r;startPlay();}};
 $('sTheme').onchange=e=>{S.theme=e.target.value;saveS();applySettingsUi();if(song){renderMeasure();renderNow();}};
