@@ -6,7 +6,7 @@
     <identification>
         <encoding>
             <software>Logic Pro</software>
-            <encoding-date>2026-11-25</encoding-date>
+            <encoding-date>2026-11-26</encoding-date>
             <supports attribute="new-system" element="print" type="yes" value="yes"/>
             <supports attribute="new-page" element="print" type="yes" value="yes"/>
         </encoding>
@@ -32,7 +32,7 @@
                 <right-margin>0</right-margin>
             </system-margins>
             <system-distance>109</system-distance>
-            <top-system-distance>65</top-system-distance>
+            <top-system-distance>159</top-system-distance>
         </system-layout>
         <staff-layout>
             <staff-distance>0</staff-distance>
@@ -46,7 +46,7 @@
     </credit>
     <part-list>
         <score-part id="P1">
-            <part-name>Janela Para o Mundo (Window to the World) Milton Nascimento e Fernando Brant Álbum: Nascimento (1997)</part-name>
+            <part-name>THEME / REFRAIN</part-name>
             <score-instrument id="P1-I1">
                 <instrument-name>Choir Aahs</instrument-name>
             </score-instrument>
@@ -408,11 +408,11 @@
                 <staff>1</staff>
             </note>
         </measure>
-        <measure number="43" width="298">
+        <measure number="43" width="355">
             <print page-number="1">
                 <system-layout>
                     <system-margins>
-                        <left-margin>691</left-margin>
+                        <left-margin>125</left-margin>
                         <right-margin>0</right-margin>
                     </system-margins>
                     <top-system-distance>159</top-system-distance>
@@ -451,7 +451,7 @@
                 <staff>1</staff>
                 <beam number="1">begin</beam>
                 <lyric>
-                    <text> </text>
+                    <text>A</text>
                 </lyric>
             </note>
             <harmony>
@@ -460,6 +460,15 @@
                 </root>
                 <kind>major</kind>
             </harmony>
+            <direction placement="above">
+                <direction-type>
+                    <metronome>
+                        <beat-unit>quarter</beat-unit>
+                        <per-minute>100</per-minute>
+                    </metronome>
+                </direction-type>
+                <offset>-1</offset>
+            </direction>
             <note>
                 <pitch>
                     <step>A</step>
@@ -475,15 +484,6 @@
                     <text>la</text>
                 </lyric>
             </note>
-            <direction placement="above">
-                <direction-type>
-                    <metronome>
-                        <beat-unit>quarter</beat-unit>
-                        <per-minute>100</per-minute>
-                    </metronome>
-                </direction-type>
-                <offset>-2</offset>
-            </direction>
             <note>
                 <pitch>
                     <step>A</step>
@@ -559,16 +559,8 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="44" width="287">
-            <print new-system="yes">
-                <system-layout>
-                    <system-margins>
-                        <left-margin>26</left-margin>
-                        <right-margin>0</right-margin>
-                    </system-margins>
-                    <system-distance>109</system-distance>
-                </system-layout>
-            </print>
+        <measure number="44" width="272">
+            <print new-system="no"/>
             <note>
                 <rest/>
                 <duration>1</duration>
@@ -674,7 +666,7 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="45" width="243">
+        <measure number="45" width="236">
             <print new-system="no"/>
             <note>
                 <pitch>
@@ -787,8 +779,16 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="46" width="218">
-            <print new-system="no"/>
+        <measure number="46" width="254">
+            <print new-system="yes">
+                <system-layout>
+                    <system-margins>
+                        <left-margin>26</left-margin>
+                        <right-margin>0</right-margin>
+                    </system-margins>
+                    <system-distance>109</system-distance>
+                </system-layout>
+            </print>
             <note>
                 <rest/>
                 <duration>1</duration>
@@ -874,7 +874,7 @@
                 <bar-style>light-light</bar-style>
             </barline>
         </measure>
-        <measure number="47" width="214">
+        <measure number="47" width="243">
             <print new-system="no"/>
             <note>
                 <pitch>
@@ -991,16 +991,8 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="48" width="236">
-            <print new-system="yes">
-                <system-layout>
-                    <system-margins>
-                        <left-margin>26</left-margin>
-                        <right-margin>0</right-margin>
-                    </system-margins>
-                    <system-distance>109</system-distance>
-                </system-layout>
-            </print>
+        <measure number="48" width="209">
+            <print new-system="no"/>
             <note>
                 <pitch>
                     <step>C</step>
@@ -1093,7 +1085,7 @@
                 <staff>1</staff>
             </note>
         </measure>
-        <measure number="49" width="275">
+        <measure number="49" width="256">
             <print new-system="no"/>
             <attributes>
                 <divisions>4</divisions>
@@ -1240,8 +1232,16 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="50" width="248">
-            <print new-system="no"/>
+        <measure number="50" width="292">
+            <print new-system="yes">
+                <system-layout>
+                    <system-margins>
+                        <left-margin>26</left-margin>
+                        <right-margin>0</right-margin>
+                    </system-margins>
+                    <system-distance>109</system-distance>
+                </system-layout>
+            </print>
             <attributes>
                 <divisions>2</divisions>
             </attributes>
@@ -1339,7 +1339,7 @@
                 <bar-style>light-heavy</bar-style>
             </barline>
         </measure>
-        <measure number="51" width="202">
+        <measure number="51" width="238">
             <print new-system="no"/>
             <note>
                 <pitch>
@@ -1452,16 +1452,8 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="52" width="287">
-            <print new-system="yes">
-                <system-layout>
-                    <system-margins>
-                        <left-margin>26</left-margin>
-                        <right-margin>0</right-margin>
-                    </system-margins>
-                    <system-distance>109</system-distance>
-                </system-layout>
-            </print>
+        <measure number="52" width="234">
+            <print new-system="no"/>
             <note>
                 <rest/>
                 <duration>1</duration>
@@ -1567,7 +1559,7 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="53" width="243">
+        <measure number="53" width="198">
             <print new-system="no"/>
             <note>
                 <pitch>
@@ -1680,8 +1672,16 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="54" width="218">
-            <print new-system="no"/>
+        <measure number="54" width="250">
+            <print new-system="yes">
+                <system-layout>
+                    <system-margins>
+                        <left-margin>26</left-margin>
+                        <right-margin>0</right-margin>
+                    </system-margins>
+                    <system-distance>109</system-distance>
+                </system-layout>
+            </print>
             <note>
                 <rest/>
                 <duration>1</duration>
@@ -1767,7 +1767,7 @@
                 <bar-style>light-light</bar-style>
             </barline>
         </measure>
-        <measure number="55" width="214">
+        <measure number="55" width="239">
             <print new-system="no"/>
             <note>
                 <pitch>
@@ -1884,16 +1884,8 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="56" width="237">
-            <print new-system="yes">
-                <system-layout>
-                    <system-margins>
-                        <left-margin>26</left-margin>
-                        <right-margin>0</right-margin>
-                    </system-margins>
-                    <system-distance>109</system-distance>
-                </system-layout>
-            </print>
+        <measure number="56" width="206">
+            <print new-system="no"/>
             <note>
                 <pitch>
                     <step>C</step>
@@ -1986,7 +1978,7 @@
                 <staff>1</staff>
             </note>
         </measure>
-        <measure number="57" width="290">
+        <measure number="57" width="267">
             <print new-system="no"/>
             <attributes>
                 <divisions>4</divisions>
@@ -2137,8 +2129,16 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="58" width="296">
-            <print new-system="no"/>
+        <measure number="58" width="366">
+            <print new-system="yes">
+                <system-layout>
+                    <system-margins>
+                        <left-margin>26</left-margin>
+                        <right-margin>0</right-margin>
+                    </system-margins>
+                    <system-distance>109</system-distance>
+                </system-layout>
+            </print>
             <note>
                 <pitch>
                     <step>D</step>
@@ -2284,7 +2284,7 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="59" width="96">
+        <measure number="59" width="125">
             <print new-system="no"/>
             <attributes>
                 <divisions>1</divisions>
@@ -2309,7 +2309,7 @@
                 <kind>major</kind>
             </harmony>
         </measure>
-        <measure number="60" width="41">
+        <measure number="60" width="103">
             <print new-system="no"/>
             <note>
                 <rest/>
@@ -2322,16 +2322,8 @@
                 <bar-style>light-heavy</bar-style>
             </barline>
         </measure>
-        <measure number="61" width="431">
-            <print new-system="yes">
-                <system-layout>
-                    <system-margins>
-                        <left-margin>26</left-margin>
-                        <right-margin>0</right-margin>
-                    </system-margins>
-                    <system-distance>109</system-distance>
-                </system-layout>
-            </print>
+        <measure number="61" width="369">
+            <print new-system="no"/>
             <attributes>
                 <divisions>2</divisions>
             </attributes>
@@ -2438,8 +2430,16 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="62" width="236">
-            <print new-system="no"/>
+        <measure number="62" width="275">
+            <print new-system="yes">
+                <system-layout>
+                    <system-margins>
+                        <left-margin>26</left-margin>
+                        <right-margin>0</right-margin>
+                    </system-margins>
+                    <system-distance>109</system-distance>
+                </system-layout>
+            </print>
             <note>
                 <rest/>
                 <duration>1</duration>
@@ -2497,7 +2497,7 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="63" width="295">
+        <measure number="63" width="324">
             <print new-system="no"/>
             <attributes>
                 <divisions>4</divisions>
@@ -2620,16 +2620,8 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="64" width="439">
-            <print new-system="yes">
-                <system-layout>
-                    <system-margins>
-                        <left-margin>26</left-margin>
-                        <right-margin>0</right-margin>
-                    </system-margins>
-                    <system-distance>109</system-distance>
-                </system-layout>
-            </print>
+        <measure number="64" width="364">
+            <print new-system="no"/>
             <note>
                 <rest/>
                 <duration>3</duration>
@@ -2748,8 +2740,16 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="65" width="312">
-            <print new-system="no"/>
+        <measure number="65" width="320">
+            <print new-system="yes">
+                <system-layout>
+                    <system-margins>
+                        <left-margin>26</left-margin>
+                        <right-margin>0</right-margin>
+                    </system-margins>
+                    <system-distance>109</system-distance>
+                </system-layout>
+            </print>
             <note>
                 <rest/>
                 <duration>1</duration>
@@ -2932,16 +2932,8 @@
                 <bar-style>light-light</bar-style>
             </barline>
         </measure>
-        <measure number="67" width="289">
-            <print new-system="yes">
-                <system-layout>
-                    <system-margins>
-                        <left-margin>26</left-margin>
-                        <right-margin>0</right-margin>
-                    </system-margins>
-                    <system-distance>109</system-distance>
-                </system-layout>
-            </print>
+        <measure number="67" width="240">
+            <print new-system="no"/>
             <attributes>
                 <divisions>2</divisions>
             </attributes>
@@ -3020,7 +3012,7 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="68" width="230">
+        <measure number="68" width="190">
             <print new-system="no"/>
             <note>
                 <rest/>
@@ -3081,145 +3073,7 @@
                 <staff>1</staff>
             </note>
         </measure>
-        <measure number="69" width="244">
-            <print new-system="no"/>
-            <note>
-                <pitch>
-                    <step>E</step>
-                    <alter>-1</alter>
-                    <octave>4</octave>
-                </pitch>
-                <duration>2</duration>
-                <voice>1</voice>
-                <type>quarter</type>
-                <accidental>flat</accidental>
-                <stem>up</stem>
-                <staff>1</staff>
-                <lyric>
-                    <text>Ci-</text>
-                </lyric>
-            </note>
-            <note>
-                <pitch>
-                    <step>D</step>
-                    <octave>4</octave>
-                </pitch>
-                <duration>2</duration>
-                <voice>1</voice>
-                <type>quarter</type>
-                <stem>up</stem>
-                <staff>1</staff>
-                <lyric>
-                    <text>da-</text>
-                </lyric>
-            </note>
-            <note>
-                <pitch>
-                    <step>C</step>
-                    <octave>4</octave>
-                </pitch>
-                <duration>2</duration>
-                <voice>1</voice>
-                <type>quarter</type>
-                <stem>up</stem>
-                <staff>1</staff>
-                <lyric>
-                    <text>dão</text>
-                </lyric>
-            </note>
-            <note>
-                <pitch>
-                    <step>A</step>
-                    <octave>3</octave>
-                </pitch>
-                <duration>1</duration>
-                <voice>1</voice>
-                <type>eighth</type>
-                <stem>up</stem>
-                <staff>1</staff>
-                <beam number="1">begin</beam>
-                <lyric>
-                    <text>do</text>
-                </lyric>
-            </note>
-            <note>
-                <pitch>
-                    <step>D</step>
-                    <octave>4</octave>
-                </pitch>
-                <duration>1</duration>
-                <voice>1</voice>
-                <type>eighth</type>
-                <stem>up</stem>
-                <staff>1</staff>
-                <beam number="1">end</beam>
-                <lyric>
-                    <text>mun-</text>
-                </lyric>
-            </note>
-        </measure>
-        <measure number="70" width="199">
-            <print new-system="no"/>
-            <note>
-                <rest/>
-                <duration>1</duration>
-                <voice>1</voice>
-                <type>eighth</type>
-                <staff>1</staff>
-            </note>
-            <note>
-                <pitch>
-                    <step>C</step>
-                    <octave>4</octave>
-                </pitch>
-                <duration>1</duration>
-                <voice>1</voice>
-                <type>eighth</type>
-                <stem>up</stem>
-                <staff>1</staff>
-                <lyric>
-                    <text>do eu</text>
-                </lyric>
-            </note>
-            <note>
-                <pitch>
-                    <step>C</step>
-                    <octave>4</octave>
-                </pitch>
-                <duration>1</duration>
-                <voice>1</voice>
-                <type>eighth</type>
-                <stem>up</stem>
-                <staff>1</staff>
-                <beam number="1">begin</beam>
-                <lyric>
-                    <text>so-</text>
-                </lyric>
-            </note>
-            <note>
-                <pitch>
-                    <step>A</step>
-                    <octave>3</octave>
-                </pitch>
-                <duration>1</duration>
-                <voice>1</voice>
-                <type>eighth</type>
-                <stem>up</stem>
-                <staff>1</staff>
-                <beam number="1">end</beam>
-                <lyric>
-                    <text>u</text>
-                </lyric>
-            </note>
-            <note>
-                <rest/>
-                <duration>4</duration>
-                <voice>1</voice>
-                <type>half</type>
-                <staff>1</staff>
-            </note>
-        </measure>
-        <measure number="71" width="363">
+        <measure number="69" width="285">
             <print new-system="yes">
                 <system-layout>
                     <system-margins>
@@ -3304,7 +3158,7 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="72" width="309">
+        <measure number="70" width="232">
             <print new-system="no"/>
             <note>
                 <rest/>
@@ -3365,7 +3219,7 @@
                 <staff>1</staff>
             </note>
         </measure>
-        <measure number="73" width="290">
+        <measure number="71" width="245">
             <print new-system="no"/>
             <note>
                 <pitch>
@@ -3442,16 +3296,154 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="74" width="568">
-            <print new-page="yes" page-number="2">
+        <measure number="72" width="200">
+            <print new-system="no"/>
+            <note>
+                <rest/>
+                <duration>1</duration>
+                <voice>1</voice>
+                <type>eighth</type>
+                <staff>1</staff>
+            </note>
+            <note>
+                <pitch>
+                    <step>C</step>
+                    <octave>4</octave>
+                </pitch>
+                <duration>1</duration>
+                <voice>1</voice>
+                <type>eighth</type>
+                <stem>up</stem>
+                <staff>1</staff>
+                <lyric>
+                    <text>do eu</text>
+                </lyric>
+            </note>
+            <note>
+                <pitch>
+                    <step>C</step>
+                    <octave>4</octave>
+                </pitch>
+                <duration>1</duration>
+                <voice>1</voice>
+                <type>eighth</type>
+                <stem>up</stem>
+                <staff>1</staff>
+                <beam number="1">begin</beam>
+                <lyric>
+                    <text>so-</text>
+                </lyric>
+            </note>
+            <note>
+                <pitch>
+                    <step>A</step>
+                    <octave>3</octave>
+                </pitch>
+                <duration>1</duration>
+                <voice>1</voice>
+                <type>eighth</type>
+                <stem>up</stem>
+                <staff>1</staff>
+                <beam number="1">end</beam>
+                <lyric>
+                    <text>u</text>
+                </lyric>
+            </note>
+            <note>
+                <rest/>
+                <duration>4</duration>
+                <voice>1</voice>
+                <type>half</type>
+                <staff>1</staff>
+            </note>
+        </measure>
+        <measure number="73" width="327">
+            <print new-system="yes">
                 <system-layout>
                     <system-margins>
                         <left-margin>26</left-margin>
                         <right-margin>0</right-margin>
                     </system-margins>
-                    <top-system-distance>65</top-system-distance>
+                    <system-distance>109</system-distance>
                 </system-layout>
             </print>
+            <note>
+                <pitch>
+                    <step>E</step>
+                    <alter>-1</alter>
+                    <octave>4</octave>
+                </pitch>
+                <duration>2</duration>
+                <voice>1</voice>
+                <type>quarter</type>
+                <accidental>flat</accidental>
+                <stem>up</stem>
+                <staff>1</staff>
+                <lyric>
+                    <text>Ci-</text>
+                </lyric>
+            </note>
+            <note>
+                <pitch>
+                    <step>D</step>
+                    <octave>4</octave>
+                </pitch>
+                <duration>2</duration>
+                <voice>1</voice>
+                <type>quarter</type>
+                <stem>up</stem>
+                <staff>1</staff>
+                <lyric>
+                    <text>da-</text>
+                </lyric>
+            </note>
+            <note>
+                <pitch>
+                    <step>C</step>
+                    <octave>4</octave>
+                </pitch>
+                <duration>2</duration>
+                <voice>1</voice>
+                <type>quarter</type>
+                <stem>up</stem>
+                <staff>1</staff>
+                <lyric>
+                    <text>dão</text>
+                </lyric>
+            </note>
+            <note>
+                <pitch>
+                    <step>A</step>
+                    <octave>3</octave>
+                </pitch>
+                <duration>1</duration>
+                <voice>1</voice>
+                <type>eighth</type>
+                <stem>up</stem>
+                <staff>1</staff>
+                <beam number="1">begin</beam>
+                <lyric>
+                    <text>do</text>
+                </lyric>
+            </note>
+            <note>
+                <pitch>
+                    <step>D</step>
+                    <octave>4</octave>
+                </pitch>
+                <duration>1</duration>
+                <voice>1</voice>
+                <type>eighth</type>
+                <stem>up</stem>
+                <staff>1</staff>
+                <beam number="1">end</beam>
+                <lyric>
+                    <text>mun-</text>
+                </lyric>
+            </note>
+        </measure>
+        <measure number="74" width="385">
+            <print new-system="no"/>
             <note>
                 <rest/>
                 <duration>1</duration>
@@ -3564,7 +3556,7 @@
                 </lyric>
             </note>
         </measure>
-        <measure number="75" width="394">
+        <measure number="75" width="250">
             <print new-system="no"/>
             <note>
                 <pitch>
