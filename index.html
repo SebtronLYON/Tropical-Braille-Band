@@ -385,6 +385,14 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 button:active,a:active,summary:active,select:active{outline:4px solid var(--pink);outline-offset:2px}
 .mfUp:hover,.mfDn:hover,.mfUp:active,.mfDn:active,.mfUp:focus-visible,.mfDn:focus-visible{outline-offset:-4px!important}
 .song summary:hover,.song summary:active{outline-offset:-2px}
+.mfSongT{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}.mfSongL{font-size:calc(1rem * var(--zoom));color:var(--muted)}.mfSongL b{color:var(--sun);font-size:1.15em}
+.mfPcts{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}.mfPcts .chip{min-height:40px;font-weight:700}.mfPcts .chip[aria-pressed="true"]{background:var(--sun);color:#000;border-color:var(--sun)}
+.mfCellPads{align-items:stretch;justify-content:center}.mfCellPads .mfLab{text-align:center}
+.mfCellPads .mfPads{width:100%;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr))!important;gap:8px}
+.mfCellPads .mfUp{height:clamp(70px,16vh,170px)!important}.mfCellPads .mfDn{min-height:clamp(40px,7vh,70px)!important}.mfCellPads .mfDn svg{width:clamp(22px,4vh,40px)!important;height:clamp(22px,4vh,40px)!important}
+.mfCellPads .mfLab{display:flex;justify-content:center}
+.mfSongS{display:none}.mfBtns .mfTap{min-width:0!important;width:auto!important}
+@media (max-width:520px){.mfSongW{display:none}.mfSongS{display:inline}.mfPcts{flex-wrap:nowrap}.mfPcts .chip{padding:2px 4px!important;font-size:.7rem!important;min-width:0}.mfBtns{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}.mfB{overflow-wrap:normal!important;font-size:.64rem!important}.mfQuad{grid-auto-rows:minmax(min-content,1fr)}.mfCellCtl{gap:6px}.mfCellCtl .mfPlay{width:54px;height:54px}.mfCellCtl .mfPm{height:44px}.mfBtns{grid-template-columns:1fr 1fr;gap:4px}.mfB{min-height:34px;font-size:.7rem;padding:2px}.mfSongT{gap:4px}.mfCellPads .mfPads{gap:4px}.mfCellPads .mfUp{height:clamp(56px,12vh,110px)!important}.mfSongL{font-size:.8rem}.mfPcts{gap:3px}.mfPcts .chip{min-height:32px;padding:3px 6px;font-size:.78rem}}
 </style>
 
 <header class="top">
@@ -832,6 +840,8 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
           <button class="mfPlay" id="mfPlay" aria-pressed="false" aria-label="Lancer le métronome">▶</button>
           <button class="big mfPm" id="mfPlus" aria-label="Accélérer de 1 (appui long pour défiler)">+</button>
         </div>
+        <div class="mfSongT"><span class="mfSongL"><span class="mfSongW">Tempo du morceau</span><span class="mfSongS">Morceau</span> : <b id="mfSongT">100</b></span>
+          <div class="mfPcts" role="group" aria-label="Tempo de travail, en pourcentage du tempo du morceau"><button class="chip" data-p="50">50 %</button><button class="chip" data-p="75">75 %</button><button class="chip" data-p="100">100 %</button></div></div>
         <div class="mfBtns">
           <button class="btn mfB" id="mfOpenSet" aria-haspopup="dialog">Métrique</button>
           <button class="btn mfB mfTap" id="mfTap" aria-label="Taper le tempo : touchez en rythme, au moins deux fois">TAP</button>
@@ -858,8 +868,8 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
         <div class="mfRow2"><input id="mfGrp" inputmode="numeric" placeholder="2+2+3" autocomplete="off"><button class="btn" id="mfGrpOk">Appliquer</button></div>
         <label for="mfSub" style="margin-top:10px">Subdivision</label>
         <select id="mfSub"><option value="1">Aucune (1 par temps)</option><option value="2">Croches (2 par temps)</option><option value="3">Triolets (3 par temps)</option><option value="4">Doubles croches (4 par temps)</option><option value="6">Sextolets (6 par temps)</option><option value="8">Triples croches (8 par temps)</option></select>
-        <label style="margin-top:12px">Tempo du morceau</label>
-        <div class="mfRow2 mfPctRow"><button class="chip" data-p="50">50 %</button><button class="chip" data-p="75">75 %</button><button class="chip" data-p="100">100 %</button><button class="chip" id="mfFlash" aria-pressed="true">Flash</button></div>
+        <label style="margin-top:12px">Affichage</label>
+        <div class="mfRow2 mfPctRow"><button class="chip" id="mfFlash" aria-pressed="true">Flash lumineux sur les temps</button></div>
         <h3 style="margin:16px 0 4px">Son et voix</h3>
         <label for="mfSnd">Son par défaut</label>
         <select id="mfSnd"><option value="click">Clic</option><option value="wood">Bois</option><option value="rock">Batterie simple</option><option value="bossa">Batterie bossa</option></select>
@@ -2609,6 +2619,7 @@ function mfSched(){
     if(i===0) mfPolyBar(MFR.next,mfBeatDur()*MF.x,true);
     MFR.k++; MFR.next+=mfBeatDur();
   }
+  MFR.q.sort((a,b)=>a.t-b.t);
 }
 function mfStart(){ ac(); if(typeof P!=='undefined'&&P.on) stopPlay(); MFR.on=true; MFR.k=0; MFR.q=[]; MFR.next=ctx.currentTime+0.12; MFR.timer=setInterval(mfSched,25); mfSched(); $('mfPlay').textContent='■'; $('mfPlay').setAttribute('aria-pressed','true'); $('mfPlay').setAttribute('aria-label','Arrêter le métronome'); requestAnimationFrame(mfFrame); }
 function mfStop(){ MFR.on=false; clearInterval(MFR.timer); MFR.q=[]; $('mfPlay').textContent='▶'; $('mfBpm').textContent=bpm; $('mfUnit').textContent='BPM'; $('mfPlay').setAttribute('aria-pressed','false'); $('mfPlay').setAttribute('aria-label','Lancer le métronome'); document.querySelectorAll('#mfPads .mfPad.on,#mfCirc .on').forEach(e=>e.classList.remove('on')); MFR.barT=null; try{mfCircle()}catch(e){} }
@@ -2672,6 +2683,7 @@ function mfRender(){
     dn.onclick=()=>{ if(long) return; mfPush(); p.sn=MF_SN[(MF_SN.indexOf(p.sn)+1)%MF_SN.length]; mfSave(); mfRender(); say('Temps '+(i+1)+' : '+MF_SNL[p.sn]); if(ctx){ac(); mfSound(ctx.currentTime+0.02,p.sn==='auto'?(S.metroSnd==='wood'?'wood':'click'):p.sn,p.lv===2);} };
     d.append(up,dn); box.append(d);
   });
+  box.style.setProperty('--cols',MF.x<=8?MF.x:Math.ceil(MF.x/2));
   mfCircle(); mfPolySnds();
   $('mfVox').setAttribute('aria-pressed',String(!!MF.vox)); $('mfKon').setAttribute('aria-pressed',String(!!MF.kon)); $('mfPoly').setAttribute('aria-pressed',String(!!MF.poly));
   $('mfPolyN').textContent=MF.polyN+' coups par mesure'; $('mfPolyVol').value=MF.polyVol??100; $('mfPolyVolVal').textContent=(MF.polyVol??100)+' %'; $('mfFlash').setAttribute('aria-pressed',String(MF.flash!==false)); $('mfVoxVol').value=MF.voxVol??100; $('mfVoxVolVal').textContent=(MF.voxVol??100)+' %';
@@ -2684,8 +2696,9 @@ function mfDial(){
   const a=A0+fr*(A1-A0); $('mfArcBg').setAttribute('d',arc(A0,A1)); $('mfArc').setAttribute('d',arc(A0,Math.max(A0+0.5,a)));
   const [kx,ky]=pt(a); $('mfKnob').setAttribute('cx',kx); $('mfKnob').setAttribute('cy',ky);
   if(!MFR.on){ $('mfBpm').textContent=bpm; $('mfUnit').textContent='BPM'; } const d=$('mfDial'); d.setAttribute('aria-valuenow',bpm); d.setAttribute('aria-valuetext',bpm+' noires par minute');
-  document.querySelectorAll('.mfPctRow .chip[data-p]').forEach(c=>c.setAttribute('aria-pressed',String(!!song&&Math.round(song.tempo*c.dataset.p/100)===bpm)));
+  document.querySelectorAll('.mfPcts .chip[data-p]').forEach(c=>c.setAttribute('aria-pressed',String(!!song&&Math.round(song.tempo*c.dataset.p/100)===bpm))); mfSongTxt();
 }
+function mfSongTxt(){ const e=$('mfSongT'); if(!e) return; const t=song&&song.tempo; e.textContent=t?t+' BPM'+(t!==bpm?' (ici '+Math.round(bpm/t*100)+' %)':''):'aucun morceau'; }
 function mfSetBpm(v,speak){ setBpm(v,speak); mfDial(); }
 function mfPresets(){ let L=[]; try{L=JSON.parse(localStorage.getItem('tbb-metros')||'[]')}catch(e){} const sel=$('mfList'); sel.innerHTML=L.length?'':'<option value="">Aucun pour l’instant</option>'; L.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p.name;sel.append(o);}); return L; }
 function openMetFull(){ try{mfFromSong()}catch(e){} $('metFull').hidden=false; $('metBtn').setAttribute('aria-pressed','true'); mfRender(); $('mfPlay').focus(); say('Métronome plein écran. Bouton lecture. Échap pour fermer.'); }
@@ -2711,7 +2724,7 @@ function closeMetFull(){ mfStop(); $('metFull').hidden=true; $('metBtn').setAttr
   let taps=[]; $('mfTap').onclick=()=>{ const n=performance.now(); if(taps.length&&n-taps[taps.length-1]>2000) taps=[]; taps.push(n); taps=taps.slice(-6);
     if(taps.length>1){ const iv=(taps[taps.length-1]-taps[0])/(taps.length-1); mfSetBpm(60000/iv*MF.y/4); } if(ctx){ac(); click(ctx.currentTime+0.005,false);} else {ac();} };
   $('mfTap').addEventListener('blur',()=>{ if(taps.length>1) say('Tempo '+bpm); taps=[]; });
-  document.querySelectorAll('.mfPctRow .chip[data-p]').forEach(c=>c.onclick=()=>{ if(!song) return; mfPush(); mfSetBpm(Math.round(song.tempo*c.dataset.p/100),true); });
+  document.querySelectorAll('.mfPcts .chip[data-p]').forEach(c=>c.onclick=()=>{ if(!song){ toast('Chargez d’abord un morceau'); return; } mfPush(); mfSetBpm(Math.round(song.tempo*c.dataset.p/100)); say(c.dataset.p+' pour cent du tempo du morceau : '+bpm); });
   const dial=$('mfDial'); let drag=false;
   const fromPt=e=>{ const r=dial.getBoundingClientRect(), dx=e.clientX-r.left-r.width/2, dy=e.clientY-r.top-r.height/2; let a=Math.atan2(dx,-dy)*180/Math.PI; a=Math.max(-150,Math.min(150,a)); mfSetBpm(30+(a+150)/300*190); };
   dial.addEventListener('pointerdown',e=>{ drag=true; mfPush(); dial.setPointerCapture(e.pointerId); fromPt(e); });
