@@ -393,6 +393,15 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
 .mfCellPads .mfLab{display:flex;justify-content:center}
 .mfSongS{display:none}.mfBtns .mfTap{min-width:0!important;width:auto!important}
 @media (max-width:520px){.mfSongW{display:none}.mfSongS{display:inline}.mfPcts{flex-wrap:nowrap}.mfPcts .chip{padding:2px 4px!important;font-size:.7rem!important;min-width:0}.mfBtns{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}.mfB{overflow-wrap:normal!important;font-size:.64rem!important}.mfQuad{grid-auto-rows:minmax(min-content,1fr)}.mfCellCtl{gap:6px}.mfCellCtl .mfPlay{width:54px;height:54px}.mfCellCtl .mfPm{height:44px}.mfBtns{grid-template-columns:1fr 1fr;gap:4px}.mfB{min-height:34px;font-size:.7rem;padding:2px}.mfSongT{gap:4px}.mfCellPads .mfPads{gap:4px}.mfCellPads .mfUp{height:clamp(56px,12vh,110px)!important}.mfSongL{font-size:.8rem}.mfPcts{gap:3px}.mfPcts .chip{min-height:32px;padding:3px 6px;font-size:.78rem}}
+.mfCellDial .mfDialBox{position:relative}
+.mfTapDial{position:absolute;left:50%;top:87%;transform:translate(-50%,-50%);width:24%;aspect-ratio:1;border-radius:50%;border:3px solid var(--sun);background:var(--panel2);color:var(--sun);font-weight:800;font-size:clamp(.9rem,2.6vw,1.5rem);cursor:pointer;padding:0;box-shadow:0 0 0 4px var(--panel)}
+.mfTapDial:active{background:var(--sun);color:#000}
+.ovSong{background:transparent;border:0;text-align:center;padding:2px 0;font-size:min(calc(1.3rem * var(--zoom)),6vw)}.ovSong .sbIn{padding:0 4px}
+.kHead .kTitleBox h2{margin:0}.mfCntBox{display:flex;align-items:center;gap:6px;flex:none}
+.metFull .kHead{margin-bottom:10px}
+.kCard{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:16px;margin-top:12px}
+.mfBtns>.mfB:last-child:nth-child(odd){grid-column:1/-1}
+@media (max-width:520px){.mfCntBox .mfCount{font-size:.8rem}.ovSong{font-size:1.05rem}.karaoke .kHead,.metFull .kHead{flex-wrap:wrap;justify-content:space-between;row-gap:2px}.karaoke .kTitleBox,.metFull .kTitleBox{order:3;flex:1 0 100%}}
 </style>
 
 <header class="top">
@@ -816,7 +825,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
   </nav>
 </div>
 <div id="metFull" class="metFull" hidden role="dialog" aria-modal="true" aria-labelledby="mfTitle">
-  <div class="kHead"><h2 id="mfTitle">Métronome</h2><span class="mfCount" id="mfCount" aria-live="off">Mesures : 0</span><button class="btn mfSmall" id="mfCountReset" aria-label="Remettre le compteur de mesures à zéro">↺</button><button class="btn kClose" id="mfClose" aria-label="Fermer le métronome">✕</button></div>
+  <div class="kHead"><span class="mfCntBox"><span class="mfCount" id="mfCount" aria-live="off">Mesures : 0</span><button class="btn mfSmall" id="mfCountReset" aria-label="Remettre le compteur de mesures à zéro">↺</button></span><div class="kTitleBox"><h2 id="mfTitle">Métronome</h2><button class="songBar ovSong" id="mfSong" aria-label="Morceau en cours"><span class="sbIn"><span class="sbTxt">♪</span></span></button></div><button class="btn kClose" id="mfClose" aria-label="Fermer le métronome">✕</button></div>
   <div class="mfBody">
     <div class="mfQuad">
       <div class="mfCell mfCellDial">
@@ -829,6 +838,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
             <text x="100" y="116" text-anchor="middle" class="mfBpm" id="mfBpm">100</text>
             <text x="100" y="142" text-anchor="middle" class="mfUnit" id="mfUnit">BPM</text>
           </svg>
+          <button class="mfTapDial" id="mfTap" aria-label="Taper le tempo : touchez en rythme, au moins deux fois">TAP</button>
         </div>
       </div>
       <div class="mfCell mfCellCirc">
@@ -844,7 +854,6 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
           <div class="mfPcts" role="group" aria-label="Tempo de travail, en pourcentage du tempo du morceau"><button class="chip" data-p="50">50 %</button><button class="chip" data-p="75">75 %</button><button class="chip" data-p="100">100 %</button></div></div>
         <div class="mfBtns">
           <button class="btn mfB" id="mfOpenSet" aria-haspopup="dialog">Métrique</button>
-          <button class="btn mfB mfTap" id="mfTap" aria-label="Taper le tempo : touchez en rythme, au moins deux fois">TAP</button>
           <button class="btn mfB" id="mfVoxBtn" aria-pressed="false">Voix</button>
           <button class="btn mfB" id="mfOpenPoly" aria-haspopup="dialog">Polyrythmie</button>
         </div>
@@ -905,8 +914,8 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
   </div>
 </div>
 <div id="karaoke" class="karaoke" hidden role="dialog" aria-labelledby="kTitle">
-  <div class="kHead"><span class="kMes" id="kMes"></span><div class="kTitleBox"><h2 id="kTitle">Paroles</h2><p class="kCred" id="kCred"></p></div><button class="btn kClose" id="kClose" aria-label="Fermer le karaoké">✕</button></div>
-  <div class="kBody" aria-hidden="true">
+  <div class="kHead"><span class="kMes" id="kMes"></span><div class="kTitleBox"><h2 id="kTitle">Karaoké</h2><button class="songBar ovSong" id="kSong" aria-label="Morceau en cours"><span class="sbIn"><span class="sbTxt">♪</span></span></button><p class="kCred" id="kCred"></p></div><button class="btn kClose" id="kClose" aria-label="Fermer le karaoké">✕</button></div>
+  <div class="kBody kCard" aria-hidden="true">
     <p class="kLine" id="kLine"></p>
     <p class="kNext" id="kNext"></p>
   </div>
@@ -2225,8 +2234,8 @@ for(const k in VIEWS) $('tab-'+k).addEventListener('click',()=>showView(k));
 $('openBtn').onclick=$('libImport').onclick=openImport;
 $('libBtn').onclick=openLib;
 $('tabImport').onclick=openImport;
-function setSongBar(){
-  const bar=$('songBar'), t=$('sbTxt'), inn=$('sbIn'); if(!bar) return;
+function setSongBar(){ ['kSong','mfSong'].forEach(id=>{ const b=$(id); if(b) sbFill(b,b.querySelector('.sbTxt'),b.querySelector('.sbIn')); }); sbFill($('songBar'),$('sbTxt'),$('sbIn')); }
+function sbFill(bar,t,inn){ if(!bar) return;
   const title=song?song.title:'Aucune partition';
   t.textContent='♪ '+title; bar.setAttribute('aria-label','Morceau en cours : '+title+'. Ouvrir mes morceaux');
   bar.classList.remove('scroll');
@@ -2234,6 +2243,7 @@ function setSongBar(){
     if(over>4){ bar.style.setProperty('--sbx',(-over-8)+'px'); bar.style.setProperty('--sbd',Math.max(8,(over/30)/0.7+3)+'s'); bar.classList.add('scroll'); } });
 }
 $('songBar').onclick=()=>openLib();
+$('kSong').onclick=()=>{ toggleKaraoke(false); openLib(); }; $('mfSong').onclick=()=>{ closeMetFull(); openLib(); };
 let sbT=null; window.addEventListener('resize',()=>{clearTimeout(sbT);sbT=setTimeout(setSongBar,200);});
 /* ---------- Menu ---------- */
 var curView='pupitre';
@@ -2294,7 +2304,7 @@ function toggleKaraoke(force){
   if(!hasLyrics()){ toast('Ce morceau n’a pas de paroles'); return; }
   const open=force!=null?force:$('karaoke').hidden;
   $('karaoke').hidden=!open; $('lyrBtn').setAttribute('aria-pressed',String(open));
-  if(open){ $('kTitle').textContent=song.title; $('kCred').textContent=(song.credits||[]).join(' · '); kSize(); renderKaraoke(); $('kClose').focus(); say('Karaoké, paroles en grand. '+song.title+((song.credits&&song.credits.length)?'. '+song.credits.join(', '):'')+'. Touche K ou Échap pour fermer.'); }
+  if(open){ setSongBar(); $('kCred').textContent=(song.credits||[]).join(' · '); kSize(); renderKaraoke(); $('kClose').focus(); say('Karaoké, paroles en grand. '+song.title+((song.credits&&song.credits.length)?'. '+song.credits.join(', '):'')+'. Touche K ou Échap pour fermer.'); }
   else $('lyrBtn').focus();
 }
 $('lyrBtn').onclick=()=>toggleKaraoke(); $('kClose').onclick=()=>toggleKaraoke(false);
@@ -2701,7 +2711,7 @@ function mfDial(){
 function mfSongTxt(){ const e=$('mfSongT'); if(!e) return; const t=song&&song.tempo; e.textContent=t?t+' BPM'+(t!==bpm?' (ici '+Math.round(bpm/t*100)+' %)':''):'aucun morceau'; }
 function mfSetBpm(v,speak){ setBpm(v,speak); mfDial(); }
 function mfPresets(){ let L=[]; try{L=JSON.parse(localStorage.getItem('tbb-metros')||'[]')}catch(e){} const sel=$('mfList'); sel.innerHTML=L.length?'':'<option value="">Aucun pour l’instant</option>'; L.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p.name;sel.append(o);}); return L; }
-function openMetFull(){ try{mfFromSong()}catch(e){} $('metFull').hidden=false; $('metBtn').setAttribute('aria-pressed','true'); mfRender(); $('mfPlay').focus(); say('Métronome plein écran. Bouton lecture. Échap pour fermer.'); }
+function openMetFull(){ try{mfFromSong()}catch(e){} $('metFull').hidden=false; setSongBar(); $('metBtn').setAttribute('aria-pressed','true'); mfRender(); $('mfPlay').focus(); say('Métronome plein écran. Bouton lecture. Échap pour fermer.'); }
 function closeMetFull(){ mfStop(); $('metFull').hidden=true; $('metBtn').setAttribute('aria-pressed','false'); $('metBtn').focus(); }
 (function(){
   const sx=$('mfX'); for(let i=1;i<=16;i++){const o=document.createElement('option');o.value=i;o.textContent=i;sx.append(o);}
