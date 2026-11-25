@@ -61,7 +61,7 @@ section.view{padding-block:14px;display:flex;flex-direction:column;gap:14px}
 .keyinfo b{color:var(--ink)}
 
 /* Measure strip */
-.mHead{display:flex;justify-content:flex-end;margin-bottom:6px}
+.mHead{display:flex;justify-content:flex-end;margin-bottom:2px}
 .measure{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:10px 10px 8px;container-type:inline-size}
 .chordsRow,.lyricsRow{position:relative;height:calc(2.2rem * var(--zoom))}
 .chordsRow button{position:absolute;top:0;background:none;border:0;color:var(--leaf);font-family:var(--f-display);font-size:calc(1.5rem * var(--zoom));cursor:pointer;padding:0 4px;white-space:nowrap}
@@ -244,7 +244,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
   <div class="wrap" style="padding-block:0 10px">
     <nav class="tabs" role="tablist" aria-label="Vues">
       <button class="tab imp" id="tabImport" aria-label="Importer une partition">Importer</button>
-      <button class="tab" role="tab" id="tab-pupitre" aria-selected="true" aria-controls="vPupitre">Pupitre</button>
+      <button class="tab" role="tab" id="tab-pupitre" aria-selected="true" aria-controls="vPupitre">Jouer</button>
       <button class="tab" role="tab" id="tab-lib" aria-selected="false" aria-controls="vLib">Mes morceaux</button>
       <button class="tab" role="tab" id="tab-tuner" aria-selected="false" aria-controls="vTuner">Accordeur</button>
       <button class="tab" role="tab" id="tab-settings" aria-selected="false" aria-controls="vSettings">Réglages</button>
@@ -317,10 +317,10 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 <section class="view wrap" id="vLib" role="tabpanel" aria-labelledby="tab-lib" hidden>
   <div class="card">
     <h2 id="libTitle">Mes morceaux</h2>
-    <p style="margin:0 0 10px;color:var(--muted)">Chaque partition importée est enregistrée ici, sur cet appareil, avec vos réglages : tempo, si♭ ou ut, boucle, métronome, accords corrigés et la dernière mesure travaillée.</p>
     <ul class="songs" id="libList" aria-labelledby="libTitle"></ul>
     <div class="row" style="margin-top:12px"><button class="btn pri" id="libImport">Importer une partition</button></div>
     <p id="libMsg" class="tMsg"></p>
+    <p style="margin:12px 0 0;color:var(--muted)">Chaque partition importée est enregistrée ici, sur cet appareil, avec vos réglages : tempo, si♭ ou ut, boucle, métronome, accords corrigés et la dernière mesure travaillée.</p>
   </div>
 </section>
 <section class="view wrap" id="vTuner" role="tabpanel" aria-labelledby="tab-tuner" hidden>
@@ -992,7 +992,12 @@ function renderStaff(){
     if(!e.getAttribute('fill')&&/^(path|text|rect|tspan)$/.test(e.tagName)&&!e.closest('[fill]')) e.setAttribute('fill',ink);
     if(e.tagName==='path'&&e.getAttribute('stroke')&&!e.getAttribute('stroke-width')) e.setAttribute('stroke-width','1.4');
   });
-  const svg=box.querySelector('svg'); if(svg){svg.setAttribute('aria-hidden','true');}
+  const svg=box.querySelector('svg'); if(svg){svg.setAttribute('aria-hidden','true');
+    // crop empty space above/below the drawing
+    try{const vb=(svg.getAttribute('viewBox')||('0 0 '+cw+' '+Math.round(175*sc))).split(/[ ,]+/).map(Number);
+      const k=(+svg.getAttribute('height')||Math.round(175*sc))/vb[3];
+      const bb=svg.getBBox(), pad=4, y0=Math.max(vb[1],bb.y-pad), h=Math.min(vb[1]+vb[3],bb.y+bb.height+pad)-y0;
+      if(h>10){svg.setAttribute('viewBox',vb[0]+' '+y0+' '+vb[2]+' '+h); const hp=Math.ceil(h*k); svg.setAttribute('height',hp); svg.style.height=hp+'px';}}catch(e){}}
   staffMap={xs:notes.map(x=>x.getAbsoluteX()*sc+6*sc),endX:(st.getX()+st.getWidth())*sc,ns};
   const head=document.createElement('div');head.className='head';head.id='head';head.hidden=!P.on;box.append(head);
   box.setAttribute('aria-label','Partition de la mesure '+m.num);
