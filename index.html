@@ -258,6 +258,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .viewSeg{display:inline-flex;align-items:stretch}
 .viewBtn{height:100%;min-height:0;display:flex;align-items:center;font-size:calc(var(--sf) * .5)}
 @media (max-width:760px){.status{--sh:min(calc(3.4rem * var(--zoom)),15vw);--sf:min(calc(1.8rem * var(--zoom)),7.5vw)}.viewBtn{font-size:calc(var(--sf) * .55)}}
+.lyrLbl{font-size:.55em;letter-spacing:.08em;color:var(--muted);opacity:.75;margin-right:.5em;vertical-align:.15em;font-weight:700}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -318,7 +319,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
         <div class="noteSide" id="noteNext"></div>
       </div>
       <div class="reg" id="reg"></div>
-      <div class="lyricNow" id="lyricNow"></div>
+      <div class="lyricNow" id="lyricNow" aria-hidden="true"></div>
     </div>
     <div class="card fingCard">
       <svg id="fingSvg" viewBox="0 0 330 108" role="img" aria-label="Doigté">
@@ -1048,6 +1049,13 @@ function renderStaff(){
     if(e.tagName==='path'&&e.getAttribute('stroke')&&!e.getAttribute('stroke-width')) e.setAttribute('stroke-width','1.4');
   });
   const svg=box.querySelector('svg'); if(svg){svg.setAttribute('aria-hidden','true');
+    // "paroles :" label at the left of the lyrics line
+    if(ns.some(n=>n.lyric)){ try{
+      const lt=[...svg.querySelectorAll('text')].filter(t=>/Atkinson/.test(t.getAttribute('font-family')||'')&&+t.getAttribute('y')>st.getYForLine(4));
+      if(lt.length){ const y=Math.max(156,...lt.map(t=>+t.getAttribute('y'))); lt.forEach(t=>t.setAttribute('y',y)); // one fixed lyrics line
+        const t=document.createElementNS('http://www.w3.org/2000/svg','text'); t.setAttribute('x',st.getX()+4); t.setAttribute('y',y);
+        t.setAttribute('font-family','Atkinson Hyperlegible, Verdana, sans-serif'); t.setAttribute('font-size','9'); t.setAttribute('font-weight','700'); t.setAttribute('fill',muted); t.setAttribute('stroke','none'); t.setAttribute('opacity','.85');
+        t.textContent='paroles :'; (svg.querySelector('g')||svg).appendChild(t); } }catch(e){} }
     // crop empty space above/below the drawing
     try{const vb=(svg.getAttribute('viewBox')||('0 0 '+cw+' '+Math.round(175*sc))).split(/[ ,]+/).map(Number);
       const k=(+svg.getAttribute('height')||Math.round(175*sc))/vb[3];
@@ -1119,7 +1127,7 @@ function renderNow(){
     $('notePrev').innerHTML=pv?noteHTML(writtenOf(pv)):''; $('noteNext').innerHTML=nx?noteHTML(writtenOf(nx)):'';
     $('noteSr').textContent='Note en cours, mesure '+song.measures[curM].num+' : '+noteSay(sp)+' '+register(sp.midi)+', '+fingSay(f)+(n.lyric?', paroles '+n.lyric:'')+(nx?'. Ensuite : '+noteSay(writtenOf(nx))+', '+fingSay(FING[writtenOf(nx).midi]):'');
     $('reg').textContent=register(sp.midi)+(n.tieStop?' · liée':'');
-    $('lyricNow').textContent=n.lyric||'';
+    $('lyricNow').textContent=''; if(n.lyric){const l=document.createElement('span');l.className='lyrLbl';l.textContent='PAROLE';$('lyricNow').append(l,document.createTextNode(n.lyric));}
     drawFing(f); $('fingTxt').textContent=fingShow(f);
     const alt=[]; if(SLIDE[sp.midi]) alt.push('Coulisse du 3ᵉ piston pour la justesse');
     if(S.alt&&ALT[sp.midi]) alt.push('Autre doigté : '+ALT[sp.midi].map(a=>a?a.split('').join('-'):'0').join(' ou '));
