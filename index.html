@@ -1998,8 +1998,8 @@ function openMenu(){ const m=$('menu'); m.hidden=false; $('menuBtn').setAttribut
   (m.querySelector('.mItem[aria-current]')||m.querySelector('.mItem')).focus(); say('Menu. Jouer, Mes morceaux, Importer une partition, Accordeur, Réglages, Aide.'); }
 function closeMenu(){ $('menu').hidden=true; $('menuBtn').setAttribute('aria-expanded','false'); }
 $('menuBtn').onclick=()=>{ $('menu').hidden?openMenu():closeMenu(); };
-$('menuClose').onclick=()=>{ closeMenu(); $('menuBtn').focus(); };
-$('menu').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeMenu();$('menuBtn').focus();} });
+$('menuClose').onclick=()=>{ closeMenu(); if(curView!=='pupitre'){showView('pupitre');say('Jouer');} $('menuBtn').focus(); };
+$('menu').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeMenu();if(curView!=='pupitre'){showView('pupitre');say('Jouer');}$('menuBtn').focus();} });
 document.querySelectorAll('#menu .mItem').forEach(b=>b.addEventListener('click',()=>{ const g=b.dataset.go; closeMenu();
   if(g==='import'){ openImport(); return; } if(g==='lib'){ openLib(); return; } showView(g);
   const t={pupitre:'Jouer',tuner:'Accordeur',settings:'Réglages',help:'Aide'}[g]; if(t&&g!=='tuner') say(t); }));
