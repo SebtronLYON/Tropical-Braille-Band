@@ -361,6 +361,10 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 @keyframes sbScroll{0%,15%{transform:translateX(0)}85%,100%{transform:translateX(var(--sbx,0px))}}
 @media (prefers-reduced-motion:reduce){.songBar.scroll .sbTxt{animation:none}.sbIn{text-overflow:ellipsis}.sbTxt{display:inline}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (hover:hover){button:hover,a:hover,summary:hover,select:hover,input[type=range]:hover,label.tg:hover,[role=slider]:hover{outline:4px solid var(--pink);outline-offset:2px}}
+button:active,a:active,summary:active,select:active{outline:4px solid var(--pink);outline-offset:2px}
+.mfUp:hover,.mfDn:hover,.mfUp:active,.mfDn:active,.mfUp:focus-visible,.mfDn:focus-visible{outline-offset:-4px!important}
+.song summary:hover,.song summary:active{outline-offset:-2px}
 </style>
 
 <header class="top">
