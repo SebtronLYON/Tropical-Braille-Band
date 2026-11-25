@@ -417,7 +417,8 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
     </div>
     <div class="card toggles" role="group" aria-label="Options de lecture">
       <button class="tg" data-k="loop" aria-keyshortcuts="B" id="tgLoop">Boucler la mesure</button>
-      <div class="tgSel"><label for="sLoopN">Longueur</label><select id="sLoopN"><option value="1">1 mesure</option><option value="2">2 mesures</option><option value="4">4 mesures</option><option value="8">8 mesures</option></select></div>
+      <div class="tgSel"><label for="sLoopN">Longueur</label><select id="sLoopN"><option value="1">1 mesure</option><option value="2">2 mesures</option><option value="4">4 mesures</option><option value="8">8 mesures</option><option value="sec">la partie</option></select></div>
+      <div class="tgSel" id="secBox" hidden><label for="sSec">Partie</label><select id="sSec"></select></div>
       <button class="tg" data-k="ramp">Tempo qui monte (+5 à chaque tour)</button>
       <button class="tg" data-k="echo" aria-keyshortcuts="E">Écoute puis joue</button>
       <button class="tg" data-k="echoMic">Vérifier mes notes au micro</button>
@@ -569,7 +570,8 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 <section class="view wrap help" id="vHelp" role="tabpanel" aria-labelledby="tab-help" hidden>
   <div class="card">
     <h2>Pour travailler</h2>
-    <p><b>Boucle</b> : rejoue la mesure en cours, ou 2, 4 ou 8 mesures. <b>Tempo qui monte</b> : à chaque tour de boucle, le tempo gagne 5, jusqu’au tempo original.</p>
+    <p><b>Parties</b> : l’application lit les repères du fichier (A, B, Thème, Refrain…) ; s’il n’y en a pas, elle découpe le morceau aux doubles barres (Partie 1, 2, 3). Le choix « Partie » permet d’y sauter, et « Longueur : la partie » de la boucler.</p>
+    <p><b>Boucle</b> : rejoue la mesure en cours, ou 2, 4 ou 8 mesures, ou toute la partie. <b>Tempo qui monte</b> : à chaque tour de boucle, le tempo gagne 5, jusqu’au tempo original.</p>
     <p><b>Écoute puis joue</b> : l’application joue une mesure, puis laisse une mesure avec seulement le métronome pour que vous la rejouiez. Avec <b>Vérifier mes notes au micro</b>, elle dit combien de notes étaient justes.</p>
     <p><b>Suivre les reprises</b> : la lecture respecte les barres de reprise, les fins 1 et 2, D.C., D.S., Coda et Fine. <b>Accompagnement</b> : si le fichier contient d’autres instruments, ils jouent doucement avec vous.</p>
     <p><b>Partitions du groupe</b> (dans Mes morceaux) : les morceaux partagés par le groupe, à ouvrir d’un toucher. <b>Sauvegarde</b> : enregistre tous vos morceaux dans un fichier, pour les retrouver sur un autre appareil. Sur le site du groupe, l’application marche aussi sans internet une fois ouverte une première fois.</p>
@@ -880,7 +882,7 @@ function parseMusicXML(text,fname){
   if(root.nodeName!=='score-partwise') throw new Error('Ce fichier n’est pas une partition MusicXML.');
   const soft=txt(root,'identification software')||'';
   const isLogic=/logic/i.test(soft);
-  let title=txt(root,'movement-title')||txt(root,'work work-title')||fname.replace(/\.[^.]+$/,'');
+  let title=fname.replace(/\.[^.]+$/,'').trim()||txt(root,'movement-title')||txt(root,'work work-title')||'Sans titre';
   const parts=[...root.querySelectorAll(':scope > part')];
   if(!parts.length) throw new Error('Aucune portée trouvée dans le fichier.');
   let part=parts[0], best=-1;
@@ -901,7 +903,15 @@ function parseMusicXML(text,fname){
         const e=c.querySelector('ending'); if(e){ const nums=(e.getAttribute('number')||'1').split(/[^0-9]+/).map(Number).filter(x=>x>0); const ty=e.getAttribute('type');
           if(ty==='start'){curEnd=nums.length?nums:[1]; m.endings=curEnd;} else { m.endings=m.endings||(nums.length?nums:[1]); endStop=true; } }
         if(c.querySelector('segno')) m.segno=true; if(c.querySelector('coda')) m.coda=true;
+        const bs=txt(c,'bar-style'), loc=c.getAttribute('location')||'right';
+        if(loc==='right'&&(bs==='light-light'||bs==='light-heavy')) m.dbl=bs;
+        if(loc==='left'&&(bs==='heavy-light'||bs==='light-light')) m.dblL=true;
         continue;
+      }
+      if(tag==='direction'){
+        const rh=txt(c,'rehearsal'); if(rh) m.sec=rh;
+        const w=[...c.querySelectorAll('words')].map(e=>e.textContent).join(' ').trim();
+        if(w&&/^(th[eè]me|refrain|intro(duction)?|couplet|pont|bridge|chorus|verse|outro|solo|break|pr[ée]-?refrain|interlude|final|vamp|[A-H]\d?|partie\s*\w+)(\s*\d+)?$/i.test(w)) m.sec=m.sec||w;
       }
       if(tag==='sound'||tag==='direction') jumpMarks(c,m);
       if(tag==='attributes'){
@@ -1179,6 +1189,7 @@ function renderHeader(){
   $('keyInfo').innerHTML=`<svg viewBox="0 0 188 70" role="img" aria-label="Affichage pour ${S.transp==='C'?'trompette en ut':'trompette en si bémol'}"><title>${T().label}</title><path d="M6 22.5c-2.2 0-2.2 11 0 11h2l1.6-3.6H24v-3.8H9.6L8 22.5z" fill="currentColor"/><path d="M24 26.6H100" stroke="currentColor" stroke-width="3" fill="none"/><path d="M100 25.2 148 23.6Q170 22 180 5.5Q183 3 184.5 6.5V51.5Q183 55 180 52.5Q170 36 148 33.2H100z" fill="currentColor"/><g fill="none" stroke="currentColor"><path d="M147 32.8Q157 33 157 44.5Q157 56 146 56H101" stroke-width="3"/><path d="M75 33H52Q38 33 38 45.5Q38 58 52 58H75" stroke-width="3"/><path d="M75 50H60Q56.5 50 56.5 52.5Q56.5 55 60 55H75" stroke-width="2.2"/><path d="M101 46.5H133Q136.5 46.5 136.5 49.3Q136.5 52 133 52H101" stroke-width="2.2"/><circle cx="113" cy="41.5" r="3.2" stroke-width="1.8"/><circle cx="108" cy="20.5" r="3.2" stroke-width="1.8"/></g><g fill="currentColor"><rect x="74.5" y="24" width="7" height="40" rx="1.5"/><rect x="83.5" y="24" width="7" height="40" rx="1.5"/><rect x="92.5" y="24" width="7" height="40" rx="1.5"/><rect x="74" y="62" width="8" height="5" rx="2.4"/><rect x="83" y="62" width="8" height="5" rx="2.4"/><rect x="92" y="62" width="8" height="5" rx="2.4"/><rect x="77" y="15" width="2" height="9"/><rect x="86" y="15" width="2" height="9"/><rect x="95" y="15" width="2" height="9"/><rect x="74.6" y="12.5" width="6.8" height="3" rx="1.2"/><rect x="83.6" y="12.5" width="6.8" height="3" rx="1.2"/><rect x="92.6" y="12.5" width="6.8" height="3" rx="1.2"/></g></svg><div class="tpills" role="radiogroup" aria-label="Affichage des notes"><button role="radio" data-t="Bb" aria-checked="${S.transp!=='C'}" aria-label="Trompette en si bémol">Si♭</button><button role="radio" data-t="C" aria-checked="${S.transp==='C'}" aria-label="En ut">Ut</button></div>`;
   $('keyInfo').querySelectorAll('.tpills button').forEach(b=>b.onclick=()=>setTransp(b.dataset.t));
   $('mTot').textContent='/ '+song.measures.length;
+  fillSections(); applySettingsUi();
 }
 const VF=(window.Vex&&Vex.Flow)?Vex.Flow:null;
 const VF_KEYS={0:'C',1:'G',2:'D',3:'A',4:'E',5:'B',6:'F#',7:'C#','-1':'F','-2':'Bb','-3':'Eb','-4':'Ab','-5':'Db','-6':'Gb','-7':'Cb'};
@@ -1203,6 +1214,7 @@ function renderStaff(){
     if(m.bwd) st.setEndBarType(VF.Barline.type.REPEAT_END);
     if(m.endings){ const pv=song.measures[curM-1]; const first=!(pv&&pv.endings&&pv.endings.join()===m.endings.join()); st.setVoltaType(first?VF.Volta.type.BEGIN:VF.Volta.type.MID,first?m.endings.join(', ')+'.':'',0); }
     const mk=marksText(m); if(mk) st.setText(mk,VF.Modifier.Position.ABOVE,{shift_y:-6,justification:VF.TextNote.Justification.RIGHT});
+    
   }catch(e){}
   st.setContext(c).draw();
   const notes=[];
@@ -1237,6 +1249,14 @@ function renderStaff(){
     if(e.tagName==='path'&&e.getAttribute('stroke')&&!e.getAttribute('stroke-width')) e.setAttribute('stroke-width','1.4');
   });
   const svg=box.querySelector('svg'); if(svg){svg.setAttribute('aria-hidden','true');
+    // section label (Partie 2, A, Refrain…): pink tag above the clef, above the chord line
+    const sc0=sections().find(x=>x.a===curM);
+    if(sc0){ try{ const g=svg.querySelector('g')||svg, NS='http://www.w3.org/2000/svg';
+      const yTop=Math.min(...[...svg.querySelectorAll('text')].map(t=>+t.getAttribute('y')||999), st.getYForLine(0))-38;
+      const t=document.createElementNS(NS,'text'); t.setAttribute('x',st.getX()+10); t.setAttribute('y',yTop+16); t.setAttribute('font-family','Atkinson Hyperlegible, Verdana, sans-serif'); t.setAttribute('font-size','15'); t.setAttribute('font-weight','700'); t.setAttribute('fill','#000'); t.setAttribute('stroke','none'); t.textContent=sc0.label;
+      g.appendChild(t); const w=t.getComputedTextLength();
+      const r=document.createElementNS(NS,'rect'); r.setAttribute('x',st.getX()+2); r.setAttribute('y',yTop); r.setAttribute('width',w+16); r.setAttribute('height',22); r.setAttribute('rx',11); r.setAttribute('fill',pink); r.setAttribute('stroke','none'); g.insertBefore(r,t);
+    }catch(e){} }
     // chord names: a little higher and a little to the left
     svg.querySelectorAll('text').forEach(t=>{ if(/Righteous/.test(t.getAttribute('font-family')||'')){ t.setAttribute('y',+t.getAttribute('y')-7); t.setAttribute('x',+t.getAttribute('x')-7); } });
     // score colours (Réglages > Couleurs de la partition)
@@ -1296,6 +1316,7 @@ function applyView(){
 function renderMeasure(){
   const m=song.measures[curM];
   $('mNum').textContent=m.num;
+  { const ss=sections(), k=ss.findIndex(x=>curM>=x.a&&curM<=x.b); const v=secAll?'all':String(k); if(k>=0&&$('sSec').value!==v) $('sSec').value=v; }
   applyView();
   if(S.view==='staff'&&VF){ renderStaff(); return; }
   const roll=$('roll'), cr=$('chordsRow'), lr=$('lyricsRow');
@@ -1395,7 +1416,8 @@ function measureSummary(mi,full){
   const m=song.measures[mi];
   const ns=m.noteIdx.map(i=>song.notes[i]).filter(n=>n.midi!=null&&!n.tieStop);
   const c=song.chords.length?chordAt(m.startQ+ (m.chords.length?m.chords[0].q-m.startQ:0)):null;
-  let s='Mesure '+m.num+'. '+marksSay(m);
+  const sc0=sections().find(x=>x.a===mi);
+  let s=(sc0?'Début de '+sc0.label+'. ':'')+'Mesure '+m.num+'. '+marksSay(m);
   if(m.chords.length) s+='Accord '+m.chords.map(chordSay).join(', puis ')+'. ';
   if(!ns.length) return s+'Silence.';
   s+=ns.map(n=>{const sp=writtenOf(n);return noteSay(sp)+(S.readFing?' ('+fingSay(FING[sp.midi])+')':'');}).join(', ')+'.';
@@ -1488,6 +1510,23 @@ function pad(ch,t,dur){
 
 /* ---------- Player ---------- */
 const P={on:false};
+function sections(){
+  if(!song) return [];
+  if(song._secs) return song._secs;
+  const M=song.measures, n=M.length; let starts=[];
+  if(M.some(m=>m.sec)){ starts=M.map((m,i)=>m.sec?[i,m.sec]:null).filter(Boolean); if(starts[0][0]!==0) starts.unshift([0,'Début']); }
+  else{
+    let br=M.map((m,i)=>m.dbl==='light-heavy'&&i<n-1?i+1:null).filter(x=>x!=null);
+    if(!br.length) br=M.map((m,i)=>m.dbl&&i<n-1?i+1:null).filter(x=>x!=null);
+    M.forEach((m,i)=>{ if(m.dblL&&i>0&&!br.includes(i)&&!M.some(x=>x.dbl==='light-heavy')) br.push(i); });
+    br=[...new Set(br)].sort((a,b)=>a-b);
+    if(br.length) starts=[[0,'Partie 1'],...br.map((b,k)=>[b,'Partie '+(k+2)])];
+  }
+  song._secs=starts.map(([a,l],k)=>({a,b:(k+1<starts.length?starts[k+1][0]:n)-1,label:l}));
+  return song._secs;
+}
+let secAll=false;
+const secOf=mi=>secAll&&song?{a:0,b:song.measures.length-1,label:'Tout'}:(sections().find(x=>mi>=x.a&&mi<=x.b)||null);
 const hasRepeats=()=>!!song&&song.measures.some(m=>m.fwd||m.bwd||m.dc||m.ds||m.endings);
 function playOrder(){
   const M=song.measures, n=M.length;
@@ -1512,7 +1551,7 @@ function playOrder(){
 }
 function makeOrder(){
   const last=song.measures.length-1; let idx=[];
-  if(S.loop){ const b=Math.min(curM+(+S.loopN||1)-1,last); for(let i=curM;i<=b;i++) idx.push(i); }
+  if(S.loop){ const sc=S.loopN==='sec'?secOf(curM):null; const a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last); for(let i=a;i<=b;i++) idx.push(i); }
   else { const po=playOrder(); let k=(resumeK!=null&&po[resumeK]===curM)?resumeK:po.indexOf(curM); if(k<0){for(let i=curM;i<=last;i++)idx.push(i);} else idx=po.slice(k); P.k0=k<0?0:k; }
   resumeK=null;
   const order=[];
@@ -1804,14 +1843,14 @@ function setSong(s,announce,id){
   applyChordEdits();
   curM=Math.max(0,Math.min(song.measures.length-1,(pr.m||1)-1)); curN=firstNoteOfMeasure(curM);
   restoring=true; setBpm(pr.bpm||Math.round(song.tempo*0.5)); restoring=false; renderAll();
-  if(e){e.used=Date.now();libSaveIndex();}
+  if(e){e.used=Date.now(); if(e.id!=='demo') e.title=song.title; libSaveIndex();}
   if(announce){
     const inf=song.chords.filter(c=>c.inferred).length;
     const msg=song.title+' chargé. '+song.measures.length+' mesures, tempo '+bpm+(bpm*2===song.tempo?', la moitié de l’original':'')+(curM?', reprise à la mesure '+(curM+1):'')+'.'+(song.chords.length?'':' Pas d’accords dans un fichier MIDI.')+(inf?' '+inf+' accords mineurs devinés.':'');
     toast(song.title+' : '+song.measures.length+' mesures'); say(msg);
   }
 }
-function loadDemo(announce){ try{ setSong(parseMusicXML(DEMO_XML,'Janela para o mundo.xml'),announce,'demo'); }catch(e){console.error(e);renderEmpty();} }
+function loadDemo(announce){ try{ setSong(parseMusicXML(DEMO_XML,'Janela para o mundo - Thème et refrain en UT.xml'),announce,'demo'); }catch(e){console.error(e);renderEmpty();} }
 
 /* ---------- Library (Mes morceaux) ---------- */
 let curId='demo', restoring=false, prefTimer=null;
@@ -1890,7 +1929,9 @@ function renderLib(){
 function applySettingsUi(){
   document.documentElement.style.setProperty('--zoom',S.zoom);
   document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white'; $('sLoopN').value=String(S.loopN||1);
-  const ln=+S.loopN||1; $('tgLoop').textContent=ln===1?'Boucler la mesure':'Boucler '+ln+' mesures';
+  const ln=+S.loopN||1; $('tgLoop').textContent=S.loopN==='sec'?'Boucler la partie':(ln===1?'Boucler la mesure':'Boucler '+ln+' mesures');
+  if(S.loopN==='sec'&&!sections().length){S.loopN='1';$('sLoopN').value='1';}
+  $('secBox').hidden=!sections().length;
   $('tgAcc').hidden=!(song&&song.acc&&song.acc.length); $('tgRep').hidden=!hasRepeats();
   $('zVal').textContent=Math.round(S.zoom*100)+' %'; $('zPlus').setAttribute('aria-disabled',String(S.zoom==='2.5')); $('zMinus').setAttribute('aria-disabled',String(S.zoom==='0.8'));
   $('sProfile').value=S.profile||'low'; $('sSound').value=S.sound; $('sTransp').value=S.transp; $('sNaming').value=S.naming; $('sZoom').value=S.zoom; $('sTheme').value=S.theme; $('sRate').value=S.rate; $('sRef').value=S.ref;
@@ -2031,8 +2072,11 @@ function zoomStep(d){
 $('zPlus').onclick=()=>zoomStep(1);
 $('zMinus').onclick=()=>zoomStep(-1);
 $('sStaffCol').onchange=e=>{S.staffCol=e.target.value;saveS();if(song)renderMeasure();say({white:'Partition tout en blanc',thin:'Lignes fines, notes plus épaisses',yellow:'Notes en jaune, note jouée en rose'}[S.staffCol]);};
+$('sSec').onchange=e=>{ if(e.target.value==='all'){ secAll=true; gotoMeasure(0,false); say('Tout lire, depuis la mesure 1'+(S.loop&&S.loopN==='sec'?'. Boucle sur tout le morceau.':'')); startPlay(); return; }
+  secAll=false; const sc=sections()[+e.target.value]; if(!sc) return; const was=P.on; gotoMeasure(sc.a,false); say(sc.label+', mesure '+song.measures[sc.a].num+(S.loop&&S.loopN==='sec'?'. Boucle de la partie.':'')); if(was) startPlay(); };
+function fillSections(){ const sel=$('sSec'); sel.innerHTML=''; secAll=false; { const o=document.createElement('option'); o.value='all'; o.textContent='Tout lire (mes. 1 à '+song.measures.length+')'; sel.append(o); } sections().forEach((x,k)=>{const o=document.createElement('option');o.value=k;o.textContent=x.label+' (mes. '+song.measures[x.a].num+' à '+song.measures[x.b].num+')';sel.append(o);}); }
 $('sLabels').onchange=e=>{S.labels=e.target.value;saveS();applySettingsUi();say(S.labels==='off'?'Pictos seuls':'Mots sous les pictos');};
-$('sLoopN').onchange=e=>{S.loopN=e.target.value;saveS();applySettingsUi();savePrefsSoon();say('Boucle de '+S.loopN+' mesure'+(S.loopN>1?'s':''));if(P.on&&S.loop){const r=curM;stopPlay();curM=r;startPlay();}};
+$('sLoopN').onchange=e=>{S.loopN=e.target.value;saveS();applySettingsUi();savePrefsSoon();say(S.loopN==='sec'?'Boucle de la partie':'Boucle de '+S.loopN+' mesure'+(S.loopN>1?'s':''));if(P.on&&S.loop){const r=curM;stopPlay();curM=r;startPlay();}};
 $('sTheme').onchange=e=>{S.theme=e.target.value;saveS();applySettingsUi();if(song){renderMeasure();renderNow();}};
 $('sRate').onchange=e=>{S.rate=e.target.value;saveS();say('Vitesse de la voix modifiée');};
 $('sVoice').onchange=e=>{S.voiceName=e.target.value;saveS();say('Bonjour, je suis la voix du Tropical Braille Band.');};
