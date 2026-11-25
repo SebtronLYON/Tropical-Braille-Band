@@ -202,7 +202,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .drop{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--sun);z-index:20;border:6px dashed var(--sun)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(200px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-weight:700;z-index:15;max-width:90vw;text-align:center}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px}
-.modal .card{max-width:520px;width:100%;display:flex;flex-direction:column;gap:12px}
+.modal .card{max-width:520px;width:100%;display:flex;flex-direction:column;gap:12px;max-height:100%;overflow-y:auto}
 .modal input{background:var(--panel2);border:3px solid var(--sun);border-radius:12px;padding:12px;font-size:2rem;width:100%}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .btn{background:var(--panel2);border:2px solid var(--ink);border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer}
@@ -472,6 +472,21 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
     <p style="margin:0">Choisissez le réglage qui vous convient. Vous pourrez le changer dans Réglages.</p>
     <button class="btn pri" id="pmBlind" style="font-size:1.4rem;padding:18px">Cécité totale, avec lecteur d’écran (VoiceOver, NVDA)</button>
     <button class="btn pri" id="pmLow" style="font-size:1.4rem;padding:18px;background:var(--pink);border-color:var(--pink);color:#000">Malvoyance, avec fort grossissement</button>
+  </div>
+</div>
+<div id="importModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="imTitle">
+  <div class="card">
+    <h2 id="imTitle">Importer une partition</h2>
+    <p style="margin:0">Choisissez le fichier de votre morceau :</p>
+    <div class="row">
+      <button class="btn pri" id="imPick" style="font-size:1.3rem;padding:14px 22px">Choisir le fichier</button>
+      <button class="btn" id="imCancel">Annuler</button>
+    </div>
+    <ul style="margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px">
+      <li><b>MusicXML</b> (.xml, .musicxml ou .mxl) : conseillé, il garde la mélodie, les paroles, les accords et le tempo.</li>
+      <li><b>MIDI</b> (.mid) : mélodie, paroles et tempo, mais pas les accords.</li>
+    </ul>
+    <p style="margin:0;color:var(--muted)">Depuis Logic Pro : Fichier › Exporter › Partition au format MusicXML.<br>Depuis MuseScore : Fichier › Exporter › MusicXML.<br>Le fichier doit être en ut (son réel) : l’app l’écrit elle-même pour trompette en si♭.</p>
   </div>
 </div>
 <div id="chordModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="cmTitle">
@@ -1446,9 +1461,14 @@ function showView(v){
   for(const k in VIEWS){ $(VIEWS[k]).hidden=k!==v; $('tab-'+k).setAttribute('aria-selected',String(k===v)); }
 }
 for(const k in VIEWS) $('tab-'+k).addEventListener('click',()=>showView(k));
-$('openBtn').onclick=$('openBtn2').onclick=$('libImport').onclick=()=>$('fileIn').click();
+$('openBtn').onclick=$('openBtn2').onclick=$('libImport').onclick=openImport;
 $('libBtn').onclick=openLib;
-$('tabImport').onclick=()=>$('fileIn').click();
+$('tabImport').onclick=openImport;
+function openImport(){ $('importModal').hidden=false; $('imPick').focus(); say('Importer une partition. Choisissez le fichier du morceau : MusicXML, conseillé car il garde les accords, ou MIDI. Bouton Choisir le fichier.'); }
+function closeImport(){ $('importModal').hidden=true; }
+$('imPick').onclick=()=>{ closeImport(); $('fileIn').click(); };
+$('imCancel').onclick=closeImport;
+$('importModal').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();closeImport();} });
 $('fileIn').onchange=e=>{const f=e.target.files[0]; if(f) loadFile(f); e.target.value='';};
 $('demoBtn').onclick=()=>{loadDemo(true);showView('pupitre');};
 $('bPlay').onclick=togglePlay;
@@ -1497,7 +1517,7 @@ $('cmInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault
 const HELP_SAY='Raccourcis. Espace ou P : lecture ou pause. S : stop. Flèches gauche et droite : note précédente ou suivante. Flèches haut et bas : mesure précédente ou suivante. Touche Début : retour au début. L : lire la mesure. N : redire la note. A : dire l’accord. Plus et moins : tempo. R : dire le tempo. B : boucle. M : métronome. T : accordeur. G : grossir l’affichage. F : réduire l’affichage. I : importer une partition. O : ouvrir mes morceaux. Échap : tout arrêter.';
 document.addEventListener('keydown',e=>{
   if(e.ctrlKey||e.metaKey||e.altKey) return;
-  if(!$('chordModal').hidden) return;
+  if(!$('chordModal').hidden||!$('importModal').hidden||!$('profileModal').hidden) return;
   const tg=e.target, tag=tg.tagName;
   if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA') return;
   const k=e.key;
@@ -1516,7 +1536,7 @@ document.addEventListener('keydown',e=>{
     b:()=>toggle('loop'), B:()=>toggle('loop'),
     m:()=>toggle('metro'), M:()=>toggle('metro'),
     t:()=>{showView('tuner');tunerToggle();}, T:()=>{showView('tuner');tunerToggle();},
-    i:()=>$('fileIn').click(), I:()=>$('fileIn').click(),
+    i:openImport, I:openImport,
     o:()=>openLib(), O:()=>openLib(),
     h:()=>say(HELP_SAY), H:()=>say(HELP_SAY), '?':()=>say(HELP_SAY),
     s:stopAll, S:stopAll,
