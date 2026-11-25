@@ -315,7 +315,10 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .mList{display:flex;flex-direction:column;gap:12px;max-width:760px;width:100%;margin:16px auto 0}
 .mItem{display:flex;align-items:center;gap:18px;width:100%;text-align:left;background:var(--panel);color:var(--ink);border:3px solid var(--line);border-radius:18px;padding:14px 20px;min-height:72px;font-weight:700;font-size:min(calc(2rem * var(--zoom)),9vw);text-transform:uppercase;letter-spacing:.03em;cursor:pointer}
 .mItem[aria-current="page"]{border-color:var(--sun);color:var(--sun)}
-.mItem.mImp{border-color:var(--pink)}
+.mItem[aria-current="page"]:hover,.mItem[aria-current="page"]:focus-visible{border-color:var(--pink)}
+.mItem:hover,.mItem:focus-visible{border-color:var(--pink);outline:none}
+.mItem:active,.mItem.mOn{border-color:var(--sun)!important;color:var(--sun)}
+.mTwo{display:flex;flex-direction:column;line-height:1.1}.mSub{font-size:.5em;text-transform:none;letter-spacing:0;color:var(--muted);font-weight:700;margin-top:4px}
 .mIco{width:1.3em;height:1.3em;flex:none}
 .mIco.mTr{width:1.6em;height:.8em}
 .tShort{display:none}
@@ -356,9 +359,11 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
       <button class="tab imp" id="tabImport" aria-label="Importer une partition">Importer</button>
       <button class="tab" role="tab" id="tab-pupitre" aria-selected="true" aria-controls="vPupitre"><svg class="tIco" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg>Jouer</button>
       <button class="tab" role="tab" id="tab-lib" aria-selected="false" aria-controls="vLib">Mes morceaux</button>
+      <button class="tab" role="tab" id="tab-import" aria-selected="false" aria-controls="vImport">Importer</button>
       <button class="tab" role="tab" id="tab-train" aria-selected="false" aria-controls="vTrain">Entraînement</button>
       <button class="tab" role="tab" id="tab-tuner" aria-selected="false" aria-controls="vTuner">Accordeur</button>
-      <button class="tab" role="tab" id="tab-settings" aria-selected="false" aria-controls="vSettings">Réglages</button>
+      <button class="tab" role="tab" id="tab-settings" aria-selected="false" aria-controls="vSettings">Accessibilité</button>
+      <button class="tab" role="tab" id="tab-instr" aria-selected="false" aria-controls="vInstr">Instrument</button>
       <button class="tab" role="tab" id="tab-metro" aria-selected="false" aria-controls="vMetro">Métronome</button>
       <button class="tab" role="tab" id="tab-help" aria-selected="false" aria-controls="vHelp">Aide</button>
     </nav>
@@ -458,6 +463,21 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
     <p style="margin:12px 0 0;color:var(--muted)">Chaque partition importée est enregistrée ici, sur cet appareil, avec vos réglages : tempo, si♭ ou ut, boucle, métronome, accords corrigés et la dernière mesure travaillée.</p>
   </div>
 </section>
+<section class="view wrap" id="vImport" role="tabpanel" aria-labelledby="tab-import" hidden>
+  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Importer</span><button class="btn snHome" aria-label="Fermer et revenir à Jouer">✕ Jouer</button></div>
+  <div class="card">
+    <h2 id="imTitle" style="margin:0 0 8px">Importer une partition</h2>
+    <p style="margin:0">Choisissez le fichier de votre morceau :</p>
+    <div class="row" style="margin:12px 0">
+      <button class="btn pri" id="imPick" style="font-size:1.3rem;padding:14px 22px">Choisir le fichier</button>
+    </div>
+    <ul style="margin:0 0 12px;padding-left:1.2em;display:flex;flex-direction:column;gap:6px">
+      <li><b>MusicXML</b> (.xml, .musicxml ou .mxl) : conseillé, il garde la mélodie, les paroles, les accords et le tempo.</li>
+      <li><b>MIDI</b> (.mid) : mélodie, paroles et tempo, mais pas les accords.</li>
+    </ul>
+    <p style="margin:0;color:var(--muted)">Depuis Logic Pro : Fichier › Exporter › Partition au format MusicXML.<br>Depuis MuseScore : Fichier › Exporter › MusicXML.<br>Le fichier doit être en ut (son réel) : l’app l’écrit elle-même pour trompette en si♭.</p>
+  </div>
+</section>
 <section class="view wrap" id="vTrain" role="tabpanel" aria-labelledby="tab-train" hidden>
   <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Entraînement</span><button class="btn snHome" aria-label="Fermer et revenir à Jouer">✕ Jouer</button></div>
   <div class="card field">
@@ -476,7 +496,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 <section class="view wrap" id="vTuner" role="tabpanel" aria-labelledby="tab-tuner" hidden>
   <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Accordeur</span><button class="btn snHome" aria-label="Fermer et revenir à Jouer">✕ Jouer</button></div>
   <div class="card tuner">
-    <button class="tBtn" id="tunerBtn" aria-keyshortcuts="T">Démarrer l’accordeur</button>
+    <button class="tBtn" id="tunerBtn" aria-keyshortcuts="T" hidden>Réessayer le micro</button>
     <div class="tNote" id="tNote" aria-hidden="true">–</div>
     <div class="tState" id="tState">Micro arrêté</div>
     <div class="lvlBox" aria-hidden="true"><div class="lvlBar"><div id="lvl"></div></div><span id="lvlTxt">Micro arrêté</span></div>
@@ -521,10 +541,10 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 </section>
 
 <section class="view wrap" id="vSettings" role="tabpanel" aria-labelledby="tab-settings" hidden>
-  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Réglages</span><button class="btn snHome" aria-label="Fermer et revenir à Jouer">✕ Jouer</button></div>
+  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Accessibilité</span><button class="btn snHome" aria-label="Fermer et revenir à Jouer">✕ Jouer</button></div>
   <div class="grid2">
     <div class="card field">
-      <h2>Vision et voix</h2>
+      <h2>Accessibilité <small style="font-size:.6em;color:var(--muted)">affichage &amp; VoiceOver</small></h2>
       <label for="sProfile">Profil</label>
       <select id="sProfile">
         <option value="blind">Cécité totale, avec lecteur d’écran</option>
@@ -572,6 +592,12 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
       <select id="sVoice"><option value="">Par défaut (Amélie si disponible)</option></select>
       <button class="btn" id="testVoice">Tester la voix</button>
     </div>
+  </div>
+</section>
+
+<section class="view wrap" id="vInstr" role="tabpanel" aria-labelledby="tab-instr" hidden>
+  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Instrument</span><button class="btn snHome" aria-label="Fermer et revenir à Jouer">✕ Jouer</button></div>
+  <div class="grid2">
     <div class="card field">
       <h2>Instrument</h2>
       <label for="sTransp">Affichage des notes</label>
@@ -664,24 +690,9 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 <div id="profileModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="pmTitle">
   <div class="card">
     <h2 id="pmTitle">Votre niveau de vision</h2>
-    <p style="margin:0">Choisissez le réglage qui vous convient. Vous pourrez le changer dans Réglages.</p>
+    <p style="margin:0">Choisissez le réglage qui vous convient. Vous pourrez le changer dans Accessibilité, en haut du menu.</p>
     <button class="btn pri" id="pmBlind" style="font-size:1.4rem;padding:18px">Cécité totale, avec lecteur d’écran (VoiceOver, NVDA)</button>
     <button class="btn pri" id="pmLow" style="font-size:1.4rem;padding:18px;background:var(--pink);border-color:var(--pink);color:#000">Malvoyance, avec fort grossissement</button>
-  </div>
-</div>
-<div id="importModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="imTitle">
-  <div class="card">
-    <h2 id="imTitle">Importer une partition</h2>
-    <p style="margin:0">Choisissez le fichier de votre morceau :</p>
-    <div class="row">
-      <button class="btn pri" id="imPick" style="font-size:1.3rem;padding:14px 22px">Choisir le fichier</button>
-      <button class="btn" id="imCancel">Annuler</button>
-    </div>
-    <ul style="margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px">
-      <li><b>MusicXML</b> (.xml, .musicxml ou .mxl) : conseillé, il garde la mélodie, les paroles, les accords et le tempo.</li>
-      <li><b>MIDI</b> (.mid) : mélodie, paroles et tempo, mais pas les accords.</li>
-    </ul>
-    <p style="margin:0;color:var(--muted)">Depuis Logic Pro : Fichier › Exporter › Partition au format MusicXML.<br>Depuis MuseScore : Fichier › Exporter › MusicXML.<br>Le fichier doit être en ut (son réel) : l’app l’écrit elle-même pour trompette en si♭.</p>
   </div>
 </div>
 <div id="menu" class="menu" hidden role="dialog" aria-modal="true" aria-label="Menu">
@@ -689,12 +700,13 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
   <div class="mHead2"><h2>Menu</h2><button class="btn kClose" id="menuClose" aria-label="Fermer le menu">✕</button></div>
   <nav class="mList" aria-label="Menu">
     <button class="mItem" data-go="pupitre"><svg class="mIco mTr" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Jouer</span></button>
+    <button class="mItem" data-go="settings" aria-label="Accessibilité : affichage et VoiceOver"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg><span class="mTwo">Accessibilité<small class="mSub">affichage &amp; VoiceOver</small></span></button>
     <button class="mItem" data-go="lib"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="4.5" width="12" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="10" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="10.5" width="12" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="16" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="16.5" width="12" height="3" rx="1.2" fill="currentColor"/></svg><span>Mes morceaux</span></button>
-    <button class="mItem mImp" data-go="import"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 5 10h4.5v6h5v-6H19z" fill="currentColor"/><rect x="4" y="18" width="16" height="3" rx="1.2" fill="currentColor"/></svg><span>Importer une partition</span></button>
+    <button class="mItem" data-go="import"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 5 10h4.5v6h5v-6H19z" fill="currentColor"/><rect x="4" y="18" width="16" height="3" rx="1.2" fill="currentColor"/></svg><span>Importer une partition</span></button>
     <button class="mItem" data-go="train"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="5.2" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg><span>Entraînement</span></button>
-    <button class="mItem" data-go="metro"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg><span>Métronome</span></button>
     <button class="mItem" data-go="tuner"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 2v9a4 4 0 0 0 8 0V2h-2.6v9a1.4 1.4 0 0 1-2.8 0V2z" fill="currentColor"/><rect x="10.7" y="14" width="2.6" height="8" rx="1" fill="currentColor"/></svg><span>Accordeur</span></button>
-    <button class="mItem" data-go="settings"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.3 2h3.4l.5 2.6 1.7.7 2.2-1.5 2.4 2.4-1.5 2.2.7 1.7 2.6.5v3.4l-2.6.5-.7 1.7 1.5 2.2-2.4 2.4-2.2-1.5-1.7.7-.5 2.6h-3.4l-.5-2.6-1.7-.7-2.2 1.5-2.4-2.4 1.5-2.2-.7-1.7L2 13.7v-3.4l2.6-.5.7-1.7-1.5-2.2 2.4-2.4 2.2 1.5 1.7-.7zM12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6z" fill="currentColor" fill-rule="evenodd"/></svg><span>Réglages</span></button>
+    <button class="mItem" data-go="metro"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg><span>Métronome</span></button>
+    <button class="mItem" data-go="instr"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="7" width="4.4" height="14" rx="1.2" fill="currentColor"/><rect x="9.8" y="7" width="4.4" height="14" rx="1.2" fill="currentColor"/><rect x="16.6" y="7" width="4.4" height="14" rx="1.2" fill="currentColor"/><rect x="2" y="2" width="6.4" height="3" rx="1.2" fill="currentColor"/><rect x="8.8" y="2" width="6.4" height="3" rx="1.2" fill="currentColor"/><rect x="15.6" y="2" width="6.4" height="3" rx="1.2" fill="currentColor"/><rect x="4.4" y="4.5" width="1.6" height="3" fill="currentColor"/><rect x="11.2" y="4.5" width="1.6" height="3" fill="currentColor"/><rect x="18" y="4.5" width="1.6" height="3" fill="currentColor"/></svg><span>Instrument</span></button>
     <button class="mItem" data-go="help"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M9.2 9.3a2.9 2.9 0 1 1 4.3 2.5c-.9.5-1.5 1-1.5 2.2" fill="none" stroke="var(--bg)" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17.6" r="1.4" fill="var(--bg)"/></svg><span>Aide</span></button>
   </nav>
 </div>
@@ -755,9 +767,10 @@ const ACC_SAY={'-2':' double bémol','-1':' bémol','0':'','1':' dièse','2':' d
 const TRANSP={Bb:{semi:2,steps:1,label:'trompette en si♭'},C:{semi:0,steps:0,label:'en ut'}};
 
 /* ---------- Settings ---------- */
-const S={view:'staff',metroVol:'100',metroAcc:true,metroSnd:'click',sub:'1',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'1',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
+const S={view:'staff',metroVol:'100',metroAcc:true,metroSnd:'click',sub:'2',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'1',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
   melody:true,metro:true,chords:false,countIn:true,loop:false,stepSound:true,follow:false,tunerSpeak:true,readFing:false};
 try{Object.assign(S,JSON.parse(localStorage.getItem('tbb-settings')||'{}'))}catch(e){}
+if(S.subV!==2){S.sub='2';S.subV=2;try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
 function saveS(){try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
 
 /* ---------- Pitch spelling ---------- */
@@ -1536,7 +1549,7 @@ function tHit(t,type,f0,f1,vol,dec){ vol=Math.max(0.0002,vol*MV()); const o=ctx.
   g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.003); g.gain.exponentialRampToValueAtTime(0.0001,t+dec); o.connect(g).connect(master); o.start(t); o.stop(t+dec+0.02); }
 const kick=t=>tHit(t,'sine',150,45,0.9,0.28);
 const snare=t=>{nHit(t,'highpass',1200,0.45,0.17); tHit(t,'triangle',190,0,0.25,0.09);};
-const hat=(t,v)=>nHit(t,'highpass',7500,v||0.13,0.045);
+const hat=(t,v)=>nHit(t,'highpass',7000,(v||0.13)*2.5,0.05);
 const rim=t=>{tHit(t,'square',1750,0,0.12,0.03); nHit(t,'bandpass',3000,0.25,0.025);};
 const wood=(t,acc,soft)=>tHit(t,'sine',acc?1250:900,0,soft?0.18:(acc?0.6:0.42),0.07);
 function softClick(t){ const o=ctx.createOscillator(),g=ctx.createGain(); o.type='square';o.frequency.value=1000; g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(0.0002,0.08*MV()),t+0.002);g.gain.exponentialRampToValueAtTime(0.0001,t+0.035); o.connect(g).connect(master);o.start(t);o.stop(t+0.05); }
@@ -1779,10 +1792,11 @@ async function tunerStart(quiet){
   TU.peak=0; TU.started=performance.now(); TU.warned=false;
   TU.buf=new Float32Array(TU.an.fftSize); TU.on=true; TU.hist=[]; TU.stableM=null; TU.since=0; TU.lastSaid=0; TU.lastSaidM=null; TU.matchSince=0;
   TU.timer=setInterval(tunerTick,60);
-  $('tunerBtn').textContent='Arrêter l’accordeur'; $('tState').textContent='Jouez une note…';
+  $('tunerBtn').hidden=true; $('tState').textContent='Jouez une note…';
   if(!quiet) say('Accordeur en marche. Jouez une note.');
 }
 function tunerFail(){
+  $('tunerBtn').textContent='Réessayer le micro'; $('tunerBtn').hidden=false;
   $('tMsg').textContent='Le micro n’est pas accessible ici. Dans l’aperçu en ligne, le micro est bloqué : ouvrez le fichier tropical-braille-band.html directement dans Chrome, Edge ou Safari et autorisez le micro.';
   say('Micro inaccessible. Ouvrez le fichier de l’application directement dans le navigateur.');
 }
@@ -1790,7 +1804,7 @@ function tunerStop(quiet){
   TU.on=false; clearInterval(TU.timer);
   try{TU.stream.getTracks().forEach(t=>t.stop());TU.src.disconnect();TU.mute.disconnect();}catch(e){}
   $('lvl').style.width='0%';
-  $('tunerBtn').textContent='Démarrer l’accordeur'; $('tState').textContent='Micro arrêté'; $('tNote').textContent='–'; $('tNote').className='tNote'; $('tCents').innerHTML='&nbsp;';
+  $('tunerBtn').textContent='Rallumer le micro'; $('tunerBtn').hidden=curView!=='tuner'; $('tState').textContent='Micro arrêté'; $('tNote').textContent='–'; $('tNote').className='tNote'; $('tCents').innerHTML='&nbsp;';
   if(!quiet) say('Accordeur arrêté.');
 }
 function yin(buf,sr){
@@ -1892,7 +1906,7 @@ function setSong(s,announce,id){
   if(P.on) stopPlay(); resumeAt=null;
   song=s; curId=id||'demo'; try{localStorage.setItem('tbb-cur',curId)}catch(e){}
   const e=libIndex().find(x=>x.id===curId); const pr=(e&&e.prefs)||{};
-  for(const k of PREF_KEYS) if(pr[k]!=null) S[k]=pr[k];
+  for(const k of PREF_KEYS) if(pr[k]!=null&&!(k==='sub'&&pr.subV!==2)) S[k]=pr[k];
   saveS(); applySettingsUi();
   applyChordEdits();
   curM=Math.max(0,Math.min(song.measures.length-1,(pr.m||1)-1)); curN=firstNoteOfMeasure(curM);
@@ -1929,7 +1943,7 @@ function savePrefsSoon(){
     const idx=libIndex(); let e=idx.find(x=>x.id===curId);
     if(!e&&curId==='demo'){ e={id:'demo',title:song.title,name:'démo',kind:'demo',added:0,prefs:{}}; idx.push(e); }
     if(!e) return;
-    e.prefs={bpm,m:curM+1}; for(const k of PREF_KEYS) e.prefs[k]=S[k];
+    e.prefs={bpm,m:curM+1,subV:2}; for(const k of PREF_KEYS) e.prefs[k]=S[k];
     _idx=idx; libSaveIndex();
   },500);
 }
@@ -2000,7 +2014,7 @@ function toggle(k){
   say((TG_SAY[k]||k)+(S[k]?' activé':' désactivé'));
 }
 document.querySelectorAll('.tg[data-k]').forEach(b=>b.addEventListener('click',()=>toggle(b.dataset.k)));
-const VIEWS={pupitre:'vPupitre',lib:'vLib',train:'vTrain',tuner:'vTuner',metro:'vMetro',settings:'vSettings',help:'vHelp'};
+const VIEWS={pupitre:'vPupitre',lib:'vLib',import:'vImport',train:'vTrain',tuner:'vTuner',metro:'vMetro',settings:'vSettings',instr:'vInstr',help:'vHelp'};
 function showView(v){
   for(const k in VIEWS){ $(VIEWS[k]).hidden=k!==v; $('tab-'+k).setAttribute('aria-selected',String(k===v)); }
   curView=v;
@@ -2025,14 +2039,15 @@ let sbT=null; window.addEventListener('resize',()=>{clearTimeout(sbT);sbT=setTim
 var curView='pupitre';
 function openMenu(){ const m=$('menu'); m.hidden=false; $('menuBtn').setAttribute('aria-expanded','true');
   m.querySelectorAll('.mItem').forEach(b=>{ if(b.dataset.go===curView) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
-  (m.querySelector('.mItem[aria-current]')||m.querySelector('.mItem')).focus(); say('Menu. Jouer, Mes morceaux, Importer une partition, Entraînement, Métronome, Accordeur, Réglages, Aide.'); }
+  (m.querySelector('.mItem[aria-current]')||m.querySelector('.mItem')).focus(); say('Menu. Jouer, Accessibilité, Mes morceaux, Importer une partition, Entraînement, Accordeur, Métronome, Instrument, Aide.'); }
 function closeMenu(){ $('menu').hidden=true; $('menuBtn').setAttribute('aria-expanded','false'); }
 $('menuBtn').onclick=()=>{ $('menu').hidden?openMenu():closeMenu(); };
 $('menuClose').onclick=()=>{ closeMenu(); if(curView!=='pupitre'){showView('pupitre');say('Jouer');} $('menuBtn').focus(); };
 $('menu').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeMenu();if(curView!=='pupitre'){showView('pupitre');say('Jouer');}$('menuBtn').focus();} });
-document.querySelectorAll('#menu .mItem').forEach(b=>b.addEventListener('click',()=>{ const g=b.dataset.go; closeMenu();
+document.querySelectorAll('#menu .mItem').forEach(b=>b.addEventListener('click',()=>{ b.classList.add('mOn'); setTimeout(()=>{ b.classList.remove('mOn'); menuGo(b); },180); }));
+function menuGo(b){ const g=b.dataset.go; closeMenu();
   if(g==='import'){ openImport(); return; } if(g==='lib'){ openLib(); return; } showView(g);
-  const t={pupitre:'Jouer',train:'Entraînement',lib:'Mes morceaux',tuner:'Accordeur',metro:'Métronome',settings:'Réglages',help:'Aide'}[g]; if(t&&g!=='tuner') say(t); }));
+  const t={pupitre:'Jouer',train:'Entraînement',lib:'Mes morceaux',tuner:'Accordeur',metro:'Métronome',settings:'Accessibilité',instr:'Instrument',help:'Aide'}[g]; if(t&&g!=='tuner') say(t); }
 function toggleView(){ if(!VF){toast('Partition indisponible (bibliothèque non chargée)');return;} S.view=S.view==='staff'?'roll':'staff'; saveS(); if(song){renderMeasure();} say(S.view==='staff'?'Affichage partition classique':'Affichage en blocs de notes'); }
 $('vbNotes').onclick=()=>{if(S.view!=='roll')toggleView();}; $('vbStaff').onclick=()=>{if(S.view!=='staff')toggleView();};
 let rzT=null; window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(song&&S.view==='staff')renderStaff();},150);});
@@ -2084,11 +2099,8 @@ function toggleKaraoke(force){
 $('lyrBtn').onclick=()=>toggleKaraoke(); $('kClose').onclick=()=>toggleKaraoke(false);
 $('karaoke').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();toggleKaraoke(false);} });
 window.addEventListener('resize',()=>{ if(!$('karaoke').hidden) kSize(); });
-function openImport(){ $('importModal').hidden=false; $('imPick').focus(); say('Importer une partition. Choisissez le fichier du morceau : MusicXML, conseillé car il garde les accords, ou MIDI. Bouton Choisir le fichier.'); }
-function closeImport(){ $('importModal').hidden=true; }
-$('imPick').onclick=()=>{ closeImport(); $('fileIn').click(); };
-$('imCancel').onclick=closeImport;
-$('importModal').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();closeImport();} });
+function openImport(){ if(!$('menu').hidden) closeMenu(); showView('import'); $('imPick').focus(); say('Importer une partition. Choisissez le fichier du morceau : MusicXML, conseillé car il garde les accords, ou MIDI. Bouton Choisir le fichier.'); }
+$('imPick').onclick=()=>{ $('fileIn').click(); };
 $('fileIn').onchange=e=>{const f=e.target.files[0]; if(f) loadFile(f); e.target.value='';};
 $('demoBtn').onclick=()=>{loadDemo(true);showView('pupitre');};
 $('bPlay').onclick=togglePlay;
@@ -2151,7 +2163,7 @@ $('cmInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault
 const HELP_SAY='Raccourcis. Espace ou P : lecture ou pause. S : stop. Flèches gauche et droite : note précédente ou suivante. Flèches haut et bas : mesure précédente ou suivante. Touche Début : retour au début. L : lire la mesure. N : redire la note. A : dire l’accord. Plus et moins : tempo. R : dire le tempo. B : boucle. E : écoute puis joue. M : métronome. T : accordeur. Q : menu. G : grossir l’affichage. F : réduire l’affichage. V : partition classique ou blocs de notes. K : paroles en grand. I : importer une partition. O : ouvrir mes morceaux. Échap : tout arrêter.';
 document.addEventListener('keydown',e=>{
   if(e.ctrlKey||e.metaKey||e.altKey) return;
-  if(!$('chordModal').hidden||!$('importModal').hidden||!$('profileModal').hidden||!$('fsModal').hidden||!$('menu').hidden) return;
+  if(!$('chordModal').hidden||!$('profileModal').hidden||!$('fsModal').hidden||!$('menu').hidden) return;
   const tg=e.target, tag=tg.tagName;
   if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA') return;
   const k=e.key;
@@ -2169,7 +2181,7 @@ document.addEventListener('keydown',e=>{
     r:()=>say('Tempo '+bpm), R:()=>say('Tempo '+bpm),
     b:()=>toggle('loop'), B:()=>toggle('loop'), e:()=>toggle('echo'), E:()=>toggle('echo'),
     m:()=>toggle('metro'), M:()=>toggle('metro'),
-    t:()=>showView('tuner'), T:()=>showView('tuner'), q:()=>{$('menu').hidden?openMenu():closeMenu();}, Q:()=>{$('menu').hidden?openMenu():closeMenu();},
+    t:()=>curView==='tuner'?tunerToggle():showView('tuner'), T:()=>curView==='tuner'?tunerToggle():showView('tuner'), q:()=>{$('menu').hidden?openMenu():closeMenu();}, Q:()=>{$('menu').hidden?openMenu():closeMenu();},
     i:openImport, I:openImport, v:toggleView, V:toggleView, k:()=>toggleKaraoke(), K:()=>toggleKaraoke(),
     o:()=>openLib(), O:()=>openLib(),
     h:()=>say(HELP_SAY), H:()=>say(HELP_SAY), '?':()=>say(HELP_SAY),
