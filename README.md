@@ -19,3 +19,7 @@ Tout tient dans le seul fichier `index.html`, qui fonctionne aussi hors connexio
 - Partition classique : [VexFlow](https://www.vexflow.com) (licence MIT) et la police musicale Bravura (SIL OFL).
 - Polices : Atkinson Hyperlegible (Braille Institute) et Righteous, via Google Fonts (licence SIL OFL).
 - Logo et visuels : Tropical Brass Band.
+
+## Partitions du groupe
+
+Le dossier [partitions](partitions/) contient les partitions MusicXML du groupe, à télécharger puis à ouvrir avec « Importer une partition ».
