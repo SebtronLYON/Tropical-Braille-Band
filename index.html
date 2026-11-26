@@ -3121,7 +3121,24 @@ function fitJouer(){ const v=$('vPupitre'); if(!v||v.hidden) return; const now=v
   shrinkTo(.6);
   if(over()>0&&roll&&!roll.hidden){ roll._gmax=0; roll.style.minHeight=''; const rh=roll.offsetHeight; roll.style.height=Math.max(110,rh-over())+'px'; }
   if(over()>0) shrinkTo(.35); }
-let _fitT=null; const fitSoon=()=>{ clearTimeout(_fitT); _fitT=setTimeout(()=>{ try{fitJouer()}catch(e){} },30); };
+/* side by side: note name centred with the valve circles, GRAVE level with PISTON */
+function alignNow(){ const v=$('vPupitre'); if(!v||v.hidden) return; const nc=v.querySelector('.noteCard'), fc=v.querySelector('.fingCard'); if(!nc||!fc) return;
+  const nm=nc.querySelector('.noteRow'), fm=fc.querySelector('svg'), nl=$('reg'), fl=$('fingTxt'); if(!nm||!fm||!nl||!fl) return;
+  [nm,fm].forEach(e=>{ e.style.minHeight=''; }); nm.style.display=''; [nl,fl].forEach(e=>e.style.marginTop=''); [nc,fc].forEach(c=>[...c.children].forEach(e=>e.style.transform=''));
+  if(Math.abs(nc.getBoundingClientRect().top-fc.getBoundingClientRect().top)>4) return; // stacked (phone)
+  const H=Math.max(nm.offsetHeight,fm.getBoundingClientRect().height);
+  nm.style.minHeight=H+'px'; nm.style.display='flex'; nm.style.alignItems='center'; nm.style.justifyContent='center';
+  const box=e=>e.getBoundingClientRect();
+  // same space between the main thing and its label
+  const gN=box(nl).top-box(nm).bottom, gF=box(fl).top-(box(fm).top+H);
+  if(gN<gF) nl.style.marginTop=(parseFloat(getComputedStyle(nl).marginTop)||0)+(gF-gN)+'px'; else if(gF<gN) fl.style.marginTop=(parseFloat(getComputedStyle(fl).marginTop)||0)+(gN-gF)+'px';
+  if(H>box(fm).height+1){ fm.style.minHeight=H+'px'; }
+  // then same start: compare the main element tops and pad the bottom of the higher card's content
+  const mid=e=>{ const r=box(e); return (r.top+r.bottom)/2; }, big=$('noteBig')||nm;
+  const d=Math.round(mid(big)-mid(fm)); if(Math.abs(d)>1){ const c=d>0?nc:fc; [...c.children].forEach(e=>e.style.transform='translateY('+(-Math.abs(d))+'px)'); }
+  { const corr=Math.round((parseFloat(getComputedStyle(big).fontSize)||0)*0.06); /* capitals sit above the text-box centre */ const t0=d>1?-Math.abs(d):0; if(corr) nm.style.transform='translateY('+(t0+corr)+'px)'; }
+}
+let _fitT=null; const fitSoon=()=>{ clearTimeout(_fitT); _fitT=setTimeout(()=>{ try{fitJouer()}catch(e){} try{alignNow()}catch(e){} },30); };
 window.addEventListener('resize',fitSoon); window.addEventListener('orientationchange',fitSoon);
 { const _rm2=renderMeasure; renderMeasure=function(){ const r=_rm2.apply(this,arguments); fitSoon(); return r; };
   const _rn2=renderNow; renderNow=function(){ const r=_rn2.apply(this,arguments); fitSoon(); return r; }; }
