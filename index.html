@@ -1794,12 +1794,14 @@ function chordAt(q){let c=null; for(const ch of song.chords){if(ch.q<=q+1e-6)c=c
   // after the last chord of the score, its bar ends and no chord is held any more
   const L=song.chords[song.chords.length-1]; if(c&&c===L){ const m=song.measures[L.m!=null&&L.m>=0?L.m:song.measures.findIndex(x=>L.q>=x.startQ-1e-6&&L.q<x.startQ+x.len-1e-6)]; if(m&&q>=m.startQ+m.len-1e-6) return null; }
   return c;}
+const chKey=ch=>'m'+ch.m+'@'+(+ch.pos||0);
+const chSig=ch=>{const o=ch.orig||ch; return o.step+(o.alter||0)+'|'+(o.suffix||'')+'|'+(o.bassStep||'')+(o.bassAlter||0);};
 function applyChordEdits(){
   if(!song) return;
   let ed={}; try{ed=JSON.parse(localStorage.getItem('tbb-chords:'+song.title)||'{}')}catch(e){}
   for(const ch of song.chords){
     Object.assign(ch,ch.orig);
-    const e=ed[ch.id];
+    const e=ed[chKey(ch)]; if(e&&e.o!==chSig(ch)) continue;
     if(e){const p=parseChordStr(e.str); if(p){const t0=TRANSP[e.transp]||TRANSP.C, ek=+e.ks||0, es=ek?ksCalc(song._f0!=null?song._f0:song.fifths,ek).steps:0, t={semi:t0.semi+ek,steps:t0.steps+es};
       const r=transposeRoot(p.step,p.alter,-t.semi,-t.steps); const b=p.bassStep?transposeRoot(p.bassStep,p.bassAlter,-t.semi,-t.steps):null;
       Object.assign(ch,{step:r.step,alter:r.alter,suffix:p.suffix,bassStep:b?b.step:null,bassAlter:b?b.alter:0,inferred:false,edited:true});}}
@@ -2622,8 +2624,8 @@ function closeChordEdit(){ $('chordModal').hidden=true; editing=null; }
 function saveChordEdit(reset){
   if(!editing) return;
   let ed={}; try{ed=JSON.parse(localStorage.getItem('tbb-chords:'+song.title)||'{}')}catch(e){}
-  if(reset) delete ed[editing.id];
-  else{ const v=$('cmInput').value; if(!parseChordStr(v)){toast('Nom d’accord non reconnu (ex. Am, F#7/C#)');return;} ed[editing.id]={str:v,transp:S.transp,ks:+S.keyShift||0}; }
+  delete ed[editing.id]; if(reset) delete ed[chKey(editing)];
+  else{ const v=$('cmInput').value; if(!parseChordStr(v)){toast('Nom d’accord non reconnu (ex. Am, F#7/C#)');return;} ed[chKey(editing)]={str:v,transp:S.transp,ks:+S.keyShift||0,o:chSig(editing)}; }
   try{localStorage.setItem('tbb-chords:'+song.title,JSON.stringify(ed))}catch(e){}
   if(!reset){ // apply even if storage fails
     const p=parseChordStr($('cmInput').value), t=T();
