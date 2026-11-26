@@ -506,6 +506,14 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
 .mHead2{display:flex;align-items:center;gap:8px}.mHead2 h2{flex:1}
 #mfOrig{font-weight:800}.mfPcts .chip{white-space:nowrap}@media (max-width:520px){.mfPcts{flex-wrap:wrap!important;justify-content:center}.kHead .fsX{margin-left:auto}}
 @media (max-width:520px){.kHead .fsX{width:40px;height:40px}}
+/* transport: each group = one zone split by thin lines */
+.tpG{gap:0;padding:0;overflow:hidden}
+.tpG .tp{border:0;border-radius:0;margin:0;background:transparent}
+.tpG .tp+.tp{border-left:2px solid var(--gc)}
+.tpG .tp.play{background:var(--sun)}
+.tpG .tp:focus-visible{outline:3px solid var(--sun);outline-offset:-4px}
+.tpG .tp.play:focus-visible{outline-color:var(--sun-ink)}
+@media (max-width:760px){ .transport .wrap{gap:4px} .tpG{border-width:2.5px;border-radius:14px;padding:0;gap:0} .transport .tp{min-height:60px} .transport .tp svg{width:32px;height:32px} .transport .tp .tl{font-size:.6rem} }
 </style>
 
 <header class="top">
