@@ -73,16 +73,16 @@
     </credit>
   <credit page="1">
     <credit-type>subtitle</credit-type>
-    <credit-words default-x="556.5" default-y="1455.96" justify="center" valign="top" font-size="14">— sous la fenêtre —
+    <credit-words default-x="556.5" default-y="1463.35" justify="center" valign="top" font-size="14">— sous la fenêtre —
 </credit-words>
-    <credit-words font-family="Times">(album : Nascimento, 1997)</credit-words>
+    <credit-words font-family="Times" font-size="10">(album : Nascimento, 1997)</credit-words>
     </credit>
   <credit page="1">
     <credit-type>composer</credit-type>
-    <credit-words default-x="1081" default-y="1416.17" justify="right" valign="bottom">Milton Nascimento e Fernando Brant</credit-words>
+    <credit-words default-x="1081" default-y="1377.07" justify="right" valign="bottom">Milton Nascimento e Fernando Brant</credit-words>
     </credit>
   <credit page="1">
-    <credit-words default-x="556.5" default-y="1416.17" justify="center" valign="bottom" font-size="14">Thème et Refrain</credit-words>
+    <credit-words default-x="556.5" default-y="1425.68" justify="center" valign="bottom" font-size="14">Thème et Refrain</credit-words>
     </credit>
   <part-list>
     <score-part id="P1">
@@ -108,7 +108,7 @@
             <left-margin>50</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <top-system-distance>191.8</top-system-distance>
+          <top-system-distance>238.3</top-system-distance>
           </system-layout>
         </print>
       <barline location="left">
@@ -550,7 +550,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>109.58</system-distance>
+          <system-distance>99.19</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -1432,7 +1432,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>109.58</system-distance>
+          <system-distance>104.73</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -1960,7 +1960,6 @@
           <root-step>A</root-step>
           </root>
         <kind text="m">minor</kind>
-        <offset>2</offset>
         </harmony>
       <note default-x="10.66" default-y="-50">
         <pitch>
@@ -1993,7 +1992,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>109.58</system-distance>
+          <system-distance>109.46</system-distance>
           </system-layout>
         </print>
       <direction placement="above" system="only-top">
@@ -2282,7 +2281,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>109.58</system-distance>
+          <system-distance>99.19</system-distance>
           </system-layout>
         </print>
       <note default-x="58.1" default-y="-20">
@@ -2588,7 +2587,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>109.58</system-distance>
+          <system-distance>99.19</system-distance>
           </system-layout>
         </print>
       <note default-x="58.72" default-y="-40">
@@ -2865,7 +2864,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>109.58</system-distance>
+          <system-distance>99.19</system-distance>
           </system-layout>
         </print>
       <note default-x="58.72" default-y="-40">
