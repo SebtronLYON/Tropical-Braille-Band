@@ -194,6 +194,7 @@ input[type=range]{width:100%;accent-color:var(--sun);height:36px}
 .goList button.linkA{border-color:var(--sun);background:var(--panel)}
 .goTools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.goTools .btn{flex:1 1 160px}
 .goTools .btn[aria-pressed="true"]{background:var(--sun);color:#000;border-color:var(--sun)}
+.goHelpTxt{margin:-4px 0 0;color:var(--muted);font-size:calc(.9rem * var(--zoom));line-height:1.35}.goHelpTxt:empty{display:none}.goHelpTxt b{color:var(--ink)}
 .goHint{margin:8px 0 0;color:var(--sun);font-weight:700}.goHint:empty{display:none}
 .bandList .li-main b::before{content:"🦩 "}
 .libTools{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
@@ -376,7 +377,8 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .libGrid .libCell{margin:0}
 .libH{margin:0 0 10px;color:var(--sun)}
 .libSub{margin:14px 0 8px;font-size:calc(1.05rem * var(--zoom));color:var(--ink)}.libCell .libSub:first-of-type{margin-top:4px}
-@media (max-width:760px){.libGrid{grid-template-columns:1fr}}
+#libCell1{grid-column:1;grid-row:1 / span 3}#libCell2,#libCell3,#libCell4{grid-column:2}
+@media (max-width:760px){.libGrid{grid-template-columns:1fr}#libCell1,#libCell2,#libCell3,#libCell4{grid-column:1;grid-row:auto}}
 .goList{scrollbar-gutter:stable;padding-right:14px!important;padding-bottom:2px}
 .goList.secs .goRow>button:first-child span{font-size:calc(1.45rem * var(--zoom));line-height:1.15}
 .goList.secs .goRow>button:first-child small{font-size:calc(.85rem * var(--zoom))}
@@ -1036,7 +1038,9 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
   <div class="card">
     <h2>Pour travailler</h2>
     <p><b>Parties</b> : l’application lit les repères du fichier (A, B, Thème, Refrain…) ; seuls les noms de parties écrits dans le fichier sont utilisés ; s’il n’y en a pas, le morceau se joue en entier, sans parties. Le choix « Partie » permet d’y sauter, et « Longueur : la partie » de la boucler.</p>
-    <p><b>Boucle</b> : rejoue la mesure en cours, ou 2, 4 ou 8 mesures, ou toute la partie. <b>Tempo qui monte</b> : à chaque tour de boucle, le tempo gagne 5, jusqu’au tempo original.</p>
+    <p><b>Boucle</b> (écran Loop / Entraînement) : « Boucler » puis « Quoi boucler ? » : des mesures à partir de la mesure en cours, tout le morceau, une partie ou plusieurs parties.</p>
+    <p><b>Boutons Partie et Mesure de Jouer</b> : toucher une partie ou une mesure s’y place : LECTURE partira de là. L’icône boucle à côté (petite icône dans chaque mesure) boucle cette partie ou cette mesure. Appuyer sur une icône boucle et glisser allume en jaune plusieurs parties ou mesures : en lâchant, elles tournent en boucle ensemble (à la souris, on peut glisser directement sur les mesures). Avec VoiceOver : bouton « Relier » en bas de la fenêtre, puis la première et la dernière. Aller hors de la boucle remet la boucle sur tout le morceau. Le bouton <b>LIRE</b> dit aussi ce qui tourne en boucle.</p>
+    <p> <b>Tempo qui monte</b> : à chaque tour de boucle, le tempo gagne 5, jusqu’au tempo original.</p>
     <p>Dans le menu, l’écran <b>Loop / Entraînement</b> (aussi avec le bouton loop de Jouer) regroupe : la boucle (mesure, partie ou morceau entier), tempo qui monte, écoute puis joue, vérifier mes notes au micro, suivre les reprises, accompagnement et son en pas à pas.</p>
     <p><b>Écoute puis joue</b> : l’application joue une mesure, puis laisse une mesure avec seulement le click pour que vous la rejouiez. Avec <b>Vérifier mes notes au micro</b>, elle dit combien de notes étaient justes.</p>
     <p><b>Suivre les reprises</b> : la lecture respecte les barres de reprise, les fins 1 et 2, D.C., D.S., Coda et Fine. <b>Accompagnement</b> : si le fichier contient d’autres instruments, ils jouent doucement avec vous.</p>
@@ -1277,6 +1281,7 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 <div id="goModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="goT">
   <div class="card goCard">
     <div class="mfPopHead"><h2 id="goT" style="margin:0"></h2><button class="btn mfSmall" id="goClose" aria-label="Fermer">✕</button></div>
+    <p class="goHelpTxt" id="goHelp"></p>
     <div class="goList" id="goList"></div>
     <p class="goHint" id="goHint" aria-live="polite"></p>
     <div class="goTools" id="goTools"></div>
@@ -2441,6 +2446,8 @@ function setLoopRange(a,b,kind,lbl,speak){ if(!song) return; const last=song.mea
   S.loop=true; S.loopN='range'; S.loopA=a; S.loopB=b; S.loopK=kind; S.loopLbl=lbl||''; saveS(); savePrefsSoon();
   const was=P.on; if(was) stopPlay(); secAll=true; curPos=null; if(curM<a||curM>b) gotoMeasure(a,false); applySettingsUi(); try{lpUi();}catch(e){} try{renderAll();}catch(e){}
   if(speak!==false) say('Boucle : '+loopSay()); if(was) startPlay(); }
+function loopSayLong(){ if(!song) return ''; if(!S.loop) return 'Boucle coupée.';
+  return 'Boucle : '+loopSay()+'. Pour changer, bouton Partie ou bouton Mesure : toucher pour y aller, icône boucle pour boucler, glisser depuis une icône boucle pour en boucler plusieurs.'; }
 function loopSay(){ const r=loopRange(); if(!S.loop) return 'boucle coupée'; if(!r) { const n=+S.loopN||1; return n===1?'la mesure en cours':n+' mesures à partir de la mesure en cours'; }
   const M=song.measures; return (r.lbl&&r.lbl!=='tout le morceau'?r.lbl+', ':'')+(r.lbl==='tout le morceau'?'tout le morceau':r.a===r.b?'mesure '+M[r.a].num:'mesures '+M[r.a].num+' à '+M[r.b].num); }
 function makeOrder(){
@@ -3024,7 +3031,8 @@ $('bPrevM').onclick=()=>gotoMeasure(curM-1,true);
 $('bNextM').onclick=()=>gotoMeasure(curM+1,true);
 $('bPrevN').onclick=()=>stepNote(-1);
 $('bNextN').onclick=()=>stepNote(1);
-$('bSay').onclick=e=>{ if($('bSay')._long){ $('bSay')._long=false; return; } if(song)say(measureSummary(curM,true)); };
+const sayFull=()=>say(measureSummary(curM,true)+' '+loopSayLong());
+$('bSay').onclick=e=>{ if($('bSay')._long){ $('bSay')._long=false; return; } if(song)sayFull(); };
 { const b=$('bSay'); let tm=null;
   const down=()=>{ clearTimeout(tm); b._long=false; tm=setTimeout(()=>{ b._long=true; S.voice=!S.voice; saveS(); applySettingsUi();
       if(S.voice) say('Voix de l’application activée'); else { try{speechSynthesis.cancel();}catch(e){} $('live').textContent='Voix de l’application coupée'; toast('Voix coupée'); } },650); };
@@ -3096,7 +3104,7 @@ document.addEventListener('keydown',e=>{
     ArrowUp:()=>gotoMeasure(curM-1,true), PageUp:()=>gotoMeasure(curM-1,true),
     Home:()=>gotoMeasure(0,true),
     '+':()=>setBpm(bpm+5,true), '=':()=>setBpm(bpm+5,true), '-':()=>setBpm(bpm-5,true), '_':()=>setBpm(bpm-5,true),
-    l:()=>song&&say(measureSummary(curM,true)), L:()=>song&&say(measureSummary(curM,true)),
+    l:()=>song&&sayFull(), L:()=>song&&sayFull(),
     n:()=>{if(song&&curN!=null)speakNote(song.notes[curN],true);}, N:()=>{if(song&&curN!=null)speakNote(song.notes[curN],true);},
     a:()=>{if(!song)return;const n=curN!=null?song.notes[curN]:null;const c=song.chords.length?chordAt(n?n.q:song.measures[curM].startQ):null;say(c?'Accord '+chordSay(c):'Pas d’accord');},
     r:()=>say('Tempo '+bpm), R:()=>say('Tempo '+bpm),
@@ -3689,7 +3697,10 @@ function openGo(kind){ if(!song) return; { const o=$('goList'), n=o.cloneNode(fa
     goTools('mes'); { const items=[...L.querySelectorAll('.mPad')];
       goDrag(L,items,pt=>pt==='mouse'?'.mPad':'.mLp',(a,b)=>{ goMark(items,a,b); goLater(()=>{ setLoopRange(a,b,'bars','',true); close(); }); }); } }
   M.hidden=false; const c=L.querySelector('[aria-current="true"]')||L.firstChild; if(c){ c.focus(); c.scrollIntoView({block:'center'}); }
-  say($('goT').textContent); $('goClose').onclick=close; M.onclick=e=>{ if(e.target===M) close(); };
+  { const H={sec:['<b>Toucher une partie</b> : on s’y place, LECTURE partira de là. <b>Icône boucle</b> : boucler la partie. <b>Appuyer sur une icône boucle et glisser</b> : boucler plusieurs parties.','Toucher une partie : on s’y place, LECTURE partira de là. Bouton boucle à droite : boucler la partie. Pour plusieurs parties : bouton Relier, en bas, puis la première et la dernière partie.'],
+      mes:['<b>Toucher une mesure</b> : on s’y place, LECTURE partira de là. <b>Petite icône boucle</b> : boucler la mesure. <b>Glisser sur plusieurs mesures</b> (sur téléphone, depuis une petite icône) : les boucler ensemble.','Toucher une mesure : on s’y place, LECTURE partira de là. Petite icône boucle : boucler la mesure. Pour plusieurs mesures : bouton Relier, en bas, puis la première et la dernière mesure.']}[kind];
+    $('goHelp').innerHTML=H?H[0]:''; say($('goT').textContent+'. '+(H?H[1]+' '+(S.loop?'Boucle actuelle : '+loopSay()+'.':''):'')); }
+  $('goClose').onclick=close; M.onclick=e=>{ if(e.target===M) close(); };
   M.onkeydown=e=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); close(); } }; }
 $('secPill').onclick=()=>openGo('sec'); $('mPillBtn').onclick=()=>openGo('mes');
 
