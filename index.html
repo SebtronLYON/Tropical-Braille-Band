@@ -371,6 +371,12 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .secPill,.mPill{border:0;cursor:pointer;font-family:inherit}.secPill:hover,.mPill:hover{filter:brightness(1.1);box-shadow:0 0 0 2px var(--sun)}
 .goCard{max-width:640px;width:100%;max-height:80vh;display:flex;flex-direction:column;gap:12px}
 .goCard.secMode{max-width:430px}
+#vLib{max-width:1200px}
+.libGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.libGrid .libCell{margin:0}
+.libH{margin:0 0 10px;color:var(--sun)}
+.libSub{margin:14px 0 8px;font-size:calc(1.05rem * var(--zoom));color:var(--ink)}.libCell .libSub:first-of-type{margin-top:4px}
+@media (max-width:760px){.libGrid{grid-template-columns:1fr}}
 .goList{scrollbar-gutter:stable;padding-right:14px!important;padding-bottom:2px}
 .goList.secs .goRow>button:first-child span{font-size:calc(1.45rem * var(--zoom));line-height:1.15}
 .goList.secs .goRow>button:first-child small{font-size:calc(.85rem * var(--zoom))}
@@ -662,14 +668,14 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
     <button class="zb fsBtn" id="fsBtn" aria-label="Plein écran" title="Plein écran"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9V3h6M15 3h6v6M21 15v6h-6M9 21H3v-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <button class="menuBtn" id="menuBtn" aria-haspopup="dialog" aria-expanded="false" aria-keyshortcuts="Q"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="2.8" rx="1.4" fill="currentColor"/><rect x="3" y="10.6" width="18" height="2.8" rx="1.4" fill="currentColor"/><rect x="3" y="16.2" width="18" height="2.8" rx="1.4" fill="currentColor"/></svg><span>Menu</span></button>
     <button class="btn-open" id="openBtn" aria-keyshortcuts="I">Importer une partition</button>
-    <button class="btn-open lib" id="libBtn" aria-keyshortcuts="O">Ouvrir mes morceaux</button>
+    <button class="btn-open lib" id="libBtn" aria-keyshortcuts="O">Ouvrir la bibliothèque</button>
     <input type="file" id="fileIn" accept=".mid,.midi,.xml,.musicxml,.mxl,.mscz" hidden>
   </div>
   <div class="wrap" style="padding-block:0 10px">
     <nav class="tabs" role="tablist" aria-label="Vues">
       <button class="tab imp" id="tabImport" aria-label="Importer une partition">Importer</button>
       <button class="tab" role="tab" id="tab-pupitre" aria-selected="true" aria-controls="vPupitre"><svg class="tIco" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg>Jouer</button>
-      <button class="tab" role="tab" id="tab-lib" aria-selected="false" aria-controls="vLib">Mes morceaux</button>
+      <button class="tab" role="tab" id="tab-lib" aria-selected="false" aria-controls="vLib">Bibliothèque</button>
       <button class="tab" role="tab" id="tab-import" aria-selected="false" aria-controls="vImport">Importer</button>
       <button class="tab" role="tab" id="tab-train" aria-selected="false" aria-controls="vTrain">Loop / Entraînement</button>
       <button class="tab" role="tab" id="tab-tuner" aria-selected="false" aria-controls="vTuner">Accordeur</button>
@@ -748,28 +754,41 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 </section>
 
 <section class="view wrap" id="vLib" role="tabpanel" aria-labelledby="tab-lib" hidden>
-  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Mes morceaux</span><button class="btn snHome" aria-label="Jouer : revenir à l’écran Jouer"><svg class="snTr" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Jouer</span></button></div>
-  <div class="card">
-    <h2 id="libTitle">Mes morceaux</h2>
+  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Bibliothèque</span><button class="btn snHome" aria-label="Jouer : revenir à l’écran Jouer"><svg class="snTr" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Jouer</span></button></div>
+  <h1 class="sr">Bibliothèque</h1>
+  <div class="libGrid">
+  <div class="card libCell" id="libCell1">
+    <h2 class="libH">1 · Jouer ma bibliothèque</h2>
+    <h3 id="libTitle" class="libSub">Mes morceaux</h3>
     <ul class="songs" id="libList" aria-labelledby="libTitle"></ul>
-    <div class="libTools" style="margin-top:12px"><button class="btn pri" id="libImport">Importer une partition</button><button class="btn" id="demoBtn">Recharger la démo « Caribbean Serenade »</button></div>
-    <small style="display:block;margin-top:8px;color:var(--muted)">Formats : .mid, .xml, .mxl. Vous pouvez aussi glisser-déposer un fichier sur la page. MusicXML conseillé : il garde les accords. Depuis MuseScore : Fichier › Exporter › MusicXML.</small>
     <p id="libMsg" class="tMsg"></p>
+    <div class="libTools"><button class="btn" id="demoBtn">Recharger la démo « Caribbean Serenade - toutes les parties »</button></div>
     <div id="bandBox" hidden>
-      <h2 id="bandTitle" style="margin-top:18px">Bibliothèque initiale</h2>
+      <h3 id="bandTitle" class="libSub">Bibliothèque initiale</h3>
       <ul class="songs bandList" id="bandList" aria-labelledby="bandTitle"></ul>
     </div>
-    <h2 style="margin-top:18px">Exporter vers MuseScore</h2>
+  </div>
+  <div class="card libCell" id="libCell2">
+    <h2 class="libH">2 · Importer mes morceaux</h2>
+    <div class="libTools"><button class="btn pri" id="libImport">Importer une partition</button></div>
+    <small style="display:block;margin-top:8px;color:var(--muted)">Formats : .mid, .xml, .mxl. Vous pouvez aussi glisser-déposer un fichier sur la page. MusicXML conseillé : il garde les accords. Depuis MuseScore : Fichier › Exporter › MusicXML.</small>
+    <p style="margin:10px 0 0;color:var(--muted)">Chaque partition importée est enregistrée sur cet appareil, dans « Mes morceaux », avec vos réglages : tempo, si♭ ou ut, boucle, click, accords corrigés et la dernière mesure travaillée.</p>
+  </div>
+  <div class="card libCell" id="libCell3">
+    <h2 class="libH">3 · Exporter vers MuseScore</h2>
     <div class="libTools"><button class="btn" id="exportBtn">Exporter le morceau en MusicXML</button></div>
     <small id="exportInfo" style="display:block;margin-top:8px;color:var(--muted)">Exporte la partition telle qu’affichée (si♭ ou ut), avec vos corrections d’accords. Dans MuseScore, vous pourrez ensuite l’écouter mesure par mesure ou l’exporter en braille musical (.brf).</small>
-    <h2 style="margin-top:18px">Sauvegarde</h2>
+  </div>
+  <div class="card libCell" id="libCell4">
+    <h2 class="libH">4 · Sauvegarder</h2>
     <div class="libTools">
       <button class="btn" id="bakSave">Sauvegarder mes morceaux</button>
       <button class="btn" id="bakLoad">Restaurer une sauvegarde</button>
       <input type="file" id="bakFile" accept=".json,application/json" hidden>
     </div>
     <p id="bakMsg" class="tMsg"></p>
-    <p style="margin:12px 0 0;color:var(--muted)">Chaque partition importée est enregistrée ici, sur cet appareil, avec vos réglages : tempo, si♭ ou ut, boucle, click, accords corrigés et la dernière mesure travaillée.</p>
+    <small style="display:block;margin-top:8px;color:var(--muted)">Crée un fichier avec tous vos morceaux et réglages, pour les retrouver sur un autre appareil.</small>
+  </div>
   </div>
 </section>
 <section class="view wrap" id="vImport" role="tabpanel" aria-labelledby="tab-import" hidden>
@@ -1021,7 +1040,7 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
     <p>Dans le menu, l’écran <b>Loop / Entraînement</b> (aussi avec le bouton loop de Jouer) regroupe : la boucle (mesure, partie ou morceau entier), tempo qui monte, écoute puis joue, vérifier mes notes au micro, suivre les reprises, accompagnement et son en pas à pas.</p>
     <p><b>Écoute puis joue</b> : l’application joue une mesure, puis laisse une mesure avec seulement le click pour que vous la rejouiez. Avec <b>Vérifier mes notes au micro</b>, elle dit combien de notes étaient justes.</p>
     <p><b>Suivre les reprises</b> : la lecture respecte les barres de reprise, les fins 1 et 2, D.C., D.S., Coda et Fine. <b>Accompagnement</b> : si le fichier contient d’autres instruments, ils jouent doucement avec vous.</p>
-    <p><b>Mes morceaux</b> : les partitions que vous avez importées, gardées sur cet appareil. <b>Bibliothèque initiale</b> (même écran) : les morceaux du groupe, à ouvrir d’un toucher ; un morceau en plusieurs parties est rangé sous son titre, touchez le titre pour voir ses partitions. <b>Sauvegarde</b> : enregistre tous vos morceaux dans un fichier, pour les retrouver sur un autre appareil. Sur le site du groupe, l’application marche aussi sans internet une fois ouverte une première fois.</p>
+    <p><b>Bibliothèque</b> (menu) : 4 cases. <b>1 · Jouer ma bibliothèque</b> : « Mes morceaux », les partitions que vous avez importées, gardées sur cet appareil, et la <b>Bibliothèque initiale</b> : les morceaux du groupe, à ouvrir d’un toucher ; un morceau en plusieurs parties est rangé sous son titre, touchez le titre pour voir ses partitions. <b>Sauvegarde</b> : enregistre tous vos morceaux dans un fichier, pour les retrouver sur un autre appareil. Sur le site du groupe, l’application marche aussi sans internet une fois ouverte une première fois.</p>
   </div>
   <div class="card">
     <h2>Raccourcis clavier</h2>
@@ -1046,7 +1065,7 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
       <dt><kbd>V</kbd></dt><dd>Basculer entre blocs de notes et partition classique</dd>
       <dt><kbd>K</kbd></dt><dd>Afficher les paroles en grand (karaoké)</dd>
       <dt><kbd>I</kbd></dt><dd>Importer une partition</dd>
-      <dt><kbd>O</kbd></dt><dd>Ouvrir mes morceaux</dd>
+      <dt><kbd>O</kbd></dt><dd>Ouvrir la bibliothèque</dd>
       <dt><kbd>Échap</kbd></dt><dd>Tout arrêter (son et voix)</dd>
       <dt><kbd>H</kbd></dt><dd>Entendre cette aide</dd>
     </dl>
@@ -1101,7 +1120,7 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
   <nav class="mList" aria-label="Menu">
     <button class="mItem" data-go="pupitre"><svg class="mIco mTr" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Jouer</span></button>
     <button class="mItem" data-go="settings" aria-label="Accessibilité : affichage et VoiceOver"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg><span class="mTwo">Accessibilité<small class="mSub">affichage &amp; VoiceOver</small></span></button>
-    <button class="mItem" data-go="lib"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="4.5" width="12" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="10" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="10.5" width="12" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="16" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="16.5" width="12" height="3" rx="1.2" fill="currentColor"/></svg><span>Mes morceaux</span></button>
+    <button class="mItem" data-go="lib"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="4.5" width="12" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="10" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="10.5" width="12" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="16" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="16.5" width="12" height="3" rx="1.2" fill="currentColor"/></svg><span>Bibliothèque</span></button>
     <button class="mItem" data-go="import"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.5 7H6a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3v-8a3 3 0 0 0-3-3h-2.5M12 2.5v11.5M8 10.5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Importer une partition</span></button>
     <button class="mItem" data-go="train"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6.5H8a5.5 5.5 0 0 0 0 11h1.5M9 17.5h7a5.5 5.5 0 0 0 0-11h-1.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M11.5 3.5 8.5 6.5l3 3M12.5 14.5l3 3-3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Loop / Entraînement</span></button>
     <button class="mItem" data-go="tuner"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 2v9a4 4 0 0 0 8 0V2h-2.6v9a1.4 1.4 0 0 1-2.8 0V2z" fill="currentColor"/><rect x="10.7" y="14" width="2.6" height="8" rx="1" fill="currentColor"/></svg><span>Accordeur</span></button>
@@ -2797,7 +2816,7 @@ function savePrefsSoon(){
     _idx=idx; libSaveIndex();
   },500);
 }
-function openLib(){ renderLib(); showView('lib'); const n=libIndex().filter(isMine).length, nb=bandItems.length; say('Mes morceaux. '+(n?n+' morceau'+(n>1?'x':'')+' importé'+(n>1?'s':''):'Aucun morceau importé')+'.'+(nb?' Bibliothèque initiale plus bas.':'')); setTimeout(()=>{const b=document.querySelector('#libList .li-main');if(b)b.focus();},50); }
+function openLib(){ renderLib(); showView('lib'); const n=libIndex().filter(isMine).length, nb=bandItems.length; say('Bibliothèque. Mes morceaux : '+(n?n+' morceau'+(n>1?'x':'')+' importé'+(n>1?'s':''):'Aucun morceau importé')+'.'+(nb?' Bibliothèque initiale plus bas.':'')); setTimeout(()=>{const b=document.querySelector('#libList .li-main');if(b)b.focus();},50); }
 function libOpen(id){
   if(id==='demo'){ loadDemo(true); showView('pupitre'); return; }
   let st=null; try{st=JSON.parse(localStorage.getItem('tbb-song:'+id)||'null')}catch(e){}
@@ -2900,7 +2919,7 @@ $('tabImport').onclick=openImport;
 function setSongBar(){ ['kSong','mfSong','lpSong'].forEach(id=>{ const b=$(id); if(b) sbFill(b,b.querySelector('.sbTxt'),b.querySelector('.sbIn')); }); sbFill($('songBar'),$('sbTxt'),$('sbIn')); }
 function sbFill(bar,t,inn){ if(!bar) return;
   const title=song?song.title:'Aucune partition';
-  t.textContent='♪ '+title; bar.setAttribute('aria-label','Morceau en cours : '+title+'. Ouvrir Mes morceaux et la Bibliothèque initiale'); bar.dataset.tip='Toucher pour choisir un morceau : Mes morceaux et Bibliothèque initiale';
+  t.textContent='♪ '+title; bar.setAttribute('aria-label','Morceau en cours : '+title+'. Ouvrir la bibliothèque'); bar.dataset.tip='Toucher pour choisir un morceau dans la Bibliothèque';
   bar.classList.remove('scroll');
   requestAnimationFrame(()=>{ const cs=getComputedStyle(inn); const avail=inn.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight); const over=t.scrollWidth-avail;
     if(over>4){ bar.style.setProperty('--sbx',(-over-8)+'px'); bar.style.setProperty('--sbd',Math.max(8,(over/30)/0.7+3)+'s'); bar.classList.add('scroll'); } });
@@ -2912,7 +2931,7 @@ let sbT=null; window.addEventListener('resize',()=>{clearTimeout(sbT);sbT=setTim
 var curView='pupitre';
 function openMenu(){ const m=$('menu'); m.hidden=false; $('menuBtn').setAttribute('aria-expanded','true');
   m.querySelectorAll('.mItem').forEach(b=>{ if(b.dataset.go===curView) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
-  (m.querySelector('.mItem[aria-current]')||m.querySelector('.mItem')).focus(); say('Menu. Jouer, Accessibilité, Mes morceaux, Importer une partition, Loop et entraînement, Accordeur, Click, Instrument, Aide, Infos, crédits et liens.'); }
+  (m.querySelector('.mItem[aria-current]')||m.querySelector('.mItem')).focus(); say('Menu. Jouer, Accessibilité, Bibliothèque, Importer une partition, Loop et entraînement, Accordeur, Click, Instrument, Aide, Infos, crédits et liens.'); }
 function closeMenu(){ $('menu').hidden=true; $('menuBtn').setAttribute('aria-expanded','false'); }
 $('menuBtn').onclick=()=>{ $('menu').hidden?openMenu():closeMenu(); };
 $('menuClose').onclick=()=>{ closeMenu(); if(curView!=='pupitre'){showView('pupitre');say('Jouer');} $('menuBtn').focus(); };
@@ -2921,7 +2940,7 @@ document.querySelectorAll('#menu .mItem').forEach(b=>b.addEventListener('click',
 function menuGo(b){ const g=b.dataset.go; closeMenu();
   if(g==='metro'){ openMetFull(); return; }
   if(g==='import'){ openImport(); return; } if(g==='lib'){ openLib(); return; } showView(g);
-  const t={pupitre:'Jouer',train:'Loop et entraînement',lib:'Mes morceaux',tuner:'Accordeur',metro:'Click',settings:'Accessibilité',instr:'Instrument',help:'Aide',credits:'Infos, crédits et liens'}[g]; if(t&&g!=='tuner') say(t); }
+  const t={pupitre:'Jouer',train:'Loop et entraînement',lib:'Bibliothèque',tuner:'Accordeur',metro:'Click',settings:'Accessibilité',instr:'Instrument',help:'Aide',credits:'Infos, crédits et liens'}[g]; if(t&&g!=='tuner') say(t); }
 function toggleView(){ if(!VF){toast('Partition indisponible (bibliothèque non chargée)');return;} S.view=S.view==='staff'?'roll':'staff'; saveS(); if(song){renderMeasure();} say(S.view==='staff'?'Affichage partition classique':'Affichage en blocs de notes'); }
 $('vbNotes').onclick=()=>{if(S.view!=='roll')toggleView();}; $('vbStaff').onclick=()=>{if(S.view!=='staff')toggleView();};
 let rzT=null; window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(song&&S.view==='staff')renderStaff();},150);});
@@ -3243,6 +3262,10 @@ if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostn
 applySettingsUi();
 if('speechSynthesis' in window){loadVoices();try{speechSynthesis.addEventListener('voiceschanged',loadVoices)}catch(e){}}
 (function boot(){
+  // old saved copies of Caribbean (renamed "Caribbean Serenade - toutes les parties"): drop them, the demo is the current version
+  try{ const idx=libIndex(); const old=idx.filter(e=>/^Caribbean Serenade( en UT)?\.xml$/i.test(e.name||'')||e.title==='Caribbean Serenade');
+    if(old.length){ for(const e of old){ localStorage.removeItem('tbb-song:'+e.id); if(localStorage.getItem('tbb-cur')===e.id) localStorage.setItem('tbb-cur','demo'); }
+      _idx=idx.filter(e=>!old.includes(e)); libSaveIndex(); } }catch(e){}
   let cur='demo'; try{cur=localStorage.getItem('tbb-cur')||'demo'}catch(e){}
   if(cur!=='demo'){ let st=null; try{st=JSON.parse(localStorage.getItem('tbb-song:'+cur)||'null')}catch(e){}
     if(st){ try{ setSong(st.kind==='mid'?parseMidi(unb64(st.data),st.name):parseMusicXML(st.data,st.name),false,cur); return; }catch(e){} } }
