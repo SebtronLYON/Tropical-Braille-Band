@@ -314,7 +314,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .mTop.onStaff{position:absolute;left:12px;right:12px;margin:0;pointer-events:none;z-index:1}.mTop.onStaff>*{pointer-events:auto}
 .mTop{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:calc(1.9rem * var(--zoom));margin-bottom:4px}
 .secPill,.mPill{background:var(--pink);color:#000;border-radius:999px;padding:2px 12px;font-weight:700;font-size:calc(1rem * var(--zoom));line-height:1.5;white-space:nowrap}
-.mPill{margin-left:0}.mTop{justify-content:flex-end!important;gap:8px}.mTop .secPill{margin-left:auto}.mPill b{font-size:1.15em}.mPill #mTot{margin-left:.2em}
+.mPill{margin-left:0}.mTop{justify-content:flex-end!important;gap:8px}.mTop .secPill{margin-left:auto}.secPill,.mPill{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box}.mPill b{font-size:1.15em;line-height:1}.mPill .mPw{margin-right:.3em}.mPill #mTot{margin-left:.2em}
 .stChord,.stChordHit{cursor:pointer}.stChord:hover{fill:var(--sun)}
 .vIco{width:1.4em;height:1.4em;flex:none;margin-right:.35em}
 .instrBtn,.trPill{height:var(--sh);box-sizing:border-box;border:2px solid var(--sun);border-radius:14px;background:var(--panel);color:var(--sun);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:none}
@@ -902,8 +902,8 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
 <footer class="transport" aria-label="Lecture">
   <div class="wrap">
     <div class="tpG gPlay" role="group" aria-label="Lecture">
-    <button class="tp play" id="bPlay" aria-label="Jouer" aria-keyshortcuts="Space"><svg viewBox="0 0 24 24" id="playIco"><path d="M7 4v16l13-8z"/></svg><span id="playLbl" class="tl">Lecture</span></button>
     <button class="tp" id="bStop" aria-label="Stop : un appui met en pause, un second appui revient au début du morceau" aria-keyshortcuts="S Home"><svg viewBox="0 0 24 24" id="stopIco"><path d="M6 6h12v12H6z"/></svg><span class="tl" id="stopLbl">Stop</span></button>
+    <button class="tp play" id="bPlay" aria-label="Jouer" aria-keyshortcuts="Space"><svg viewBox="0 0 24 24" id="playIco"><path d="M7 4v16l13-8z"/></svg><span id="playLbl" class="tl">Lecture</span></button>
     </div>
     <div class="tpG gMes" role="group" aria-label="Mesures">
     <button class="tp" id="bPrevM" aria-label="Mesure précédente"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14l-10-7z"/></svg><span class="tl">Mesure</span></button>
