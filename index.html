@@ -580,7 +580,7 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 @media (max-width:760px){ #vPupitre .now .fingCard svg[data-tb]{width:calc(100% * max(var(--fit,1),.7))} .status:has(.clefPill) .instrBtn{aspect-ratio:auto;width:auto;padding:2px 4px} .status:has(.clefPill) .instrBtn svg{width:calc(var(--sh) * 1.25)} .status:has(.clefPill) .trPill{width:auto;padding:0 6px!important} .status:has(.clefPill) .clefPill{padding:2px 5px!important} }
 .songs li.folder{flex-direction:column;align-items:stretch;border-style:solid;border-color:var(--sun)}
 .songs .folderBtn b{display:flex;align-items:center;gap:.3em}
-.songs .folderBtn .fIco{font-size:.8em}
+.songs .folderBtn .fIco{font-size:.8em;color:var(--sun);width:1em;display:inline-block}.libEmpty{color:var(--muted);padding:12px}
 .songs .folderBtn[aria-expanded="true"]{margin-bottom:4px}
 .subSongs{margin-top:8px!important;padding-left:12px!important;border-left:4px solid var(--sun)}
 .subSongs li{padding:12px;background:var(--panel)}
@@ -725,7 +725,7 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
     <small style="display:block;margin-top:8px;color:var(--muted)">Formats : .mid, .xml, .mxl. Vous pouvez aussi glisser-déposer un fichier sur la page. MusicXML conseillé : il garde les accords. Depuis MuseScore : Fichier › Exporter › MusicXML.</small>
     <p id="libMsg" class="tMsg"></p>
     <div id="bandBox" hidden>
-      <h2 id="bandTitle" style="margin-top:18px">Partitions du groupe</h2>
+      <h2 id="bandTitle" style="margin-top:18px">Bibliothèque initiale</h2>
       <ul class="songs bandList" id="bandList" aria-labelledby="bandTitle"></ul>
     </div>
     <h2 style="margin-top:18px">Exporter vers MuseScore</h2>
@@ -978,7 +978,7 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
     <p>Dans le menu, l’écran <b>Loop / Entraînement</b> (aussi avec le bouton loop de Jouer) regroupe : la boucle (mesure, partie ou morceau entier), tempo qui monte, écoute puis joue, vérifier mes notes au micro, suivre les reprises, accompagnement et son en pas à pas.</p>
     <p><b>Écoute puis joue</b> : l’application joue une mesure, puis laisse une mesure avec seulement le click pour que vous la rejouiez. Avec <b>Vérifier mes notes au micro</b>, elle dit combien de notes étaient justes.</p>
     <p><b>Suivre les reprises</b> : la lecture respecte les barres de reprise, les fins 1 et 2, D.C., D.S., Coda et Fine. <b>Accompagnement</b> : si le fichier contient d’autres instruments, ils jouent doucement avec vous.</p>
-    <p><b>Partitions du groupe</b> (dans Mes morceaux) : les morceaux partagés par le groupe, à ouvrir d’un toucher. <b>Sauvegarde</b> : enregistre tous vos morceaux dans un fichier, pour les retrouver sur un autre appareil. Sur le site du groupe, l’application marche aussi sans internet une fois ouverte une première fois.</p>
+    <p><b>Mes morceaux</b> : les partitions que vous avez importées, gardées sur cet appareil. <b>Bibliothèque initiale</b> (même écran) : les morceaux du groupe, à ouvrir d’un toucher ; un morceau en plusieurs parties est rangé sous son titre, touchez le titre pour voir ses partitions. <b>Sauvegarde</b> : enregistre tous vos morceaux dans un fichier, pour les retrouver sur un autre appareil. Sur le site du groupe, l’application marche aussi sans internet une fois ouverte une première fois.</p>
   </div>
   <div class="card">
     <h2>Raccourcis clavier</h2>
@@ -2643,7 +2643,7 @@ async function loadFile(file,meta){
     else if(/\.mxl$/i.test(name)){ const x=await unzipMxl(buf); s=parseMusicXML(x,name); store={name,kind:'xml',data:x}; }
     else { const x=new TextDecoder().decode(buf); s=parseMusicXML(x,name); store={name,kind:'xml',data:x}; }
     if(meta&&meta.title) s.title=meta.title;
-    const id=libAdd(s,store,meta&&meta.folder);
+    const id=libAdd(s,store,meta&&meta.folder,meta&&meta.band);
     setSong(s,true,id); showView('pupitre');
   }catch(e){ console.error(e); toast(e.message||'Fichier illisible'); say('Erreur : '+(e.message||'fichier illisible')); }
 }
@@ -2702,14 +2702,14 @@ function setKeyShift(k){ if(!song) return; k=Math.max(-6,Math.min(6,Math.round(+
 function libIndex(){ try{ const a=JSON.parse(localStorage.getItem('tbb-lib')||'[]'); a.forEach(e=>{ if(e&&e.title) e.title=cleanTitle(e.title); }); return a; }catch(e){return []} }
 let _idx=null;
 function libSaveIndex(idx){ if(idx) _idx=idx; try{localStorage.setItem('tbb-lib',JSON.stringify(_idx||libIndex()))}catch(e){} }
-function libAdd(s,store,folder){
+function libAdd(s,store,folder,band){
   const idx=libIndex();
   let e=idx.find(x=>x.name===store.name&&x.title===s.title);
   const id=e?e.id:'s'+Date.now().toString(36);
   try{ localStorage.setItem('tbb-song:'+id,JSON.stringify(store)); }
   catch(err){ toast('Mémoire pleine : supprimez un morceau dans Mes morceaux.'); say('Mémoire pleine. Le morceau est ouvert mais pas enregistré.'); return 'tmp'; }
   if(!e){ e={id,name:store.name,title:s.title,kind:store.kind,added:Date.now(),prefs:{}}; idx.push(e); }
-  if(folder) e.folder=folder;
+  if(folder) e.folder=folder; if(band) e.band=1;
   e.measures=s.measures.length; e.tempo=s.tempo; e.used=Date.now();
   _idx=idx; libSaveIndex(); return id;
 }
@@ -2724,7 +2724,7 @@ function savePrefsSoon(){
     _idx=idx; libSaveIndex();
   },500);
 }
-function openLib(){ renderLib(); showView('lib'); const n=libIndex().filter(e=>e.id!=='demo').length+1; say('Mes morceaux. '+n+' morceau'+(n>1?'x':'')+'. Choisissez un morceau à ouvrir.'); setTimeout(()=>{const b=document.querySelector('#libList .li-main');if(b)b.focus();},50); }
+function openLib(){ renderLib(); showView('lib'); const n=libIndex().filter(isMine).length, nb=bandItems.length; say('Mes morceaux. '+(n?n+' morceau'+(n>1?'x':'')+' importé'+(n>1?'s':''):'Aucun morceau importé')+'.'+(nb?' Bibliothèque initiale plus bas.':'')); setTimeout(()=>{const b=document.querySelector('#libList .li-main');if(b)b.focus();},50); }
 function libOpen(id){
   if(id==='demo'){ loadDemo(true); showView('pupitre'); return; }
   let st=null; try{st=JSON.parse(localStorage.getItem('tbb-song:'+id)||'null')}catch(e){}
@@ -2748,19 +2748,21 @@ function folderize(ul,items,folderOf,makeLi,key){
     seen[f]=[it];
     const li=document.createElement('li'); li.className='folder'; const k=key+':'+f;
     const b=document.createElement('button'); b.className='li-main folderBtn'; b.setAttribute('aria-expanded','false');
-    const t=document.createElement('b'); t.innerHTML='<span class="fIco" aria-hidden="true">📁</span> '; t.append(f); const sp=document.createElement('span'); b.append(t,sp);
+    const t=document.createElement('b'); t.innerHTML='<span class="fIco" aria-hidden="true">▸</span> '; t.append(f); const ico=t.firstChild; const sp=document.createElement('span'); b.append(t,sp);
     const sub=document.createElement('ul'); sub.className='songs subSongs'; sub.hidden=true;
-    const upd=()=>{ const n=seen[f].length; sp.textContent=n+' partition'+(n>1?'s':'')+(sub.hidden?' · toucher pour ouvrir le dossier':' · dossier ouvert'); b.setAttribute('aria-expanded',String(!sub.hidden)); b.setAttribute('aria-label','Dossier '+f+', '+n+' partition'+(n>1?'s':'')+(sub.hidden?'. Ouvrir le dossier':'. Fermer le dossier')); };
-    b.onclick=()=>{ sub.hidden=!sub.hidden; FOLD_OPEN[k]=!sub.hidden; upd(); say(sub.hidden?'Dossier fermé':'Dossier '+f+' ouvert. '+seen[f].length+' partitions.'); };
+    const upd=()=>{ const n=seen[f].length; ico.textContent=sub.hidden?'▸':'▾'; sp.textContent=n+' partition'+(n>1?'s':'')+(sub.hidden?' · toucher pour voir les partitions':' · toucher pour replier'); b.setAttribute('aria-expanded',String(!sub.hidden)); b.setAttribute('aria-label',f+', '+n+' partition'+(n>1?'s':'')+(sub.hidden?'. Déplier':'. Replier')); };
+    b.onclick=()=>{ sub.hidden=!sub.hidden; FOLD_OPEN[k]=!sub.hidden; upd(); say(sub.hidden?f+' replié':f+' déplié. '+seen[f].length+' partitions.'); };
     li.append(b,sub); ul.append(li); li._sub=sub; li._upd=upd; li._k=k; seen[f].li=li; }
-  for(const f in seen){ const li=seen[f].li; for(const it of seen[f]) li._sub.append(makeLi(it,f)); if(FOLD_OPEN[li._k]||li._sub.querySelector('.cur')) li._sub.hidden=false; li._upd(); }
+  for(const f in seen){ const li=seen[f].li; for(const it of seen[f]) li._sub.append(makeLi(it,f)); if(FOLD_OPEN[li._k]) li._sub.hidden=false; li._upd(); }
 }
 const inFolder=(t,f)=>{ if(!f) return t; const r=t.startsWith(f)?t.slice(f.length).replace(/^[\s\-–—:·(]+/,''):t; return (r.indexOf('(')<0?r.replace(/\)$/,''):r)||t; };
+const BAND_T=()=>new Set(bandItems.map(x=>cleanTitle(x.title||x.file.replace(/\.[^.]+$/,''))));
+const isMine=e=>e.id!=='demo'&&!e.band&&!e.folder&&!BAND_T().has(e.title)&&!((e.added||0)<1795748400000&&/^Janela para o mundo/i.test(e.title||''));
 function renderLib(){
   const ul=$('libList'); ul.innerHTML='';
   const idx=libIndex();
-  const demo=idx.find(e=>e.id==='demo')||{id:'demo',title:'Janela para o mundo (démo)',measures:33,tempo:100,prefs:{}};
-  const items=[{...demo,title:'Janela para o mundo (démo)',measures:33,demo:true},...idx.filter(e=>e.id!=='demo').sort((a,b)=>(b.used||0)-(a.used||0))];
+  const items=idx.filter(isMine).sort((a,b)=>(b.used||0)-(a.used||0));
+  if(!items.length){ const li=document.createElement('li'); li.className='libEmpty'; li.textContent='Aucun morceau importé pour l’instant. Touchez « Importer une partition », ou ouvrez un morceau de la Bibliothèque initiale ci-dessous.'; ul.append(li); }
   const makeLi=(e,fold)=>{
     const li=document.createElement('li'); if(e.id===curId) li.className='cur';
     const main=document.createElement('button'); main.className='li-main';
@@ -2785,7 +2787,7 @@ function renderLib(){
     return li; };
   folderize(ul,items,e=>e.folder,makeLi,'lib');
   let used=0; try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);used+=(localStorage.getItem(k)||'').length;}}catch(e){}
-  $('libMsg').textContent=items.length>1?'Place utilisée : environ '+Math.round(used/1024)+' Ko sur 5 000.':'';
+  $('libMsg').textContent=items.length?'Place utilisée : environ '+Math.round(used/1024)+' Ko sur 5 000.':'';
 }
 
 /* ---------- UI wiring ---------- */
@@ -2823,7 +2825,7 @@ $('tabImport').onclick=openImport;
 function setSongBar(){ ['kSong','mfSong','lpSong'].forEach(id=>{ const b=$(id); if(b) sbFill(b,b.querySelector('.sbTxt'),b.querySelector('.sbIn')); }); sbFill($('songBar'),$('sbTxt'),$('sbIn')); }
 function sbFill(bar,t,inn){ if(!bar) return;
   const title=song?song.title:'Aucune partition';
-  t.textContent='♪ '+title; bar.setAttribute('aria-label','Morceau en cours : '+title+'. Ouvrir mes morceaux');
+  t.textContent='♪ '+title; bar.setAttribute('aria-label','Morceau en cours : '+title+'. Ouvrir Mes morceaux et la Bibliothèque initiale'); bar.dataset.tip='Toucher pour choisir un morceau : Mes morceaux et Bibliothèque initiale';
   bar.classList.remove('scroll');
   requestAnimationFrame(()=>{ const cs=getComputedStyle(inn); const avail=inn.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight); const over=t.scrollWidth-avail;
     if(over>4){ bar.style.setProperty('--sbx',(-over-8)+'px'); bar.style.setProperty('--sbd',Math.max(8,(over/30)/0.7+3)+'s'); bar.classList.add('scroll'); } });
@@ -3119,17 +3121,17 @@ async function loadBand(){
 }
 function renderBand(){
   const box=$('bandBox'), ul=$('bandList'); if(!bandItems.length){box.hidden=true;return;}
-  box.hidden=false; ul.innerHTML='';
+  box.hidden=false; ul.innerHTML=''; $('demoBtn').hidden=true; try{ if(!$('vLib').hidden) renderLib(); }catch(e){}
   const makeLi=(x,fold)=>{
     const li=document.createElement('li'); const b=document.createElement('button'); b.className='li-main';
     const t=document.createElement('b'); t.textContent=inFolder(cleanTitle(x.title||x.file.replace(/\.[^.]+$/,'')),fold); const sp=document.createElement('span'); sp.textContent=x.info||'Partition partagée par le groupe';
-    b.append(t,sp); b.setAttribute('aria-label','Partition du groupe : '+t.textContent+'. Ouvrir');
+    b.append(t,sp); b.setAttribute('aria-label','Bibliothèque initiale : '+t.textContent+'. Ouvrir');
     b.onclick=()=>openBand(x); li.append(b); return li; };
   folderize(ul,bandItems,x=>x.folder,makeLi,'band');
 }
 async function openBand(x){
   try{ toast('Chargement…'); const r=await fetch(bandBase+encodeURIComponent(x.file)); if(!r.ok) throw new Error('Partition introuvable sur le site.');
-    const blob=await r.blob(); await loadFile(new File([blob],x.file),{title:x.title,folder:x.folder}); }
+    const blob=await r.blob(); await loadFile(new File([blob],x.file),{title:x.title,folder:x.folder,band:true}); }
   catch(e){ toast(e.message||'Pas de connexion'); say('Impossible d’ouvrir cette partition. '+(e.message||'')); }
 }
 /* ---------- Sauvegarde / restauration ---------- */
