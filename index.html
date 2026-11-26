@@ -574,10 +574,10 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 .utPill:hover{border-color:var(--sun)!important}
 .clefPill{padding:4px 10px!important}
 .clefPill svg{height:calc(var(--sh) * .74);width:calc(var(--sh) * .42);display:block}.clefPill{min-width:0!important;width:auto}
-@media (min-width:900px){ #vPupitre .now:has(svg[data-tb]){grid-template-columns:minmax(0,2fr) minmax(0,3fr)} }
+
 #vPupitre .now .fingCard svg[data-tb]{max-width:900px}
 #trPill,.utPill{width:2.9em;padding:0!important;min-width:0!important}
-@media (max-width:760px){ #vPupitre .now .fingCard svg[data-tb]{width:calc(100% * max(var(--fit,1),.85))} .status:has(.clefPill) .instrBtn{aspect-ratio:auto;width:auto;padding:2px 4px} .status:has(.clefPill) .instrBtn svg{width:calc(var(--sh) * 1.25)} .status:has(.clefPill) .trPill{width:auto;padding:0 6px!important} .status:has(.clefPill) .clefPill{padding:2px 5px!important} }
+@media (max-width:760px){ #vPupitre .now .fingCard svg[data-tb]{width:calc(100% * max(var(--fit,1),.7))} .status:has(.clefPill) .instrBtn{aspect-ratio:auto;width:auto;padding:2px 4px} .status:has(.clefPill) .instrBtn svg{width:calc(var(--sh) * 1.25)} .status:has(.clefPill) .trPill{width:auto;padding:0 6px!important} .status:has(.clefPill) .clefPill{padding:2px 5px!important} }
 .songs li.folder{flex-direction:column;align-items:stretch;border-style:solid;border-color:var(--sun)}
 .songs .folderBtn b{display:flex;align-items:center;gap:.3em}
 .songs .folderBtn .fIco{font-size:.8em}
@@ -586,6 +586,22 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 .subSongs li{padding:12px;background:var(--panel)}
 .subSongs .li-main b{font-size:min(calc(1.8rem * var(--zoom)),8vw)}
 .songs li.folder>.folderBtn{flex:none}.bandList .folderBtn b::before{content:none}
+.fingCard:has(svg[data-tb]) #fingTxt{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0}
+.fingCard:has(svg[data-tb]) .fingAlt{display:none}
+.fingCard.tbFill{position:relative}
+#vPupitre .now .fingCard.tbFill svg[data-tb]{position:absolute;left:10px;top:10px;width:calc(100% - 20px);height:calc(100% - 20px);max-width:none;max-height:none;transform:none!important}
+#vPupitre .now:has(.tbFill) .noteCard:not(.fingCard) .noteRow{flex:1}
+#vPupitre .now:has(.tbFill){grid-template-columns:minmax(0,2fr) minmax(0,3fr)}
+#vPupitre .now:has(.tbFill) .noteCard:not(.fingCard){--nb:min(calc(clamp(5.5rem,22vw,13rem) * var(--zoom)),37cqi)}
+.imCard{width:min(560px,calc(100vw - 24px));box-sizing:border-box}
+.imGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.imOpt{min-width:0;padding:12px 8px}
+.imOpt b{font-size:clamp(1rem,4.6vw,1.2rem)}
+.imOpt small{font-size:clamp(.8rem,3.6vw,.95rem);text-align:center}
+.imIco{max-width:150px}
+@media (max-height:560px){ .imIco{max-width:110px} .imOpt{padding:8px 6px} }
+#tbOpts:not([hidden]){display:flex;flex-direction:column;gap:6px}#tbOpts select{width:100%}
+#vPupitre .now .fingCard.tbFill svg[data-tb]{overflow:visible}
 </style>
 
 <header class="top">
@@ -848,8 +864,8 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
     <div class="card field">
       <h2>Instrument</h2>
       <label for="sInstr">Mon instrument</label>
-      <select id="sInstr"><option value="tp">Trompette</option><option value="tb">Trombone en ut</option></select>
-      <div id="tbOpts" hidden><label for="sTbClef" style="margin-top:10px">Clé du trombone</label><select id="sTbClef"><option value="G">Clé de sol (une octave au-dessus du son)</option><option value="F">Clé de fa (son réel)</option></select>
+      <select id="sInstr"><option value="imTpB">Trompette en si♭</option><option value="imTpC">Trompette en ut</option><option value="imTbG">Trombone en ut, clé de sol</option><option value="imTbF">Trombone en ut, clé de fa</option></select>
+      <div id="tbOpts" hidden><label for="sTbClef" style="margin-top:10px" hidden>Clé du trombone</label><select id="sTbClef" hidden><option value="G">Clé de sol (une octave au-dessus du son)</option><option value="F">Clé de fa (son réel)</option></select>
       <label for="sTbOct" style="margin-top:10px">Octave de la mélodie</label><select id="sTbOct"><option value="auto">Automatique (une octave plus bas si la mélodie est aiguë)</option><option value="0">Comme dans la partition</option><option value="-12">Une octave plus bas</option></select></div>
       <label for="sTransp" style="margin-top:10px" id="sTranspL">Affichage des notes</label>
       <select id="sTransp">
@@ -1148,8 +1164,10 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
   <div class="card imCard">
     <div class="mfPopHead"><h2 id="imT" style="margin:0;color:var(--sun)">Instrument</h2><button class="btn mfSmall" id="imClose" aria-label="Fermer">✕</button></div>
     <div class="imGrid">
-      <button class="imOpt" id="imTp" aria-pressed="true"><span class="imIco" id="imTpIco"></span><b>Trompette</b><small>en si♭ ou en ut</small></button>
-      <button class="imOpt" id="imTb" aria-pressed="false"><span class="imIco" id="imTbIco"></span><b>Trombone</b><small>en ut · positions</small></button>
+      <button class="imOpt" id="imTpB" aria-pressed="true"><span class="imIco tpIco"></span><b>Trompette</b><small>en si♭</small></button>
+      <button class="imOpt" id="imTpC" aria-pressed="false"><span class="imIco tpIco"></span><b>Trompette</b><small>en ut</small></button>
+      <button class="imOpt" id="imTbG" aria-pressed="false"><span class="imIco tbIco"></span><b>Trombone</b><small>en ut · clé de sol</small></button>
+      <button class="imOpt" id="imTbF" aria-pressed="false"><span class="imIco tbIco"></span><b>Trombone</b><small>en ut · clé de fa</small></button>
     </div>
   </div>
 </div>
@@ -1211,6 +1229,9 @@ const TB_SAMPLES = {"40": "//uQZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZ
 "use strict";
 const $=id=>document.getElementById(id);
 const TP_ICON='<svg viewBox="0 0 188 70" aria-hidden="true" focusable="false"><path d="M6 22.5c-2.2 0-2.2 11 0 11h2l1.6-3.6H24v-3.8H9.6L8 22.5z" fill="currentColor"/><path d="M24 26.6H100" stroke="currentColor" stroke-width="3" fill="none"/><path d="M100 25.2 148 23.6Q170 22 180 5.5Q183 3 184.5 6.5V51.5Q183 55 180 52.5Q170 36 148 33.2H100z" fill="currentColor"/><g fill="none" stroke="currentColor"><path d="M147 32.8Q157 33 157 44.5Q157 56 146 56H101" stroke-width="3"/><path d="M75 33H52Q38 33 38 45.5Q38 58 52 58H75" stroke-width="3"/><path d="M75 50H60Q56.5 50 56.5 52.5Q56.5 55 60 55H75" stroke-width="2.2"/><path d="M101 46.5H133Q136.5 46.5 136.5 49.3Q136.5 52 133 52H101" stroke-width="2.2"/><circle cx="113" cy="41.5" r="3.2" stroke-width="1.8"/><circle cx="108" cy="20.5" r="3.2" stroke-width="1.8"/></g><g fill="currentColor"><rect x="74.5" y="24" width="7" height="40" rx="1.5"/><rect x="83.5" y="24" width="7" height="40" rx="1.5"/><rect x="92.5" y="24" width="7" height="40" rx="1.5"/><rect x="74" y="62" width="8" height="5" rx="2.4"/><rect x="83" y="62" width="8" height="5" rx="2.4"/><rect x="92" y="62" width="8" height="5" rx="2.4"/><rect x="77" y="15" width="2" height="9"/><rect x="86" y="15" width="2" height="9"/><rect x="95" y="15" width="2" height="9"/><rect x="74.6" y="12.5" width="6.8" height="3" rx="1.2"/><rect x="83.6" y="12.5" width="6.8" height="3" rx="1.2"/><rect x="92.6" y="12.5" width="6.8" height="3" rx="1.2"/></g></svg>';
+var IM_OPTS=[['imTpB','tp','Bb','trompette en si bémol'],['imTpC','tp','C','trompette en ut'],['imTbG','tb','G','trombone en ut, clé de sol'],['imTbF','tb','F','trombone en ut, clé de fa']];
+function pickInstr(id){ const o=IM_OPTS.find(x=>x[0]===id); if(!o) return; if(o[1]==='tp'){ S.transp=o[2]; saveS(); savePrefsSoon(); applySettingsUi(); } else { S.tbClef=o[2]; saveS(); } setInstr(o[1]); }
+function imCur(){ return isTb()?(tbF()?'imTbF':'imTbG'):(S.transp==='C'?'imTpC':'imTpB'); }
 const TB_ICON='<svg viewBox="0 0 262 76" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor"><path d="M104 24H23a15.5 15.5 0 0 0 0 31H83" stroke-width="4.6"/><path d="M23 24v31M57 24v31M71 37v18" stroke-width="2.6"/><path d="M67 37h16" stroke-width="4.8"/><path d="M83 37h8M83 55h8" stroke-width="2.8" opacity=".6"/><path d="M90 37h150M90 55h150M240 37h7a9 9 0 0 1 0 18h-7" stroke-width="4.8"/><path d="M57 37h11" stroke-width="2.2" opacity=".6"/></g><path d="M51 31.5c1.3 3 3.3 3.6 6 3.7v3.6c-2.7.1-4.7.7-6 3.7z" fill="currentColor" opacity=".6"/><path d="M20 21.6h80c17 0 25.6-8.4 29.2-19.2 4.4 7.2 4.4 39.2 0 47.2-4-10-12.4-21-29.2-22.4H20z" fill="currentColor"/><rect x="88" y="39.5" width="3.4" height="13" rx="1" fill="var(--pink)"/></svg>';
 const STEPS=['C','D','E','F','G','A','B'];
 const STEP_PC=[0,2,4,5,7,9,11];
@@ -1322,38 +1343,31 @@ function clefIcon(kind){ if(_clefI[kind]) return _clefI[kind];
     const g=d.querySelector('.vf-clef'); const bb=g.getBBox(); const paths=[...g.querySelectorAll('path')].map(p=>'<path d="'+p.getAttribute('d')+'"/>').join('');
     d.remove(); _clefI[kind]='<svg viewBox="'+[bb.x-2,bb.y-2,bb.width+4,bb.height+4].map(v=>v.toFixed(1)).join(' ')+'" aria-hidden="true" focusable="false" fill="currentColor">'+paths+'</svg>'; return _clefI[kind];
   }catch(e){ return kind==='bass'?'Fa':'Sol'; } }
-function drawPos(f){
-  const svg=$('fingSvg'); svg.setAttribute('viewBox','0 0 1180 356'); svg.dataset.tb='1';
-  const X=k=>345+(k-1)*128, on=f&&f.pos, alts=(f&&f.alts)||[], dim=f==null, bx=on?X(on):X(1);
-  const brass=dim?'var(--line)':'#f2bf4c', grey='#c9cfd2', yT=62, yA=150, yB=232;
+let TB_W=1000;
+function drawPos(f){ drawPos._f=f; const W=TB_W, sp=Math.max(108,(W-282-60)/6);
+  const svg=$('fingSvg'); svg.setAttribute('viewBox','0 0 '+W+' 440'); svg.setAttribute('preserveAspectRatio','xMinYMid meet'); svg.dataset.tb='1';
+  const X=k=>282+(k-1)*sp, on=f&&f.pos, alts=(f&&f.alts)||[], dim=f==null, bx=on?X(on):X(1);
+  const brass=dim?'var(--line)':'#f2bf4c', grey='#c9cfd2', yT=78, yA=188, yB=272, R=(yB-yT)/2, cx=R+10;
   let h='';
-  // dashed guides at each position
   for(let k=1;k<=7;k++) h+=`<path d="M${X(k)} ${yA+14} V${yB-14}" stroke="var(--muted)" stroke-width="3" stroke-dasharray="7 7" opacity=".6"/>`;
-  // inner slide (grey, fixed)
-  h+=`<path d="M320 ${yA} H${bx+4} M320 ${yB} H${bx+4}" stroke="${grey}" stroke-width="14"/>`;
-  // outer slide (moves to the right)
-  h+=`<path d="M${bx} ${yA} H1180 M${bx} ${yB} H1180" stroke="${brass}" stroke-width="24"/>`;
-  // bell section: bell tube on top, crook on the left, back to the slide
-  h+=`<path d="M470 ${yT} H105 A85 85 0 0 0 105 ${yB} H330" stroke="${brass}" stroke-width="20" fill="none"/>`;
-  h+=`<path d="M240 ${yT} H330 V${yA}" stroke="${brass}" stroke-width="12" fill="none"/><path d="M105 ${yT} V${yB}" stroke="${brass}" stroke-width="10"/>`;
-  // slide receiver + hand brace
-  h+=`<path d="M290 ${yA} H330" stroke="${brass}" stroke-width="24"/><path d="M312 ${yA} V${yB}" stroke="${brass}" stroke-width="12"/>`;
-  // bell: smooth flare + rim
-  h+=`<path d="M440 ${yT-10} C540 ${yT-12} 610 ${yT-26} 660 ${yT-58} L660 ${yT+58} C610 ${yT+26} 540 ${yT+12} 440 ${yT+10} Z" fill="${brass}"/>`;
-  h+=`<ellipse cx="660" cy="${yT}" rx="13" ry="60" fill="${brass}" stroke="${dim?'var(--panel)':'#d59a1e'}" stroke-width="5"/>`;
-  // mouthpiece + leadpipe (grey), drawn last: over the brass braces
-  h+=`<path d="M230 ${yA} H292" stroke="${grey}" stroke-width="11"/><path d="M200 ${yA-28} C207 ${yA-11} 218 ${yA-8} 234 ${yA-7} V${yA+7} C218 ${yA+8} 207 ${yA+11} 200 ${yA+28} Z" fill="${grey}"/>`;
-  // position marker (the little bar) on the outer slide
-  h+=`<rect x="${bx-10}" y="${yA+11}" width="20" height="${yB-yA-22}" rx="5" fill="${dim?'var(--line)':'var(--pink)'}"/>`;
-  // numbers 1..7, big
+  h+=`<path d="M176 ${yA} H${bx+4} M176 ${yB} H${bx+4}" stroke="${grey}" stroke-width="12"/>`;
+  h+=`<path d="M${bx} ${yA} H${W} M${bx} ${yB} H${W}" stroke="${brass}" stroke-width="22"/>`;
+  h+=`<path d="M330 ${yT} H${cx} A${R} ${R} 0 0 0 ${cx} ${yB} H180" stroke="${brass}" stroke-width="12" fill="none"/>`;
+  h+=`<path d="M${cx} ${yT} V${yB}" stroke="${brass}" stroke-width="8"/><path d="M182 ${yT} V${yA}" stroke="${brass}" stroke-width="8"/>`;
+  h+=`<path d="M150 ${yA} H182" stroke="${brass}" stroke-width="20"/><path d="M168 ${yA} V${yB}" stroke="${brass}" stroke-width="10"/>`;
+  h+=`<path d="M290 ${yT-6} C400 ${yT-8} 480 ${yT-30} 540 ${yT-98} L540 ${yT+98} C480 ${yT+30} 400 ${yT+8} 290 ${yT+6} Z" fill="${brass}"/>`;
+  h+=`<ellipse cx="540" cy="${yT}" rx="16" ry="100" fill="${brass}" stroke="${dim?'var(--panel)':'#d59a1e'}" stroke-width="5"/>`;
+  h+=`<path d="M110 ${yA} H152" stroke="${grey}" stroke-width="9"/><path d="M84 ${yA-24} C90 ${yA-9} 99 ${yA-6} 114 ${yA-5} V${yA+5} C99 ${yA+6} 90 ${yA+9} 84 ${yA+24} Z" fill="${grey}"/>`;
+  h+=`<rect x="${bx-9}" y="${yA+10}" width="18" height="${yB-yA-20}" rx="5" fill="${dim?'var(--line)':'var(--pink)'}"/>`;
+  h+=`<text class="posLbl" x="${X(1)-60}" y="343" dominant-baseline="central" text-anchor="end" font-size="27" font-weight="700" fill="${dim?'var(--line)':'var(--ink)'}" font-family="Atkinson Hyperlegible, Verdana, sans-serif">POSITION</text>`;
   for(let k=1;k<=7;k++){ const x=X(k), isOn=k===on, isAlt=alts.includes(k);
-    h+=`<circle cx="${x}" cy="288" r="62" fill="${isOn?'var(--sun)':'var(--panel)'}" stroke="${dim?'var(--line)':isAlt?'var(--pink)':'var(--ink)'}" stroke-width="8"${isAlt&&!dim?' stroke-dasharray="14 10"':''}/>`;
-    h+=`<text x="${x}" y="316" text-anchor="middle" font-size="80" font-weight="700" fill="${isOn?'var(--sun-ink)':dim?'var(--line)':isAlt?'var(--pink)':'var(--ink)'}" font-family="Atkinson Hyperlegible, Verdana, sans-serif">${k}</text>`; }
-  svg.innerHTML=h; svg.setAttribute('aria-label','Position de coulisse : '+fingSay(f)+(alts.length?', ou '+alts.join(' ou '):''));
+    h+=`<circle cx="${x}" cy="343" r="50" fill="${isOn?'var(--sun)':'var(--panel)'}" stroke="${dim?'var(--line)':isAlt?'var(--pink)':'var(--ink)'}" stroke-width="7"${isAlt&&!dim?' stroke-dasharray="13 9"':''}/>`;
+    h+=`<text x="${x}" y="367" text-anchor="middle" font-size="70" font-weight="700" fill="${isOn?'var(--sun-ink)':dim?'var(--line)':isAlt?'var(--pink)':'var(--ink)'}" font-family="Atkinson Hyperlegible, Verdana, sans-serif">${k}</text>`; }
+  svg.innerHTML='<g transform="translate(0,40)">'+h+'</g>'; svg.setAttribute('aria-label','Position de coulisse : '+fingSay(f)+(alts.length?', ou '+alts.join(' ou '):''));
 }
 function drawFing(f){
   if(isTb()) return drawPos(f);
-  const svg=$('fingSvg'); svg.setAttribute('viewBox','0 0 330 108'); delete svg.dataset.tb; const r=44, ys=54, xs=[60,165,270];
+  const svg=$('fingSvg'); svg.setAttribute('viewBox','0 0 330 108'); delete svg.dataset.tb; svg.removeAttribute('preserveAspectRatio'); const r=44, ys=54, xs=[60,165,270];
   let h='';
   for(let i=0;i<3;i++){
     const on=f!=null && f.includes(String(i+1));
@@ -2666,16 +2680,17 @@ function toggleFullscreen(){
 function openFs(){ $('fsModal').hidden=false; $('fsClose').focus({preventScroll:true}); $('fsModal').querySelector('.card').scrollTop=0; say('Plein écran sur iPhone. Safari ne le permet pas pour une page. Ajoutez l’app à l’écran d’accueil : bouton Partager, puis Sur l’écran d’accueil, puis Ajouter. Ouvrez ensuite l’icône TBB.'); }
 function closeFs(){ $('fsModal').hidden=true; (window._fsFrom&&window._fsFrom.offsetParent?window._fsFrom:$('fsBtn')).focus(); }
 document.querySelectorAll('.fsBtn').forEach(b=>b.onclick=e=>{ window._fsFrom=b; toggleFullscreen(); });
-function instrUi(){ const tb=isTb(); try{ $('sInstr').value=tb?'tb':'tp'; $('tbOpts').hidden=!tb; $('sTransp').hidden=tb; $('sTranspL').hidden=tb; $('tgAlt').hidden=tb; $('sTbClef').value=tbF()?'F':'G'; $('sTbOct').value=S.tbOct||'auto';
-  $('imTp').setAttribute('aria-pressed',String(!tb)); $('imTb').setAttribute('aria-pressed',String(tb)); }catch(e){} }
+function instrUi(){ const tb=isTb(); try{ $('sInstr').value=imCur(); $('tbOpts').hidden=!tb; $('sTransp').hidden=true; $('sTranspL').hidden=true; $('tgAlt').hidden=tb; $('sTbClef').value=tbF()?'F':'G'; $('sTbOct').value=S.tbOct||'auto';
+  IM_OPTS.forEach(o=>$(o[0]).setAttribute('aria-pressed',String(o[0]===imCur()))); }catch(e){} }
 function setInstr(v,quiet){ S.instr=v==='tb'?'tb':'tp'; saveS(); tpBuf=SMP_BUF[isTb()?'tb':'tp']||null; if(ctx) loadTrumpet(); instrUi();
   if(song){ applyKeyShift(); renderAll(); try{updateTunerTarget();}catch(e){} }
   if(!quiet) say(isTb()?'Trombone en ut, '+(tbF()?'clé de fa':'clé de sol')+'. Positions de coulisse de 1 à 7.':'Trompette'+(S.transp==='C'?', en ut':', en si bémol')); }
-$('sInstr').onchange=e=>setInstr(e.target.value);
+$('sInstr').onchange=e=>pickInstr(e.target.value);
 $('sTbClef').onchange=e=>{ S.tbClef=e.target.value; saveS(); if(song){ renderAll(); try{updateTunerTarget();}catch(e){} } say(tbF()?'Clé de fa':'Clé de sol'); };
 $('sTbOct').onchange=e=>{ S.tbOct=e.target.value; saveS(); if(song){ applyKeyShift(); renderAll(); try{updateTunerTarget();}catch(e){} } say(e.target.selectedOptions[0].textContent); };
 instrUi();
-$('imTpIco').innerHTML=TP_ICON; $('imTbIco').innerHTML=TB_ICON; $('imClose').onclick=closeInstr; $('imTp').onclick=()=>{ closeInstr(); setInstr('tp'); }; $('imTb').onclick=()=>{ closeInstr(); setInstr('tb'); };
+document.querySelectorAll('.tpIco').forEach(e=>e.innerHTML=TP_ICON); document.querySelectorAll('.tbIco').forEach(e=>e.innerHTML=TB_ICON); $('imClose').onclick=closeInstr;
+IM_OPTS.forEach(([id])=>{ $(id).onclick=()=>{ closeInstr(); pickInstr(id); }; });
 $('instrModal').addEventListener('click',e=>{ if(e.target===$('instrModal')) closeInstr(); }); $('instrModal').addEventListener('keydown',e=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); closeInstr(); } }); $('fsClose').onclick=closeFs;
 $('fsModal').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();closeFs();} });
 document.addEventListener('fullscreenchange',updateFsBtn); updateFsBtn();
@@ -2741,7 +2756,7 @@ $('bpmRange').oninput=e=>setBpm(+e.target.value);
 $('bpmRange').onchange=e=>say('Tempo '+bpm);
 document.querySelectorAll('#pctChips .chip').forEach(c=>c.onclick=()=>{if(song)setBpm(song.tempo*c.dataset.p/100,true);});
 $('tunerBtn').onclick=tunerToggle;
-function openInstr(){ const m=$('instrModal'); m.hidden=false; instrUi(); (isTb()?$('imTb'):$('imTp')).focus(); say('Choisir l’instrument. '+(isTb()?'Trombone en ut, sélectionné. Ou trompette.':'Trompette, sélectionnée. Ou trombone en ut.')); }
+function openInstr(){ const m=$('instrModal'); m.hidden=false; instrUi(); $(imCur()).focus(); const c=IM_OPTS.find(o=>o[0]===imCur()); say('Choisir l’instrument. 4 choix : trompette en si bémol, trompette en ut, trombone clé de sol, trombone clé de fa. Actuel : '+c[3]+'.'); }
 function closeInstr(){ $('instrModal').hidden=true; const b=$('instrBtn'); if(b) b.focus(); }
 function setTransp(v){ S.transp=v; saveS(); savePrefsSoon(); applySettingsUi(); if(song){applyKeyShift(); renderAll(); try{updateTunerTarget();}catch(e){}} say(S.transp==='Bb'?'Affichage trompette en si bémol':'Affichage en ut, son réel'); }
 $('sTransp').onchange=e=>setTransp(e.target.value);
@@ -3235,6 +3250,8 @@ function fitJouer(){ const v=$('vPupitre'); if(!v||v.hidden) return; const now=v
   const tr=document.querySelector('.transport'), limit=window.innerHeight-(tr?tr.offsetHeight:0)-10;
   const cards=[...now.querySelectorAll('.noteCard')]; cards.forEach(c=>{ c.style.minHeight=''; c._gmax=0; });
   const svg=now.querySelector('.fingCard svg'), roll=$('roll');
+  { const fc=now.querySelector('.fingCard'), nc=now.querySelector('.noteCard'); if(fc){ fc.classList.remove('tbFill'); if(svg&&svg.dataset.tb&&nc&&Math.abs(nc.getBoundingClientRect().top-fc.getBoundingClientRect().top)<=4) fc.classList.add('tbFill'); }
+    if(fc&&fc.classList.contains('tbFill')){ const tr2=document.querySelector('.transport'), lim=window.innerHeight-(tr2?tr2.offsetHeight:0)-10; { const r=fc.getBoundingClientRect(); fc.style.minHeight=Math.round(Math.max(190,Math.min(r.width*0.46,lim-r.top)))+'px'; } } else if(fc) fc.style.minHeight=''; }
   now.style.setProperty('--fit','1'); now.style.removeProperty('--fsvg'); if(roll){ roll.style.height=''; }
   const over=()=>now.getBoundingClientRect().bottom-limit;
   if(over()<=0) return;
@@ -3249,7 +3266,17 @@ function alignNow(){ const v=$('vPupitre'); if(!v||v.hidden) return; const nc=v.
   const nm=nc.querySelector('.noteRow'), fm=fc.querySelector('svg'), nl=$('reg'), fl=$('fingTxt'); if(!nm||!fm||!nl||!fl) return;
   [nm,fm].forEach(e=>{ e.style.minHeight=''; e.style.transform=''; }); nm.style.display=''; [nl,fl].forEach(e=>e.style.marginTop=''); [nc,fc].forEach(c=>[...c.children].forEach(e=>e.style.transform=''));
   if(Math.abs(nc.getBoundingClientRect().top-fc.getBoundingClientRect().top)>4) return; // stacked (phone)
-  if(fm.dataset.tb){ for(let k=0;k<6;k++){ const d=Math.round(nl.getBoundingClientRect().top-fl.getBoundingClientRect().top); if(Math.abs(d)<=1) break; const lab=d>0?fl:nl; lab.style.marginTop=((parseFloat(lab.style.marginTop)||0)+Math.abs(d))+'px'; }
+  if(fm.dataset.tb){ const fc2=fm.closest('.fingCard'), fill=fc2&&fc2.classList.contains('tbFill');
+    { const r0=fm.getBoundingClientRect(), want=fill&&r0.height?Math.round(Math.max(1000,440*r0.width/r0.height-8)):1000; if(Math.abs(want-TB_W)>4){ TB_W=want; drawPos(drawPos._f); } }
+    const lb=fm.querySelector('.posLbl'); if(!lb||!fill) return;
+    const cs=getComputedStyle(nl), gr=nl.getBoundingClientRect(), sr=fm.getBoundingClientRect(); let dx=0; fm.setAttribute('viewBox','0 0 '+TB_W+' 440');
+    for(let it=0;it<3;it++){ const W=TB_W+dx, sc=Math.min(sr.width/W,sr.height/440); if(!sc) return; const offY=(sr.height-440*sc)/2;
+      lb.setAttribute('font-size',(parseFloat(cs.fontSize)/sc).toFixed(1)); lb.setAttribute('font-family',cs.fontFamily); lb.setAttribute('font-weight',cs.fontWeight);
+      lb.setAttribute('letter-spacing',((parseFloat(cs.letterSpacing)||0)/sc).toFixed(1));
+      lb.setAttribute('y','343'); const dyU=((gr.top+gr.bottom)/2-sr.top-offY)/sc-383;
+      let bx=0; try{ bx=lb.getBBox().x; }catch(e){} const need=Math.max(0,6-bx); fm.setAttribute('viewBox',(-need).toFixed(1)+' '+(-dyU).toFixed(1)+' '+(TB_W+need).toFixed(1)+' 440'); if(Math.abs(need-dx)<2) break; dx=need; }
+    return; }
+  if(false){ for(let k=0;k<6;k++){ const d=Math.round(nl.getBoundingClientRect().top-fl.getBoundingClientRect().top); if(Math.abs(d)<=1) break; const lab=d>0?fl:nl; lab.style.marginTop=((parseFloat(lab.style.marginTop)||0)+Math.abs(d))+'px'; }
     { const big=$('noteBig'); if(big){ const r=big.getBoundingClientRect(), fs=parseFloat(getComputedStyle(big).fontSize)||0, nm2=(r.top+r.bottom)/2-fs*0.06, sr=fm.getBoundingClientRect(), dy=Math.max(Math.round(nm2-(sr.top+sr.bottom)/2), Math.round(fc.getBoundingClientRect().top+8-sr.top)); if(Math.abs(dy)>1) fm.style.transform='translateY('+dy+'px)'; } }
     return; } // trombone: labels level only (grow the gap above the higher label)
   const H=Math.max(nm.offsetHeight,fm.getBoundingClientRect().height);
