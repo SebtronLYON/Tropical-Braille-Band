@@ -1531,7 +1531,9 @@ function parseMusicXML(text,fname){
     }
     if(endStop) curEnd=null;
     const tsLen=m.beats*4/m.beatType;
-    m.len=(mEl.getAttribute('implicit')==='yes'&&maxPos>0)?maxPos:Math.max(tsLen,maxPos);
+    // pickup (anacrusis): a short first bar, marked implicit or not -> keep its real length
+    const isPick=maxPos>0&&maxPos<tsLen-1e-6&&(mEl.getAttribute('implicit')==='yes'||!measures.length);
+    m.len=isPick?maxPos:Math.max(tsLen,maxPos); if(isPick) m.pickup=tsLen-maxPos;
     // Logic Pro writes the chord after the first note of the bar: move it back to beat 1
     if(isLogic && mNotes.length){
       const firstEnd=mNotes[0].q-absQ+mNotes[0].dur;
@@ -1939,7 +1941,7 @@ function renderMeasure0(){
   let lo=Math.min(...ws), hi=Math.max(...ws); if(!ws.length){lo=60;hi=72;}
   const span=Math.max(hi-lo,7); const mid=(hi+lo)/2; lo=mid-span/2; hi=mid+span/2;
   const unit=4/m.beatType;
-  for(let k=0;k<m.beats;k++){const d=document.createElement('div');d.className='beat'+(k===0?' down':'');d.style.left=(k*unit/m.len*100)+'%';roll.append(d);}
+  for(let k=0;k<m.beats;k++){const bq=k*unit-(m.pickup||0); if(bq<-1e-6) continue; const d=document.createElement('div');d.className='beat'+(k===0?' down':'');d.style.left=(bq/m.len*100)+'%';roll.append(d);}
   for(const n of ns){
     const left=(n.q-m.startQ)/m.len*100, w=n.dur/m.len*100;
     if(n.midi==null){const r=document.createElement('div');r.className='rst';r.style.left=`calc(${left}% + 3px)`;r.style.width=`calc(${w}% - 6px)`;r.title='silence';roll.append(r);continue;}
@@ -2236,7 +2238,7 @@ function buildEvents(order){
     const m=song.measures[sg.mi], unit=4/m.beatType, base=m.startQ, nx=order[k+1];
     const contNext=nx&&nx.mi===sg.mi+1&&!nx.listen;
     segs.push({mi:sg.mi,t0,len:m.len,listen:sg.listen});
-    for(let j=0;j<m.beats;j++) ev.push({q:t0+j*unit,type:'click',acc:j===0,force:sg.listen,beat:j,unit,beats:m.beats});
+    { const off=m.pickup||0; for(let j=0;j<m.beats;j++){ const q=j*unit-off; if(q<-1e-6) continue; ev.push({q:t0+q,type:'click',acc:j===0,force:sg.listen,beat:j,unit,beats:m.beats}); } }
     if(!sg.listen) for(const i of m.noteIdx){
       const n=song.notes[i]; if(n.midi==null||n.tieStop) continue;
       let dur=n.dur, j=i; while(song.notes[j].tieStart&&song.notes[j+1]&&song.notes[j+1].tieStop&&song.notes[j+1].midi===n.midi){j++;dur+=song.notes[j].dur;}
