@@ -555,6 +555,17 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 @media (prefers-reduced-motion:reduce){ .tp.play svg,.tp.play .tl{transition:none} }
 /* fingering text in capitals (display only) */
 .fingTxt{text-transform:uppercase;letter-spacing:.03em}
+/* hover = fill (no pink frame) for Notes/Partition and Tonalité */
+@media (hover:hover){
+ .viewBtn:hover{outline:none}
+ .viewBtn[aria-pressed="false"]:hover{background:color-mix(in srgb,var(--sun) 80%,var(--panel));color:var(--sun-ink)}
+ .viewBtn[aria-pressed="true"]:hover{background:color-mix(in srgb,var(--sun) 80%,#fff)}
+ .ksBox button:hover{outline:none}
+ .ksBox .ksB:hover,.ksBox .ksLbl:hover{background:color-mix(in srgb,var(--sun) 80%,var(--panel));color:var(--sun-ink)}
+ .ksBox .ksLbl:hover small{color:var(--sun-ink)}
+ .ksBox.on .ksB:hover,.ksBox.on .ksLbl:hover{background:color-mix(in srgb,var(--pink) 80%,var(--panel));color:#000}
+ .ksBox.on .ksLbl:hover small{color:#000} .ksBox.on .ksLbl:hover .ksBadge{background:#000;color:var(--pink)}
+}
 </style>
 
 <header class="top">
