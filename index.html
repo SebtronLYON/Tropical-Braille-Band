@@ -2132,11 +2132,31 @@ function metroHit0(t,beat,dur,beats){
   if(st==='wood'){ wood(t,acc); for(let k=1;k<sub;k++) wood(t+k*dur/sub,false,true); return; }
   click(t,acc); for(let k=1;k<sub;k++) softClick(t+k*dur/sub);
 }
+/* close voicing: the inversion nearest to the previous chord (few jumps), kept around middle C */
+function voiceLead(pcs){
+  const u=[...new Set(pcs)], prev=pad._prev, cands=[];
+  for(let r=0;r<u.length;r++){ const ord=u.slice(r).concat(u.slice(0,r));
+    for(const lo of [52,53,54,55,56,57,58,59,60,61,62,63]){ if(((lo%12)+12)%12!==ord[0]) continue;
+      const v=[lo]; for(let k=1;k<ord.length;k++){ let n=v[k-1]+1; while(n%12!==ord[k]) n++; v.push(n); }
+      if(v[v.length-1]<=79) cands.push(v); } }
+  const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
+  const cost=v=>{ let c=Math.abs(mean(v)-64)*0.15; if(prev){ if(prev.length===v.length) c+=v.reduce((x,n,i)=>x+Math.abs(n-prev[i]),0); else c+=Math.abs(mean(v)-mean(prev))*v.length; } return c; };
+  let best=cands[0]; for(const v of cands) if(cost(v)<cost(best)) best=v;
+  pad._prev=best; return best||pcs.map(p=>60+p);
+}
+function bassNear(pc){ const prev=pad._bass; let best=null;
+  for(const m of [24+pc,36+pc]){ if(m<31||m>47) continue; const c=prev==null?Math.abs(m-38):Math.abs(m-prev); if(best==null||c<best[0]) best=[c,m]; }
+  const m=best?best[1]:36+pc; pad._bass=m; return m; }
 function pad(ch,t,dur){
   const iv=chordIntervals(ch.suffix); if(!iv) return;
   const root=(STEP_PC[STEPS.indexOf(ch.step)]+ch.alter+12)%12; const base=60+root-(root>6?12:0);
-  const tones=iv.map(i=>base+i);
-  if(ch.bassStep){const bp=(STEP_PC[STEPS.indexOf(ch.bassStep)]+ch.bassAlter+12)%12; tones.push(48+bp-(bp>6?12:0));}
+  const tones=voiceLead(iv.map(i=>(root+i)%12));
+  // bass in the low register for every chord: the slash bass (A/C#) or the root
+  { const bp=ch.bassStep?(STEP_PC[STEPS.indexOf(ch.bassStep)]+ch.bassAlter+12)%12:root, bm=bassNear(bp), end=t+Math.max(0.1,dur-0.05);
+    for(const [typ,mm,gv] of [['triangle',bm,0.16],['sine',bm+12,0.05]]){
+      const o=ctx.createOscillator(),g=ctx.createGain(); o.type=typ; o.frequency.value=mtof(mm);
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(gv,t+0.03); g.gain.setTargetAtTime(gv*0.7,t+0.12,0.25); g.gain.setTargetAtTime(0.0001,end,0.06);
+      o.connect(g).connect(master); o.start(t); o.stop(end+0.4); } }
   for(const m of tones){
     const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=mtof(m);
     const end=t+Math.max(0.1,dur-0.05);
@@ -2223,6 +2243,7 @@ function buildEvents(order){
 function segAt(rq){ let k=0; while(k<P.segs.length-1&&P.segs[k+1].t0<=rq+1e-6) k++; return k; }
 let resumeAt=null, resumeK=null;
 function startPlay(){
+  pad._prev=null; pad._bass=null;
   if(!song) return; ac();
   const a=curM; P.k0=0;
   const order=makeOrder(); P.order=order;
