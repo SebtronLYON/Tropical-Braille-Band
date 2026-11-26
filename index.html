@@ -372,6 +372,18 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .secPill,.mPill{border:0;cursor:pointer;font-family:inherit}.secPill:hover,.mPill:hover{filter:brightness(1.1);box-shadow:0 0 0 2px var(--sun)}
 .goCard{max-width:640px;width:100%;max-height:80vh;display:flex;flex-direction:column;gap:12px}
 .goCard.secMode{max-width:430px}
+.srcCard{max-width:560px;width:100%;display:flex;flex-direction:column;gap:12px}
+.srcGuess{margin:0;color:var(--sun);font-weight:700}.srcGuess:empty{display:none}
+.srcBtns{display:grid;gap:10px}
+.srcBtn{font:inherit;text-align:left;padding:14px 18px;border-radius:16px;border:3px solid var(--line);background:var(--panel2);color:var(--ink);cursor:pointer}
+.srcBtn b{display:block;font-family:var(--f-display);font-size:calc(1.9rem * var(--zoom));line-height:1.1}
+.srcBtn small{display:block;color:var(--muted);font-size:calc(.95rem * var(--zoom))}
+.srcBtn.guess{border-color:var(--sun)}.srcBtn.guess::after{content:'proposé';float:right;margin-top:-2.2em;background:var(--sun);color:#000;border-radius:8px;padding:2px 8px;font-weight:800;font-size:.8rem}
+.libSrc{flex:none;font-size:.85rem!important;padding:6px 10px!important}
+.goReset{display:inline-flex;align-items:center;gap:6px;margin-left:auto;margin-right:8px}
+.goReset svg{width:22px;height:22px}
+.mfPopHead .goReset[hidden]{display:none}
+.goReset:disabled{opacity:.4;cursor:default}
 #vLib{max-width:1200px}
 .libGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
 .libGrid .libCell{margin:0}
@@ -1280,11 +1292,23 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 </div>
 <div id="goModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="goT">
   <div class="card goCard">
-    <div class="mfPopHead"><h2 id="goT" style="margin:0"></h2><button class="btn mfSmall" id="goClose" aria-label="Fermer">✕</button></div>
+    <div class="mfPopHead"><h2 id="goT" style="margin:0"></h2><button class="btn mfSmall goReset" id="goReset" hidden aria-label="Reset : annuler les boucles choisies, la lecture continue sur tout le morceau" data-tip="Annuler les boucles choisies"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M9 9l6 6M15 9l-6 6"/></svg><span>RESET</span></button><button class="btn mfSmall" id="goClose" aria-label="Fermer">✕</button></div>
     <p class="goHelpTxt" id="goHelp"></p>
     <div class="goList" id="goList"></div>
     <p class="goHint" id="goHint" aria-live="polite"></p>
     <div class="goTools" id="goTools"></div>
+  </div>
+</div>
+<div id="srcModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="srcT">
+  <div class="card srcCard">
+    <h2 id="srcT" style="margin:0">Cette partition est écrite pour :</h2>
+    <p id="srcGuess" class="srcGuess"></p>
+    <div class="srcBtns">
+      <button class="srcBtn" data-src="C"><b>Ut</b><small>piano, flûte, trombone, guitare, basse, voix…</small></button>
+      <button class="srcBtn" data-src="Bb"><b>Si♭</b><small>trompette, clarinette, sax ténor, sax soprano</small></button>
+      <button class="srcBtn" data-src="Eb"><b>Mi♭</b><small>sax alto, sax baryton</small></button>
+    </div>
+    <small style="color:var(--muted)">L’application remet la partition en son réel (Ut), puis chacun l’affiche pour son instrument. Vous pourrez changer ce choix dans la Bibliothèque.</small>
   </div>
 </div>
 <div id="chordModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="cmTitle">
@@ -1679,7 +1703,7 @@ function parseMusicXML(text,fname){
   { const cw=[...root.querySelectorAll('credit > credit-words')].map(c=>({t:c.textContent.replace(/\s+/g,' ').trim(),fs:parseFloat(c.getAttribute('font-size'))||0})).filter(c=>c.t&&!/^page\s*\d/i.test(c.t));
     const mx=Math.max(0,...cw.map(c=>c.fs)); const ttl=(root.querySelector('movement-title,work > work-title')||{}).textContent||'';
     cw.forEach(c=>{ if(cw.length>1&&c.fs===mx) return; if(ttl&&c.t.toLowerCase()===ttl.trim().toLowerCase()) return; if(!credits.includes(c.t)) credits.push(c.t); }); }
-  const song={title,credits,source:'MusicXML'+(soft?' ('+soft+')':''),tempo:tempo||100,fifths:fifths||0,mode,measures,notes,chords,isLogic,acc};
+  const song={title,credits,source:'MusicXML'+(soft?' ('+soft+')':''),tempo:tempo||100,fifths:fifths||0,mode,measures,notes,chords,isLogic,acc,trChrom:melChrom};
   if(isLogic) inferMinor(song);
   return finishSong(song);
 }
@@ -2507,7 +2531,7 @@ function segAt(rq,o){ o=o||pSt(); let k=0; while(k<o.segs.length-1&&o.segs[k+1].
 function queueLoopSwitch(){ if(!P.on||!S.loop||!song) return false; const q=nowQ(); if(q<0||q<P.qb) return false;
   const rq=curRq(), k=segAt(rq,P), sg=P.segs[k], pass=Math.floor((q-P.qb)/P.L), qEnd=P.qb+pass*P.L+sg.t0+sg.len;
   let nk=k+1; while(P.order[nk]&&P.order[nk].listen) nk++; const nx=(P.order[nk]||P.order[0]).mi;
-  const r=loopRange(); const start=r?(nx>=r.a&&nx<=r.b?nx:r.a):nx;
+  const r=loopRange(); const nxt=sg.mi+1<song.measures.length?sg.mi+1:0; const start=r?(nx>=r.a&&nx<=r.b?nx:r.a):(S.loopN==='all'?nxt:nx);
   const sv=curM, sp=curPos, kmOld=P.kmap; curM=start; curPos=null; const order=makeOrder(); const km=P.kmap; curM=sv; curPos=sp; P.kmap=kmOld;
   P.pend={qEnd,order,kmap:km}; return true; }
 function doLoopSwitch(){ const p=P.pend; P.pend=null; const b=buildEvents(p.order);
@@ -2762,10 +2786,26 @@ async function loadFile(file,meta){
     else if(/\.mxl$/i.test(name)){ const x=await unzipMxl(buf); s=parseMusicXML(x,name); store={name,kind:'xml',data:x}; }
     else { const x=new TextDecoder().decode(buf); s=parseMusicXML(x,name); store={name,kind:'xml',data:x}; }
     if(meta&&meta.title) s.title=meta.title;
+    let src='C'; if(!(meta&&meta.band)){ src=await askSrc(s); applySrc(s,src); } store.src=src;
     const id=libAdd(s,store,meta&&meta.folder,meta&&meta.band);
     setSong(s,true,id); showView('pupitre');
   }catch(e){ console.error(e); toast(e.message||'Fichier illisible'); say('Erreur : '+(e.message||'fichier illisible')); }
 }
+const SRC={C:{semi:0,steps:0,df:0,name:'Ut'},Bb:{semi:-2,steps:-1,df:-2,name:'Si♭'},Eb:{semi:-9,steps:-5,df:-3,name:'Mi♭'}};
+const srcGuessOf=c=>{ c=+c||0; const pc=((c%12)+12)%12; return pc===10?'Bb':pc===3?'Eb':pc===0?'C':null; };
+function applySrc(s,code){ const t=SRC[code]; if(!t||!t.semi||!s) return s; const nf=normFifths((s.fifths||0)+t.df);
+  for(const n of s.notes){ if(n.midi==null) continue; n.midi+=t.semi; if(n.sp) n.sp=transposeSp(n.sp,t.semi,t.steps,nf);
+    if(n.grace) for(const g of n.grace){ g.midi+=t.semi; if(g.sp) g.sp=transposeSp(g.sp,t.semi,t.steps,nf); } }
+  for(const x of (s.acc||[])) if(x.midi!=null) x.midi+=t.semi;
+  const tr=o=>{ if(!o||!o.step) return; const r=transposeRoot(o.step,o.alter||0,t.semi,t.steps); o.step=r.step; o.alter=r.alter; if(o.bassStep){ const b=transposeRoot(o.bassStep,o.bassAlter||0,t.semi,t.steps); o.bassStep=b.step; o.bassAlter=b.alter; } };
+  for(const ch of (s.chords||[])){ tr(ch); if(ch.orig&&ch.orig!==ch) tr(ch.orig); }
+  s.fifths=nf; s.src=code; return s; }
+function askSrc(s,cur){ return new Promise(res=>{ const M=$('srcModal'), g=cur||srcGuessOf(s&&s.trChrom);
+  $('srcGuess').textContent=cur?'Choix actuel : '+SRC[cur].name+'.':(s&&s.trChrom&&g?'Ce fichier semble écrit en '+SRC[g].name+'.':'');
+  M.querySelectorAll('.srcBtn').forEach(b=>{ b.classList.toggle('guess',b.dataset.src===(g||'C')); b.onclick=()=>{ M.hidden=true; res(b.dataset.src); }; });
+  M.hidden=false; const f=M.querySelector('.srcBtn.guess')||M.querySelector('.srcBtn'); f.focus();
+  say('Cette partition est écrite pour : Ut, Si bémol, ou Mi bémol ? '+(g&&g!=='C'?'Proposé : '+SRC[g].name.replace('♭',' bémol')+'.':'Proposé : Ut.'));
+  M.onkeydown=e=>{ if(e.key==='Escape'){ e.preventDefault(); M.hidden=true; res(g||'C'); } }; }); }
 const b64=buf=>{let s='';const u=new Uint8Array(buf);for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s);};
 const unb64=s=>{const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u.buffer;};
 function setSong(s,announce,id){
@@ -2829,7 +2869,7 @@ function libAdd(s,store,folder,band){
   try{ localStorage.setItem('tbb-song:'+id,JSON.stringify(store)); }
   catch(err){ toast('Mémoire pleine : supprimez un morceau dans Mes morceaux.'); say('Mémoire pleine. Le morceau est ouvert mais pas enregistré.'); return 'tmp'; }
   if(!e){ e={id,name:store.name,title:s.title,kind:store.kind,added:Date.now(),prefs:{}}; idx.push(e); }
-  if(folder) e.folder=folder; if(band) e.band=1;
+  if(folder) e.folder=folder; if(band) e.band=1; e.src=store.src||'C';
   e.measures=s.measures.length; e.tempo=s.tempo; e.used=Date.now();
   _idx=idx; libSaveIndex(); return id;
 }
@@ -2849,7 +2889,7 @@ function libOpen(id){
   if(id==='demo'){ loadDemo(true); showView('pupitre'); return; }
   let st=null; try{st=JSON.parse(localStorage.getItem('tbb-song:'+id)||'null')}catch(e){}
   if(!st){ toast('Morceau introuvable'); return; }
-  try{ const s=st.kind==='mid'?parseMidi(unb64(st.data),st.name):parseMusicXML(st.data,st.name); setSong(s,true,id); showView('pupitre'); }
+  try{ const s=st.kind==='mid'?parseMidi(unb64(st.data),st.name):parseMusicXML(st.data,st.name); applySrc(s,st.src||'C'); setSong(s,true,id); showView('pupitre'); }
   catch(e){ toast(e.message); say('Erreur : '+e.message); }
 }
 function libDelete(id){
@@ -2895,6 +2935,13 @@ function renderLib(){
     main.onclick=()=>libOpen(e.id);
     li.append(main);
     if(!e.demo){
+      const sb=document.createElement('button'); sb.className='btn libSrc'; sb.textContent='Écrit en '+(SRC[e.src||'C']||SRC.C).name; sb.setAttribute('aria-label','Partition écrite en '+(SRC[e.src||'C']||SRC.C).name.replace('♭',' bémol')+'. Changer');
+      sb.onclick=async()=>{ let st=null; try{st=JSON.parse(localStorage.getItem('tbb-song:'+e.id)||'null')}catch(_){}; if(!st) return;
+        let s0=null; try{ s0=st.kind==='mid'?parseMidi(unb64(st.data),st.name):parseMusicXML(st.data,st.name); }catch(_){}
+        const v=await askSrc(s0,e.src||'C'); st.src=v; try{ localStorage.setItem('tbb-song:'+e.id,JSON.stringify(st)); }catch(_){}
+        const idx=libIndex(); const x=idx.find(y=>y.id===e.id); if(x){ x.src=v; _idx=idx; libSaveIndex(); }
+        if(curId===e.id) libOpen(e.id); else renderLib(); toast('Écrit en '+SRC[v].name); };
+      li.append(sb);
       const del=document.createElement('button'); del.className='btn del'; del.textContent='Supprimer';
       del.setAttribute('aria-label','Supprimer '+e.title);
       del.onclick=()=>{
@@ -3297,7 +3344,7 @@ if('speechSynthesis' in window){loadVoices();try{speechSynthesis.addEventListene
       _idx=idx.filter(e=>!old.includes(e)); libSaveIndex(); } }catch(e){}
   let cur='demo'; try{cur=localStorage.getItem('tbb-cur')||'demo'}catch(e){}
   if(cur!=='demo'){ let st=null; try{st=JSON.parse(localStorage.getItem('tbb-song:'+cur)||'null')}catch(e){}
-    if(st){ try{ setSong(st.kind==='mid'?parseMidi(unb64(st.data),st.name):parseMusicXML(st.data,st.name),false,cur); return; }catch(e){} } }
+    if(st){ try{ setSong(applySrc(st.kind==='mid'?parseMidi(unb64(st.data),st.name):parseMusicXML(st.data,st.name),st.src||'C'),false,cur); return; }catch(e){} } }
   loadDemo(false);
 })();
 if(!S.profile){$('profileModal').hidden=false;setTimeout(()=>$('pmBlind').focus(),100);}
@@ -3721,6 +3768,10 @@ function openGo(kind){ if(!song) return; { const o=$('goList'), n=o.cloneNode(fa
   { const H={sec:['<b>Toucher une partie</b> : on s’y place, LECTURE partira de là. <b>Icône boucle</b> : boucler la partie. <b>Appuyer sur une icône boucle et glisser</b> : boucler plusieurs parties.','Toucher une partie : on s’y place, LECTURE partira de là. Bouton boucle à droite : boucler la partie. Pour plusieurs parties : bouton Relier, en bas, puis la première et la dernière partie.'],
       mes:['<b>Toucher une mesure</b> : on s’y place, LECTURE partira de là. <b>Petite icône boucle</b> : boucler la mesure. <b>Glisser sur plusieurs mesures</b> (sur téléphone, depuis une petite icône) : les boucler ensemble.','Toucher une mesure : on s’y place, LECTURE partira de là. Petite icône boucle : boucler la mesure. Pour plusieurs mesures : bouton Relier, en bas, puis la première et la dernière mesure.']}[kind];
     $('goHelp').innerHTML=H?H[0]:''; say($('goT').textContent+'. '+(H?H[1]+' '+(S.loop?'Boucle actuelle : '+loopSay()+'.':''):'')); }
+  { const R=$('goReset'); R.hidden=!(kind==='sec'||kind==='mes'); R.disabled=!(S.loop&&S.loopN!=='all');
+    R.onclick=()=>{ if(R.disabled) return; L.querySelectorAll('.inLoop,.sel').forEach(x=>x.classList.remove('inLoop','sel')); L.querySelectorAll('.goLp[aria-pressed="true"]').forEach(x=>x.setAttribute('aria-pressed','false')); L.querySelectorAll('.mLp.on').forEach(x=>x.classList.remove('on'));
+      say('Boucles annulées. La lecture continue sur tout le morceau.');
+      goLater(()=>{ S.loop=true; S.loopN='all'; saveS(); savePrefsSoon(); if(P.on) queueLoopSwitch(); applySettingsUi(); try{lpInfo();}catch(e){} toast('Boucles annulées · tout le morceau'); close(); }); }; }
   $('goClose').onclick=close; M.onclick=e=>{ if(e.target===M) close(); };
   M.onkeydown=e=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); close(); } }; }
 $('secPill').onclick=()=>openGo('sec'); $('mPillBtn').onclick=()=>openGo('mes');
