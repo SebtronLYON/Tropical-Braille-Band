@@ -101,7 +101,7 @@
             <left-margin>50</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <top-system-distance>229.37</top-system-distance>
+          <top-system-distance>235.15</top-system-distance>
           </system-layout>
         </print>
       <attributes>
@@ -307,7 +307,7 @@
         </harmony>
       <direction placement="above" system="only-top">
         <direction-type>
-          <rehearsal default-x="-31.36" relative-x="47.22" relative-y="67.21" font-weight="bold" font-size="14">RIFF BASS</rehearsal>
+          <rehearsal default-x="-31.36" default-y="32.19" relative-y="20" justify="center" font-weight="bold" font-size="14">RIFF BASS</rehearsal>
           </direction-type>
         </direction>
       <note default-x="31.36" default-y="-5">
@@ -654,7 +654,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>121.62</system-distance>
+          <system-distance>123.21</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -668,7 +668,7 @@
         </direction>
       <direction placement="above" system="only-top">
         <direction-type>
-          <rehearsal default-x="-25" relative-x="17.71" relative-y="93.37" font-weight="bold" font-size="14">Thème A - voix 1 Tp</rehearsal>
+          <rehearsal default-x="-25" relative-x="26.56" relative-y="85.99" font-weight="bold" font-size="14">Thème A - voix 1 Tp</rehearsal>
           </direction-type>
         </direction>
       <note default-x="97.29" default-y="-25">
@@ -996,7 +996,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>117.44</system-distance>
+          <system-distance>123.21</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -1338,7 +1338,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>113.61</system-distance>
+          <system-distance>123.21</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -2043,7 +2043,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>101.09</system-distance>
+          <system-distance>123.21</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -2260,7 +2260,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>110.54</system-distance>
+          <system-distance>123.21</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -2479,7 +2479,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>116.45</system-distance>
+          <system-distance>123.21</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -2688,7 +2688,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>120.87</system-distance>
+          <system-distance>123.21</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -2902,7 +2902,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>118.03</system-distance>
+          <system-distance>123.21</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -3109,7 +3109,7 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>92.75</system-distance>
+          <system-distance>123.21</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -3118,7 +3118,7 @@
         </harmony>
       <direction placement="above" system="only-top">
         <direction-type>
-          <rehearsal default-x="-25" relative-x="25.09" relative-y="71.38" font-weight="bold" font-size="14">BANJO</rehearsal>
+          <rehearsal default-x="-25" relative-x="11.81" relative-y="69.91" font-weight="bold" font-size="14">BANJO</rehearsal>
           </direction-type>
         </direction>
       <note default-x="97.29" default-y="-20">
@@ -3452,7 +3452,7 @@
         </harmony>
       <direction placement="above" system="only-top">
         <direction-type>
-          <rehearsal default-x="-12.5" relative-x="35.42" relative-y="68.39" font-weight="bold" font-size="14">SKANK</rehearsal>
+          <rehearsal default-x="-12.5" relative-x="10.33" relative-y="52.04" justify="center" font-weight="bold" font-size="14">SKANK - voix 1</rehearsal>
           </direction-type>
         </direction>
       <note default-x="12.5" default-y="-20">
@@ -3613,13 +3613,18 @@
             <left-margin>0</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>92.75</system-distance>
+          <system-distance>123.21</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
         <root><root-step>G</root-step></root>
         <kind>major</kind>
         </harmony>
+      <direction placement="above" system="only-top">
+        <direction-type>
+          <rehearsal default-x="-25" relative-x="78.21" relative-y="50.56" justify="center" font-weight="bold" font-size="14">SKANK - voix 2</rehearsal>
+          </direction-type>
+        </direction>
       <note default-x="97.29" default-y="-20">
         <rest/>
         <duration>2</duration>
@@ -3778,6 +3783,11 @@
         <root><root-step>G</root-step></root>
         <kind>major</kind>
         </harmony>
+      <direction placement="above" system="only-top">
+        <direction-type>
+          <rehearsal default-x="-12.5" relative-x="95.92" relative-y="49.09" justify="center" font-weight="bold" font-size="14">SKANK - voix 3</rehearsal>
+          </direction-type>
+        </direction>
       <note default-x="12.5" default-y="-20">
         <rest/>
         <duration>2</duration>
@@ -3930,13 +3940,13 @@
         </barline>
       </measure>
     <measure number="45" width="709.06">
-      <print new-system="yes">
+      <print new-page="yes" page-number="2">
         <system-layout>
           <system-margins>
-            <left-margin>0</left-margin>
+            <left-margin>0.44</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>92.75</system-distance>
+          <top-system-distance>96.33</top-system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -3945,7 +3955,7 @@
         </harmony>
       <direction placement="above" system="only-top">
         <direction-type>
-          <rehearsal default-x="-25" relative-x="4.43" relative-y="61.05" font-weight="bold" font-size="14">SPECIAL SOUBA</rehearsal>
+          <rehearsal default-x="-25" relative-x="11.81" relative-y="61.05" font-weight="bold" font-size="14">SPECIAL SOUBA</rehearsal>
           </direction-type>
         </direction>
       <note default-x="97.29" default-y="-25">
@@ -4087,13 +4097,13 @@
         </note>
       </measure>
     <measure number="47" width="709.06">
-      <print new-page="yes" page-number="2">
+      <print new-system="yes">
         <system-layout>
           <system-margins>
             <left-margin>0.44</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <top-system-distance>136.87</top-system-distance>
+          <system-distance>218.36</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -4107,7 +4117,7 @@
         </direction>
       <direction placement="above" system="only-top">
         <direction-type>
-          <rehearsal default-x="-25" relative-x="2.95" relative-y="101.59" font-weight="bold" font-size="14">SPECIAL</rehearsal>
+          <rehearsal default-x="-25" relative-x="14.76" relative-y="100.12" font-weight="bold" font-size="14">SPECIAL - Voix 2</rehearsal>
           </direction-type>
         </direction>
       <note default-x="97.29" default-y="-50">
@@ -4453,7 +4463,7 @@
             <left-margin>0.44</left-margin>
             <right-margin>0</right-margin>
             </system-margins>
-          <system-distance>205</system-distance>
+          <system-distance>218.36</system-distance>
           </system-layout>
         </print>
       <harmony print-frame="no">
@@ -4463,6 +4473,11 @@
       <direction placement="above">
         <direction-type>
           <words default-y="52.58" relative-y="10">voix 1</words>
+          </direction-type>
+        </direction>
+      <direction placement="above" system="only-top">
+        <direction-type>
+          <rehearsal default-x="-25" relative-x="20.66" relative-y="74.75" justify="center" font-weight="bold" font-size="14">SPECIAL - Voix 1</rehearsal>
           </direction-type>
         </direction>
       <note default-x="97.29" default-y="-40">
