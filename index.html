@@ -605,6 +605,9 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 #bSay .sayX{display:none}#bSay.mute .sayX{display:inline}#bSay.mute{opacity:.75}
 #bSay{-webkit-touch-callout:none;user-select:none}
 .tpG[hidden]{display:none!important}
+#tipBubble{position:fixed;z-index:9999;max-width:min(320px,calc(100vw - 16px));padding:8px 12px;border-radius:12px;background:var(--sun);color:#0b1d22;font:600 .95rem/1.25 'Atkinson Hyperlegible',Verdana,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.45);pointer-events:none;text-align:center}
+#tipBubble::after{content:"";position:absolute;left:var(--ax,50%);bottom:-7px;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:var(--sun)}
+#tipBubble.below::after{bottom:auto;top:-7px;border-top:0;border-bottom:7px solid var(--sun)}
 </style>
 
 <header class="top">
@@ -959,6 +962,9 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 </section>
 <section class="view wrap help" id="vHelp" role="tabpanel" aria-labelledby="tab-help" hidden>
   <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Aide</span><button class="btn snHome" aria-label="Jouer : revenir à l’écran Jouer"><svg class="snTr" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Jouer</span></button></div>
+  <div class="card"><h2>Bulles d’aide</h2>
+    <button class="tg" data-k="tips">Bulles d’aide au survol de la souris</button>
+    <small>Laissez la souris immobile sur un bouton : une bulle explique à quoi il sert.</small></div>
   <div class="card">
     <h2>Pour travailler</h2>
     <p><b>Parties</b> : l’application lit les repères du fichier (A, B, Thème, Refrain…) ; s’il n’y en a pas, elle découpe le morceau aux doubles barres (Partie 1, 2, 3). Le choix « Partie » permet d’y sauter, et « Longueur : la partie » de la boucler.</p>
@@ -3369,5 +3375,24 @@ function openGo(kind){ if(!song) return; const L=$('goList'), M=$('goModal'); L.
   say($('goT').textContent); $('goClose').onclick=close; M.onclick=e=>{ if(e.target===M) close(); };
   M.onkeydown=e=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); close(); } }; }
 $('secPill').onclick=()=>openGo('sec'); $('mPillBtn').onclick=()=>openGo('mes');
+
+/* ---------- Tooltips: bubble after a short pause of the mouse on a control ---------- */
+(()=>{ if(S.tips==null) S.tips=true;
+  const tip=document.createElement('div'); tip.id='tipBubble'; tip.setAttribute('aria-hidden','true'); tip.hidden=true; document.body.append(tip);
+  let tm=null, cur=null;
+  const SEL='button,select,[role="button"],a.btn,.mItem,.stChord';
+  const textOf=el=>{ const t=el.dataset.tip||el.getAttribute('title')||el.getAttribute('aria-label')||''; if(t) return t.trim();
+    const lb=el.id&&document.querySelector('label[for="'+el.id+'"]'); if(lb) return lb.textContent.trim(); return (el.textContent||'').replace(/\s+/g,' ').trim(); };
+  const hide=()=>{ clearTimeout(tm); tip.hidden=true; if(cur&&cur.dataset.tipT!=null){ cur.setAttribute('title',cur.dataset.tipT); delete cur.dataset.tipT; } cur=null; };
+  const show=el=>{ const t=textOf(el); if(!t||t.length<2) return; tip.textContent=t; tip.hidden=false;
+    const r=el.getBoundingClientRect(), w=tip.offsetWidth, h=tip.offsetHeight; let x=r.left+r.width/2-w/2; x=Math.max(8,Math.min(innerWidth-w-8,x));
+    let y=r.top-h-10; tip.classList.toggle('below',y<8); if(y<8) y=r.bottom+10; tip.style.left=x+'px'; tip.style.top=y+'px';
+    tip.style.setProperty('--ax',Math.round(r.left+r.width/2-x)+'px'); };
+  document.addEventListener('pointerover',e=>{ if(e.pointerType!=='mouse'||!S.tips) return; const el=e.target.closest&&e.target.closest(SEL); if(el===cur) return; hide(); if(!el) return; cur=el;
+    if(el.hasAttribute('title')){ el.dataset.tipT=el.getAttribute('title'); el.removeAttribute('title'); }
+    tm=setTimeout(()=>{ if(cur===el) show(el); },700); },true);
+  document.addEventListener('pointerout',e=>{ if(!cur) return; const to=e.relatedTarget; if(to&&cur.contains(to)) return; hide(); },true);
+  ['pointerdown','keydown','scroll','wheel'].forEach(ev=>document.addEventListener(ev,()=>{ clearTimeout(tm); tip.hidden=true; },true));
+})();
 </script>
 </body></html>
