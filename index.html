@@ -175,6 +175,26 @@ input[type=range]{width:100%;accent-color:var(--sun);height:36px}
 .tgSel{display:flex;align-items:center;gap:8px;background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:8px 12px;font-weight:700;min-width:0}
 .tgSel select{flex:1;min-width:0;font:inherit;padding:6px;border-radius:10px}
 .tg[hidden],.tgSel[hidden]{display:none}
+.lpWhat{margin-top:12px}.lpQ{margin:0 0 6px;font-weight:800;color:var(--muted)}
+.lpModes{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.lpMode{font:inherit;font-weight:700;padding:12px 8px;border-radius:14px;border:2px solid var(--line);background:var(--panel2);color:var(--ink);cursor:pointer}
+.lpMode[aria-checked="true"]{border-color:var(--sun);background:var(--sun);color:#000}
+.lpRow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}.lpRow[hidden]{display:none}.lpRow>small{color:var(--muted);flex-basis:100%}
+.lpRow .tgSel{flex:1 1 200px}.lpNoSec{color:var(--muted);margin:10px 0 0}
+.lpWhat.off{opacity:.55}
+.goRow{display:flex;gap:6px;align-items:stretch}.goRow>button:first-child{flex:1}
+.goList .goLp{flex:none;width:58px;padding:6px!important;display:flex;align-items:center;justify-content:center}
+.goList .goLp svg{width:28px;height:28px}
+.goList .goLp[aria-pressed="true"]{border-color:var(--sun);background:var(--sun);color:#000}
+.goList button.inLoop{outline:3px solid var(--sun);outline-offset:-3px}
+.goList .mPad{position:relative;padding:8px 8px 14px}
+.goList .mPad .mLp{position:absolute;bottom:3px;right:3px;width:22px;height:22px;border-radius:7px;border:1px solid var(--line);background:var(--panel);color:var(--muted);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+.goList .mPad .mLp svg{width:15px;height:15px}
+.goList .mPad .mLp.on{background:var(--sun);color:#000;border-color:var(--sun)}
+.goList button.linkA{border-color:var(--sun);background:var(--panel)}
+.goTools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.goTools .btn{flex:1 1 160px}
+.goTools .btn[aria-pressed="true"]{background:var(--sun);color:#000;border-color:var(--sun)}
+.goHint{margin:8px 0 0;color:var(--sun);font-weight:700}.goHint:empty{display:none}
 .bandList .li-main b::before{content:"🦩 "}
 .libTools{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 
@@ -762,10 +782,22 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 <div class="card field lpCard" id="loopCard">
     <h2>Boucle</h2>
     <div class="toggles" role="group" aria-label="Boucle">
-      <button class="tg" data-k="loop" aria-keyshortcuts="B" id="tgLoop">Boucler la mesure</button>
-      <div class="tgSel"><label for="sLoopN">Longueur</label><select id="sLoopN"><option value="1">1 mesure</option><option value="2">2 mesures</option><option value="4">4 mesures</option><option value="8">8 mesures</option><option value="sec">la partie</option><option value="all">le morceau entier</option></select></div>
-      <div class="tgSel" id="secBox" hidden><label for="sSec">Partie</label><select id="sSec"></select></div>
+      <button class="tg" data-k="loop" aria-keyshortcuts="B" id="tgLoop">Boucler</button>
     </div>
+    <div class="lpWhat" id="lpWhat">
+      <p class="lpQ" id="lpQ">Quoi boucler ?</p>
+      <div class="lpModes" role="radiogroup" aria-labelledby="lpQ">
+        <button class="lpMode" role="radio" data-m="n">Des mesures</button>
+        <button class="lpMode" role="radio" data-m="all">Tout le morceau</button>
+        <button class="lpMode" role="radio" data-m="sec">Une partie</button>
+        <button class="lpMode" role="radio" data-m="secs">Plusieurs parties</button>
+      </div>
+      <div class="lpRow" id="lpRowN"><div class="tgSel"><label for="sLoopN">Nombre</label><select id="sLoopN"><option value="1">1 mesure</option><option value="2">2 mesures</option><option value="3">3 mesures</option><option value="4">4 mesures</option><option value="6">6 mesures</option><option value="8">8 mesures</option></select></div><small>à partir de la mesure en cours. Pour choisir des mesures précises : bouton Mesure de Jouer, puis « Relier des mesures ».</small></div>
+      <div class="lpRow" id="lpRowSec"><div class="tgSel"><label for="lpSecOne">Partie</label><select id="lpSecOne"></select></div></div>
+      <div class="lpRow" id="lpRowSecs"><div class="tgSel"><label for="lpSecFrom">De</label><select id="lpSecFrom"></select></div><div class="tgSel"><label for="lpSecTo">à</label><select id="lpSecTo"></select></div></div>
+      <p class="lpRow lpNoSec" id="lpNoSec">Ce morceau n’a pas de parties nommées.</p>
+    </div>
+    <div class="tgSel" id="secBox" hidden><label for="sSec">Partie</label><select id="sSec"></select></div>
     <p class="lpInfo" id="lpInfo" aria-live="polite"></p>
   </div>
   <div class="card field trCard" id="trainCard">
@@ -1216,6 +1248,8 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
   <div class="card goCard">
     <div class="mfPopHead"><h2 id="goT" style="margin:0"></h2><button class="btn mfSmall" id="goClose" aria-label="Fermer">✕</button></div>
     <div class="goList" id="goList"></div>
+    <p class="goHint" id="goHint" aria-live="polite"></p>
+    <div class="goTools" id="goTools"></div>
   </div>
 </div>
 <div id="chordModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="cmTitle">
@@ -2367,10 +2401,22 @@ function playOrder(){
   }
   return out;
 }
+const LP_ICO='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg>';
+function loopRange(){ if(!song) return null; const last=song.measures.length-1;
+  if(S.loopN==='all') return {a:0,b:last,lbl:'tout le morceau'};
+  if(S.loopN==='range'&&S.loopA!=null&&S.loopB!=null&&S.loopA>=0&&S.loopB<=last&&S.loopA<=S.loopB) return {a:+S.loopA,b:+S.loopB,lbl:S.loopLbl||''};
+  if(S.loopN==='sec'){ const sc=secOf(curM); return sc?{a:sc.a,b:sc.b,lbl:sc.label}:null; }
+  return null; }
+function setLoopRange(a,b,kind,lbl,speak){ if(!song) return; const last=song.measures.length-1; a=Math.max(0,Math.min(last,a)); b=Math.max(a,Math.min(last,b));
+  S.loop=true; S.loopN='range'; S.loopA=a; S.loopB=b; S.loopK=kind; S.loopLbl=lbl||''; saveS(); savePrefsSoon();
+  const was=P.on; if(was) stopPlay(); secAll=true; curPos=null; if(curM<a||curM>b) gotoMeasure(a,false); applySettingsUi(); try{lpUi();}catch(e){} try{renderAll();}catch(e){}
+  if(speak!==false) say('Boucle : '+loopSay()); if(was) startPlay(); }
+function loopSay(){ const r=loopRange(); if(!S.loop) return 'boucle coupée'; if(!r) { const n=+S.loopN||1; return n===1?'la mesure en cours':n+' mesures à partir de la mesure en cours'; }
+  const M=song.measures; return (r.lbl&&r.lbl!=='tout le morceau'?r.lbl+', ':'')+(r.lbl==='tout le morceau'?'tout le morceau':r.a===r.b?'mesure '+M[r.a].num:'mesures '+M[r.a].num+' à '+M[r.b].num); }
 function makeOrder(){
   const last=song.measures.length-1; let idx=[]; P.kmap=null;
   const rot=(arr,r)=>r>0?arr.slice(r).concat(arr.slice(0,r)):arr;
-  if(S.loop){ const sc=S.loopN==='all'?{a:0,b:last}:S.loopN==='sec'?secOf(curM):null; const a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last);
+  if(S.loop){ const sc=loopRange(); const a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last);
     if(sc&&sc.seq){ let r=(curPos!=null&&curPos>=sc.k0&&curPos<=sc.k1)?curPos-sc.k0:sc.seq.indexOf(curM); if(r<0)r=0;
       idx=rot(sc.seq,r); P.kmap=rot(sc.seq.map((_,j)=>sc.k0+j),r); }
     else if(sc&&S.repeats&&hasRepeats()){ const po=playOrder(); const pr=po.map((m,k)=>[m,k]).filter(x=>x[0]>=a&&x[0]<=b);
@@ -2670,7 +2716,7 @@ function setSong(s,announce,id){
   song=s; curId=id||'demo'; try{localStorage.setItem('tbb-cur',curId)}catch(e){}
   const e=libIndex().find(x=>x.id===curId); if(e&&curId==='demo'&&e.title!==song.title){ e.title=song.title; e.prefs={}; libSaveIndex(); } const pr=(e&&e.prefs)||{};
   for(const k of PREF_KEYS) if(pr[k]!=null&&!(k==='sub'&&pr.subV!==3)) S[k]=pr[k];
-  S.keyShift=+pr.keyShift||0;
+  S.keyShift=+pr.keyShift||0; if(S.loopN==='range'&&pr.loopN!=='range') S.loopN='all';
   saveS(); applySettingsUi();
   applyKeyShift();
   curM=Math.max(0,Math.min(song.measures.length-1,(pr.m||1)-1)); curN=firstNoteOfMeasure(curM);
@@ -2686,7 +2732,7 @@ function loadDemo(announce){ try{ setSong(parseMusicXML(DEMO_XML,'Caribbean Sere
 
 /* ---------- Library (Mes morceaux) ---------- */
 let curId='demo', restoring=false, prefTimer=null;
-const PREF_KEYS=['keyShift','transp','loop','loopN','ramp','echo','metro','metroSnd','sub','melody','chords','countIn','acc'];
+const PREF_KEYS=['keyShift','transp','loop','loopN','loopA','loopB','loopK','loopLbl','ramp','echo','metro','metroSnd','sub','melody','chords','countIn','acc'];
 function cleanTitle(t){ return String(t==null?'':t).replace(/\s*\(\s*en\s+ut\s*\)/gi,'').replace(/\s*[-–]?\s+en\s+ut\b/gi,'').replace(/\s{2,}/g,' ').trim()||String(t||''); }
 try{ for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(!k||k.indexOf('tbb-chords:')) continue; const n='tbb-chords:'+cleanTitle(k.slice(11)); if(n!==k&&!localStorage.getItem(n)) localStorage.setItem(n,localStorage.getItem(k)); } }catch(e){}
 /* ---------- Key transposition (semitones, per song) ---------- */
@@ -2809,10 +2855,12 @@ function renderLib(){
 /* ---------- UI wiring ---------- */
 function applySettingsUi(){ try{ updSayBtn(); }catch(e){}
   document.documentElement.style.setProperty('--zoom',S.zoom);
-  document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white';     $('sLoopN').value=String(S.loopN||1);
-  const ln=+S.loopN||1; $('tgLoop').textContent=S.loopN==='all'?'Boucler le morceau entier':S.loopN==='sec'?'Boucler la partie':(ln===1?'Boucler la mesure':'Boucler '+ln+' mesures');
+  document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white';     if(+S.loopN) $('sLoopN').value=String(S.loopN);
+  $('tgLoop').textContent='Boucler';
   if(S.loopN==='sec'&&!sections().length){S.loopN='1';$('sLoopN').value='1';}
-  $('secBox').hidden=!sections().length;
+  if(S.loopN==='range'&&song&&!(S.loopB!=null&&S.loopB<song.measures.length)){S.loopN='all';}
+  try{ lpUi(); }catch(e){}
+  $('secBox').hidden=true;
   $('tgAcc').hidden=!(song&&song.acc&&song.acc.length); $('tgRep').hidden=!hasRepeats();
   $('zVal').textContent=Math.round(S.zoom*100)+' %'; $('zPlus').setAttribute('aria-disabled',String(S.zoom==='2.5')); $('zMinus').setAttribute('aria-disabled',String(S.zoom==='0.8'));
   $('sProfile').value=S.profile||'low'; $('sSound').value=S.sound; $('sTransp').value=S.transp; $('sNaming').value=S.naming; $('sZoom').value=S.zoom; $('sTheme').value=S.theme; $('sRate').value=S.rate; $('sRef').value=S.ref;
@@ -2992,7 +3040,7 @@ function fillSections(){ const sel=$('sSec'); sel.innerHTML=''; secAll=true; cur
 document.querySelectorAll('.snBack').forEach(b=>b.onclick=()=>openMenu());
 document.querySelectorAll('.snHome').forEach(b=>b.onclick=()=>{showView('pupitre');say('Jouer');});
 $('sLabels').onchange=e=>{S.labels=e.target.value;saveS();applySettingsUi();say(S.labels==='off'?'Pictos seuls':'Mots sous les pictos');};
-$('sLoopN').onchange=e=>{S.loopN=e.target.value;saveS();applySettingsUi();savePrefsSoon();say(S.loopN==='all'?'Boucle du morceau entier':S.loopN==='sec'?'Boucle de la partie':'Boucle de '+S.loopN+' mesure'+(S.loopN>1?'s':''));if(P.on&&S.loop){const r=curM;stopPlay();curM=r;startPlay();}};
+$('sLoopN').onchange=e=>{S.loopN=e.target.value;S.loop=true;saveS();applySettingsUi();savePrefsSoon();say(S.loopN==='all'?'Boucle du morceau entier':S.loopN==='sec'?'Boucle de la partie':'Boucle de '+S.loopN+' mesure'+(S.loopN>1?'s':''));if(P.on&&S.loop){const r=curM;stopPlay();curM=r;startPlay();}};
 $('sTheme').onchange=e=>{S.theme=e.target.value;saveS();applySettingsUi();if(song){renderMeasure();renderNow();}};
 $('sRate').onchange=e=>{S.rate=e.target.value;saveS();say('Vitesse de la voix modifiée');};
 $('sVoice').onchange=e=>{S.voiceName=e.target.value;saveS();say('Bonjour, je suis la voix du Tropical Braille Band.');};
@@ -3422,12 +3470,33 @@ function mfGuard(fn){ if(!song||MF.alone){ fn(); return; }
   md.onkeydown=e=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); end(false); } }; }
 $('mfRelink').onclick=()=>{ MF.alone=false; MF.x=0; mfFromSong(); mfRender(); mfAloneUi(); say('Le click suit de nouveau le morceau'); };
 
+function lpMode(){ if(S.loopN==='all') return 'all'; if(S.loopN==='sec') return 'sec'; if(S.loopN==='range') return S.loopK==='secs'?'secs':S.loopK==='sec'?'sec':'bars'; return 'n'; }
+function lpUi(){ const w=$('lpWhat'); if(!w) return; const md=lpMode(), ss=song?sections():[];
+  w.classList.toggle('off',!S.loop);
+  w.querySelectorAll('.lpMode').forEach(b=>{ const on=b.dataset.m===md||(md==='bars'&&b.dataset.m==='n'); b.setAttribute('aria-checked',String(on)); b.tabIndex=on?0:-1; b.hidden=(b.dataset.m==='sec'||b.dataset.m==='secs')&&!ss.length; });
+  $('lpRowN').hidden=!(md==='n'||md==='bars'); $('lpRowSec').hidden=md!=='sec'||!ss.length; $('lpRowSecs').hidden=md!=='secs'||!ss.length; $('lpNoSec').hidden=!!ss.length||!song;
+  const fill=(sel,v)=>{ sel.innerHTML=''; ss.forEach((x,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=x.label+' (mes. '+song.measures[x.a].num+(x.b>x.a?' à '+song.measures[x.b].num:'')+')'; sel.append(o); }); if(v>=0) sel.value=String(v); };
+  const r=loopRange(); const iA=r?ss.findIndex(x=>x.a===r.a):-1, iB=r?ss.findIndex(x=>x.b===r.b):-1;
+  fill($('lpSecOne'),md==='sec'?(S.loopN==='sec'?secIdx():iA):Math.max(0,secIdx())); fill($('lpSecFrom'),md==='secs'?iA:0); fill($('lpSecTo'),md==='secs'?iB:Math.min(1,ss.length-1)); }
+function lpSetSecs(i,j,kind){ const ss=sections(); if(!ss.length) return; i=Math.max(0,Math.min(ss.length-1,i)); j=Math.max(0,Math.min(ss.length-1,j)); if(j<i){const t=i;i=j;j=t;}
+  setLoopRange(ss[i].a,ss[j].b,kind,i===j?ss[i].label:ss[i].label+' → '+ss[j].label); }
+document.querySelectorAll('#lpWhat .lpMode').forEach(b=>b.onclick=()=>{ if(!song) return; const m=b.dataset.m, ss=sections();
+  if(m==='all'){ S.loop=true; S.loopN='all'; saveS(); savePrefsSoon(); applySettingsUi(); lpInfo(); say('Boucle : tout le morceau'); }
+  else if(m==='n'){ S.loop=true; S.loopN=$('sLoopN').value||'1'; saveS(); savePrefsSoon(); applySettingsUi(); lpInfo(); say('Boucle : '+loopSay()); }
+  else if(m==='sec'){ const i=Math.max(0,secIdx()); lpSetSecs(i,i,'sec'); }
+  else if(m==='secs'){ const i=Math.max(0,secIdx()); lpSetSecs(i,Math.min(i+1,ss.length-1),'secs'); }
+  if(P.on&&S.loop&&(m==='all'||m==='n')){ const r=curM; stopPlay(); curM=r; startPlay(); } });
+$('lpWhat').addEventListener('keydown',e=>{ const bs=[...document.querySelectorAll('#lpWhat .lpMode:not([hidden])')], i=bs.indexOf(document.activeElement); if(i<0) return;
+  const d=e.key==='ArrowRight'||e.key==='ArrowDown'?1:e.key==='ArrowLeft'||e.key==='ArrowUp'?-1:0; if(!d) return; e.preventDefault(); const nb=bs[(i+d+bs.length)%bs.length]; nb.focus(); nb.click(); });
+$('lpSecOne').onchange=e=>lpSetSecs(+e.target.value,+e.target.value,'sec');
+$('lpSecFrom').onchange=()=>lpSetSecs(+$('lpSecFrom').value,+$('lpSecTo').value,'secs');
+$('lpSecTo').onchange=()=>lpSetSecs(+$('lpSecFrom').value,+$('lpSecTo').value,'secs');
 function lpInfo(){ const e=$('lpInfo'); if(!e) return; let t='';
   if(!song) t='Aucun morceau chargé.';
   else if(!S.loop) t='Boucle coupée : la lecture continue jusqu’à la fin.';
-  else { const last=song.measures.length-1, sc=S.loopN==='all'?{a:0,b:last}:S.loopN==='sec'?secOf(curM):null, a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last);
-    t=sc&&sc.seq?'La lecture tourne sur '+sc.label+' : mesures '+secNums(sc)+'.':a===b?'La lecture tourne sur la mesure '+song.measures[a].num+'.':'La lecture tourne de la mesure '+song.measures[a].num+' à la mesure '+song.measures[b].num+'.'; }
-  e.textContent=t; const m=$('lpMes'); if(m) m.textContent=song?'Mesure '+song.measures[curM].num+' / '+song.measures.length:''; }
+  else { const last=song.measures.length-1, sc=loopRange(), a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last);
+    t='La lecture tourne sur '+(sc&&sc.lbl&&sc.lbl!=='tout le morceau'?sc.lbl+' : ':'')+(S.loopN==='all'?'tout le morceau.':a===b?'la mesure '+song.measures[a].num+'.':'les mesures '+song.measures[a].num+' à '+song.measures[b].num+'.'); }
+  e.textContent=t; try{lpUi();}catch(_){} const m=$('lpMes'); if(m) m.textContent=song?'Mesure '+song.measures[curM].num+' / '+song.measures.length:''; }
 function openLoop(){ { const t=document.querySelector('.transport'); $('loopFull').style.setProperty('--kb',(t?t.offsetHeight:0)+'px'); } $('lpHost').append($('trainBody')); $('loopFull').hidden=false; setSongBar(); lpInfo(); $('tgLoop').focus(); say('Loop et entraînement, plein écran. '+$('lpInfo').textContent+' Échap pour fermer.'); }
 function closeLoop(){ $('trainHome').append($('trainBody')); $('loopFull').hidden=true; $('loopBtn').focus(); }
 $('loopBtn').onclick=()=>$('loopFull').hidden?openLoop():closeLoop(); $('lpClose').onclick=closeLoop;
@@ -3515,23 +3584,54 @@ try{ new ResizeObserver(fitSoon).observe(document.querySelector('#measure')); }c
 setTimeout(fitJouer,300); if(document.fonts) document.fonts.ready.then(fitSoon);
 
 /* Partie / Mesure pills: choose a section or a bar */
-function openGo(kind){ if(!song) return; const L=$('goList'), M=$('goModal'); L.innerHTML=''; L.className='goList'+(kind==='sec'?' secs':kind==='key'?' keys':'');
+const GO={link:null,kind:null};
+function goTools(kind){ const T=$('goTools'); T.innerHTML=''; GO.kind=kind; GO.link=null; $('goHint').textContent='';
+  if(kind==='sec'&&sections().length<2) return;
+  const b=document.createElement('button'); b.className='btn'; b.id='goLinkBtn'; b.setAttribute('aria-pressed','false');
+  b.innerHTML=LP_ICO.replace('<svg ','<svg style="width:20px;height:20px;vertical-align:-4px;margin-right:6px" ')+(kind==='sec'?'Relier plusieurs parties en boucle':'Relier des mesures en boucle');
+  b.onclick=()=>{ if(GO.link!=null){ GO.link=null; b.setAttribute('aria-pressed','false'); $('goHint').textContent=''; document.querySelectorAll('#goList .linkA').forEach(x=>x.classList.remove('linkA')); say('Liaison annulée'); return; }
+    GO.link=-1; b.setAttribute('aria-pressed','true'); const t=kind==='sec'?'Touchez la première partie de la boucle.':'Touchez la première mesure de la boucle.'; $('goHint').textContent=t; say(t); };
+  T.append(b);
+  if(S.loop&&S.loopN!=='all'){ const off=document.createElement('button'); off.className='btn'; off.textContent='Boucler tout le morceau';
+    off.onclick=()=>{ S.loop=true; S.loopN='all'; saveS(); savePrefsSoon(); applySettingsUi(); $('goModal').hidden=true; say('Boucle sur tout le morceau'); }; T.append(off); } }
+function goLinkPick(i){ const items=[...document.querySelectorAll(GO.kind==='sec'?'#goList .goRow > button:first-child':'#goList .mPad')];
+  if(GO.link===-1){ GO.link=i; items[i]&&items[i].classList.add('linkA'); const t=GO.kind==='sec'?'Touchez maintenant la dernière partie de la boucle.':'Touchez maintenant la dernière mesure de la boucle.'; $('goHint').textContent=t; say(t); return; }
+  const a=GO.link; GO.link=null; $('goModal').hidden=true;
+  if(GO.kind==='sec') lpSetSecs(a,i,'secs'); else setLoopRange(Math.min(a,i),Math.max(a,i),'bars','',true); }
+function openGo(kind){ if(!song) return; const L=$('goList'), M=$('goModal'); L.innerHTML=''; $('goTools').innerHTML=''; $('goHint').textContent=''; GO.link=null; L.className='goList'+(kind==='sec'?' secs':kind==='key'?' keys':'');
   const close=()=>{ M.hidden=true; const b=$(kind==='sec'?'secPill':kind==='key'?'ksLbl':'mPillBtn'); if(b&&!b.hidden) b.focus(); };
   if(kind==='key'){ $('goT').textContent='Choisir la tonalité'; const f0=song._f0!=null?song._f0:song.fifths, wAdd=isBb()?2:0, cur=+S.keyShift||0;
     for(let i=-6;i<=6;i++){ const b=document.createElement('button'); const nm=keyName(normFifths(ksCalc(f0,i).nf+wAdd),songMode()); b.innerHTML='<span></span><small></small>'; b.firstChild.textContent=nm.replace(' majeur','').replace(' mineur',' m');
       b.lastChild.textContent=i?(i>0?'+':'−')+Math.abs(i)+' demi-ton'+(Math.abs(i)>1?'s':''):'original'; if(!i) b.classList.add('orig'); if(i===cur) b.setAttribute('aria-current','true');
       b.setAttribute('aria-label',nm+(i?', '+Math.abs(i)+' demi-ton'+(Math.abs(i)>1?'s':'')+(i>0?' plus aigu':' plus grave'):', tonalité d’origine'));
       b.onclick=()=>{ M.hidden=true; setKeyShift(i); close(); }; L.append(b); }
-  } else if(kind==='sec'){ $('goT').textContent='Choisir la partie'; const ss=sections(), cur=secIdx();
-    ss.forEach((sc,i)=>{ const b=document.createElement('button'); b.innerHTML='<span></span><small></small>'; b.firstChild.textContent=sc.label; b.lastChild.textContent='mesures '+secNums(sc);
-      if(i===cur&&!secAll) b.setAttribute('aria-current','true'); b.onclick=()=>{ M.hidden=true; const s=$('sSec'); s.value=String(i); s.onchange({target:s}); }; L.append(b); });
+  } else if(kind==='sec'){ $('goT').textContent='Choisir la partie'; const ss=sections(), cur=secIdx(), lr=S.loop?loopRange():null;
+    ss.forEach((sc,i)=>{ const row=document.createElement('div'); row.className='goRow';
+      const b=document.createElement('button'); b.innerHTML='<span></span><small></small>'; b.firstChild.textContent=sc.label; b.lastChild.textContent='mesures '+secNums(sc);
+      if(i===cur&&!secAll) b.setAttribute('aria-current','true'); if(lr&&sc.a>=lr.a&&sc.b<=lr.b&&S.loopN!=='all') b.classList.add('inLoop');
+      b.setAttribute('aria-label',sc.label+', mesures '+secNums(sc)+(b.classList.contains('inLoop')?', dans la boucle':''));
+      b.onclick=()=>{ if(GO.link!=null){ goLinkPick(i); return; } M.hidden=true; const s=$('sSec'); s.value=String(i); s.onchange({target:s}); };
+      const lp=document.createElement('button'); lp.className='goLp'; lp.innerHTML=LP_ICO; const on=!!(lr&&S.loopN!=='all'&&lr.a===sc.a&&lr.b===sc.b); lp.setAttribute('aria-pressed',String(on));
+      lp.setAttribute('aria-label',(on?'Arrêter la boucle de ':'Boucler ')+sc.label); lp.dataset.tip=on?'Arrêter la boucle':'Boucler cette partie';
+      lp.onclick=()=>{ if(on){ S.loopN='all'; saveS(); savePrefsSoon(); applySettingsUi(); say('Boucle de '+sc.label+' arrêtée. Boucle sur tout le morceau.'); }
+        else lpSetSecs(i,i,'sec'); M.hidden=true; close(); };
+      row.append(b,lp); L.append(row); });
     const all=document.createElement('button'); all.innerHTML='<span>Tout le morceau</span><small>depuis la mesure 1</small>'; if(secAll) all.setAttribute('aria-current','true');
     all.onclick=()=>{ M.hidden=true; const s=$('sSec'); s.value='all'; s.onchange({target:s}); }; L.append(all);
-  } else { $('goT').textContent='Aller à la mesure'; const ss=sections();
-    song.measures.forEach((m,i)=>{ const b=document.createElement('button'); const sc=ss.find(x=>x.a===i);
-      b.innerHTML=(sc?'<span class="gSec"></span>':'')+'<span></span>'; if(sc) b.firstChild.textContent=sc.label; b.lastChild.textContent=m.num;
-      b.setAttribute('aria-label','Mesure '+m.num+(sc?', début de '+sc.label:'')); if(i===curM) b.setAttribute('aria-current','true');
-      b.onclick=()=>{ M.hidden=true; gotoMeasure(i,true); }; L.append(b); }); }
+    goTools('sec');
+  } else { $('goT').textContent='Aller à la mesure'; const ss=sections(), lr=S.loop?loopRange():null, lrM=(S.loop&&!lr)?{a:curM,b:Math.min(curM+(+S.loopN||1)-1,song.measures.length-1)}:lr;
+    song.measures.forEach((m,i)=>{ const b=document.createElement('button'); b.className='mPad'; const sc=ss.find(x=>x.a===i);
+      b.innerHTML=(sc?'<span class="gSec"></span>':'')+'<span class="mNum"></span>'; if(sc) b.firstChild.textContent=sc.label; b.querySelector('.mNum').textContent=m.num;
+      const inL=!!(lrM&&S.loopN!=='all'&&i>=lrM.a&&i<=lrM.b); if(inL) b.classList.add('inLoop');
+      b.setAttribute('aria-label','Mesure '+m.num+(sc?', début de '+sc.label:'')+(inL?', dans la boucle':'')); if(i===curM) b.setAttribute('aria-current','true');
+      const lp=document.createElement('span'); lp.className='mLp'+(inL&&lrM.a===lrM.b?' on':''); lp.innerHTML=LP_ICO; lp.setAttribute('role','button'); lp.tabIndex=0;
+      lp.setAttribute('aria-label',(inL&&lrM.a===lrM.b?'Arrêter la boucle de la mesure ':'Boucler la mesure ')+m.num); lp.dataset.tip='Boucler cette mesure';
+      const lpAct=e=>{ e.stopPropagation(); e.preventDefault(); if(inL&&lrM.a===lrM.b){ S.loopN='all'; saveS(); savePrefsSoon(); applySettingsUi(); say('Boucle de la mesure arrêtée. Boucle sur tout le morceau.'); }
+        else setLoopRange(i,i,'bars','',true); M.hidden=true; close(); };
+      lp.onclick=lpAct; lp.onkeydown=e=>{ if(e.key==='Enter'||e.key===' ') lpAct(e); };
+      b.append(lp);
+      b.onclick=()=>{ if(GO.link!=null){ goLinkPick(i); return; } M.hidden=true; gotoMeasure(i,true); }; L.append(b); });
+    goTools('mes'); }
   M.hidden=false; const c=L.querySelector('[aria-current="true"]')||L.firstChild; if(c){ c.focus(); c.scrollIntoView({block:'center'}); }
   say($('goT').textContent); $('goClose').onclick=close; M.onclick=e=>{ if(e.target===M) close(); };
   M.onkeydown=e=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); close(); } }; }
