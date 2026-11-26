@@ -1729,7 +1729,10 @@ function finishSong(s){
 let song=null, curM=0, curN=null, bpm=100;
 const pitchedIdx=()=>song.notes.filter(n=>n.midi!=null&&!n.tieStop).map(n=>n.i);
 
-function chordAt(q){let c=null; for(const ch of song.chords){if(ch.q<=q+1e-6)c=ch;else break;} return c;}
+function chordAt(q){let c=null; for(const ch of song.chords){if(ch.q<=q+1e-6)c=ch;else break;}
+  // after the last chord of the score, its bar ends and no chord is held any more
+  const L=song.chords[song.chords.length-1]; if(c&&c===L){ const m=song.measures[L.m!=null&&L.m>=0?L.m:song.measures.findIndex(x=>L.q>=x.startQ-1e-6&&L.q<x.startQ+x.len-1e-6)]; if(m&&q>=m.startQ+m.len-1e-6) return null; }
+  return c;}
 function applyChordEdits(){
   if(!song) return;
   let ed={}; try{ed=JSON.parse(localStorage.getItem('tbb-chords:'+song.title)||'{}')}catch(e){}
