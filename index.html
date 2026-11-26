@@ -209,7 +209,6 @@ input[type=range]{width:100%;accent-color:var(--sun);height:36px}
   .status>*{min-width:0}
   .viewSeg{flex:none}
   .chordNow{padding:2px 10px}
-  .keyinfo{display:none}
   #vPupitre{display:flex}
   #vPupitre .measure{order:1} #vPupitre .now{order:2} #vPupitre .ctrl{order:3}
   .now{gap:0}
@@ -301,6 +300,25 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .kNext{margin:0;font-weight:700;font-size:min(calc(2.4rem * var(--zoom)),7vw);color:var(--muted);opacity:.55;line-height:1.2}
 @media (max-width:760px){.lyrBtn{margin-left:0}}
 @media (max-width:430px){.status{--sf:6vw;--sh:13vw;gap:5px}.status .viewBtn{font-size:3.3vw;padding:0 4px}.mnum{padding:0 5px}.chordNow{padding:0 5px}.mnum>span:last-child{font-size:.85em}}
+/* JOUER redesign: top row of the score zone, compact status row */
+#measure{position:relative}
+.mTop.onStaff{position:absolute;left:12px;right:12px;margin:0;pointer-events:none;z-index:1}.mTop.onStaff>*{pointer-events:auto}
+.mTop{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:calc(1.9rem * var(--zoom));margin-bottom:4px}
+.secPill,.mPill{background:var(--pink);color:#000;border-radius:999px;padding:2px 12px;font-weight:700;font-size:calc(1rem * var(--zoom));line-height:1.5;white-space:nowrap}
+.mPill{margin-left:auto}.mPill b{font-size:1.15em}.mPill #mTot{margin-left:.2em}
+.stChord,.stChordHit{cursor:pointer}.stChord:hover{fill:var(--sun)}
+.vIco{width:1.4em;height:1.4em;flex:none;margin-right:.35em}
+.instrBtn,.trPill{height:var(--sh);box-sizing:border-box;border:2px solid var(--sun);border-radius:14px;background:var(--panel);color:var(--sun);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.instrBtn{padding:4px 10px;aspect-ratio:188/90}.instrBtn svg{width:100%;height:auto;display:block}
+.trPill{font-family:var(--f-display);font-size:calc(var(--sf) * .7);padding:0 12px;min-width:2.6em}
+.instrBtn:hover,.trPill:hover{border-color:var(--pink)}
+.keyinfo{height:auto;gap:8px}
+.imGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.imOpt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 10px;border:2px solid var(--line);border-radius:16px;background:var(--panel);color:var(--ink);cursor:pointer;font:inherit}
+.imOpt[aria-pressed="true"]{border-color:var(--sun);color:var(--sun)}.imOpt[aria-disabled="true"]{opacity:.6}
+.imOpt b{font-size:1.2rem}.imOpt small{color:var(--muted)}
+.imIco{width:100%;max-width:170px;color:currentColor}.imIco svg{width:100%;height:auto;display:block}
+@media (max-width:760px){ .mPw{display:none} .secPill,.mPill{padding:1px 9px} .status .keyinfo{display:flex;margin-left:auto} .vTxt{display:none} .vIco{margin-right:0} .viewBtn{padding:0 8px} .instrBtn{padding:3px 6px} .trPill{padding:0 8px;min-width:0} .status{flex-wrap:nowrap} }
 /* Simplified header + full-screen menu */
 .top .btn-open{display:none!important}
 .top .wrap+.wrap{display:none!important}
@@ -474,18 +492,17 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
 <main>
 <section class="view wrap" id="vPupitre" role="tabpanel" aria-labelledby="tab-pupitre">
   <div class="status">
-    <div class="mnum" aria-live="off"><span>Mesure</span><b id="mNum">–</b><span id="mTot">/ –</span></div>
-    <button class="chordNow" id="chordNow" aria-label="Accord en cours, appuyer pour corriger">–</button>
+    <button class="chordNow" id="chordNow" hidden aria-hidden="true" tabindex="-1">–</button>
     <div class="viewSeg" role="group" aria-label="Affichage de la mesure">
-      <button class="viewBtn" id="vbNotes" aria-pressed="false" aria-keyshortcuts="V">Notes</button>
-      <button class="viewBtn" id="vbStaff" aria-pressed="true" aria-keyshortcuts="V">Partition</button>
+      <button class="viewBtn" id="vbNotes" aria-pressed="false" aria-keyshortcuts="V" aria-label="Vue Notes"><svg class="vIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><ellipse cx="7" cy="17" rx="3.6" ry="2.7" fill="currentColor"/><ellipse cx="17" cy="14" rx="3.6" ry="2.7" fill="currentColor"/><path d="M10.4 17V5l10 -3v12" fill="none" stroke="currentColor" stroke-width="2"/></svg><span class="vTxt">Notes</span></button>
+      <button class="viewBtn" id="vbStaff" aria-pressed="true" aria-keyshortcuts="V" aria-label="Vue Partition"><svg class="vIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M1 5h22M1 9h22M1 13h22M1 17h22M1 21h22" stroke="currentColor" stroke-width="1.3"/><ellipse cx="12" cy="15" rx="3.4" ry="2.5" fill="currentColor"/><path d="M15.2 15V3" stroke="currentColor" stroke-width="2"/></svg><span class="vTxt">Partition</span></button>
     </div>
     <button class="lyrBtn" id="lyrBtn" aria-label="Karaoké, paroles en grand" title="Karaoké, paroles en grand (K)" aria-keyshortcuts="K" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="16.2" cy="7.3" r="5.2" fill="currentColor"/><path d="M12.6 9.4 4.3 17.7a1.7 1.7 0 0 0 2.4 2.4l8.3-8.3z" fill="currentColor"/><path d="M12.3 8.3l3.7 3.7" stroke="var(--panel)" stroke-width="1.3" fill="none"/><path d="M7.4 13.6l3.2 3.2" stroke="var(--panel)" stroke-width="1.1" fill="none"/><path d="M5.3 19.6c-1.6 1.6-.4 3.6 1.3 2.8 1.5-.7 1.6-2.7 3.4-2.6 1.7.1 1.6 2.4 3.6 2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
     <button class="lyrBtn metBtn" id="metBtn" aria-pressed="false" aria-label="Métronome en plein écran" title="Métronome en plein écran"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg></button>
     <div class="keyinfo" id="keyInfo"></div>
   </div>
 
-  <div class="measure" id="measure">
+  <div class="measure" id="measure"><div class="mTop"><span class="secPill" id="secPill" hidden></span><div class="mPill" aria-live="off"><span class="mPw">Mesure </span><b id="mNum">–</b><span id="mTot">/ –</span></div></div>
     <div class="chordsRow" id="chordsRow"></div>
     <div class="roll" id="roll" role="group" aria-label="Notes de la mesure"></div>
     <div class="staff" id="staff" hidden aria-label="Partition de la mesure" role="img"></div>
@@ -685,7 +702,9 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
   <div class="grid2">
     <div class="card field">
       <h2>Instrument</h2>
-      <label for="sTransp">Affichage des notes</label>
+      <label for="sInstr">Mon instrument</label>
+      <select id="sInstr"><option value="tp">Trompette</option><option value="tb">Trombone en ut (bientôt)</option></select>
+      <label for="sTransp" style="margin-top:10px">Affichage des notes</label>
       <select id="sTransp">
         <option value="Bb">Trompette en si♭ (écrit un ton au-dessus)</option>
         <option value="C">En ut (son réel, comme le fichier)</option>
@@ -958,6 +977,15 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
   </div>
   <p class="kCred kCredB" id="kCred"></p>
 </div>
+<div id="instrModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="imT">
+  <div class="card imCard">
+    <div class="mfPopHead"><h2 id="imT" style="margin:0;color:var(--sun)">Instrument</h2><button class="btn mfSmall" id="imClose" aria-label="Fermer">✕</button></div>
+    <div class="imGrid">
+      <button class="imOpt" id="imTp" aria-pressed="true"><span class="imIco" id="imTpIco"></span><b>Trompette</b><small>en si♭ ou en ut</small></button>
+      <button class="imOpt" id="imTb" aria-disabled="true" aria-pressed="false"><span class="imIco" id="imTbIco"></span><b>Trombone</b><small>en ut · bientôt</small></button>
+    </div>
+  </div>
+</div>
 <div id="fsModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="fsTitle">
   <div class="card">
     <h2 id="fsTitle">Plein écran sur iPhone</h2>
@@ -1000,6 +1028,7 @@ const TP_SAMPLES = {"52": "//uQZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZ
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
+const TP_ICON='<svg viewBox="0 0 188 70" aria-hidden="true" focusable="false"><path d="M6 22.5c-2.2 0-2.2 11 0 11h2l1.6-3.6H24v-3.8H9.6L8 22.5z" fill="currentColor"/><path d="M24 26.6H100" stroke="currentColor" stroke-width="3" fill="none"/><path d="M100 25.2 148 23.6Q170 22 180 5.5Q183 3 184.5 6.5V51.5Q183 55 180 52.5Q170 36 148 33.2H100z" fill="currentColor"/><g fill="none" stroke="currentColor"><path d="M147 32.8Q157 33 157 44.5Q157 56 146 56H101" stroke-width="3"/><path d="M75 33H52Q38 33 38 45.5Q38 58 52 58H75" stroke-width="3"/><path d="M75 50H60Q56.5 50 56.5 52.5Q56.5 55 60 55H75" stroke-width="2.2"/><path d="M101 46.5H133Q136.5 46.5 136.5 49.3Q136.5 52 133 52H101" stroke-width="2.2"/><circle cx="113" cy="41.5" r="3.2" stroke-width="1.8"/><circle cx="108" cy="20.5" r="3.2" stroke-width="1.8"/></g><g fill="currentColor"><rect x="74.5" y="24" width="7" height="40" rx="1.5"/><rect x="83.5" y="24" width="7" height="40" rx="1.5"/><rect x="92.5" y="24" width="7" height="40" rx="1.5"/><rect x="74" y="62" width="8" height="5" rx="2.4"/><rect x="83" y="62" width="8" height="5" rx="2.4"/><rect x="92" y="62" width="8" height="5" rx="2.4"/><rect x="77" y="15" width="2" height="9"/><rect x="86" y="15" width="2" height="9"/><rect x="95" y="15" width="2" height="9"/><rect x="74.6" y="12.5" width="6.8" height="3" rx="1.2"/><rect x="83.6" y="12.5" width="6.8" height="3" rx="1.2"/><rect x="92.6" y="12.5" width="6.8" height="3" rx="1.2"/></g></svg>', TB_ICON='<svg viewBox="0 0 188 70" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round"><path d="M70 24H146" stroke-width="3.4"/><path d="M70 24Q52 24 52 34Q52 44 70 44" stroke-width="3.4"/><path d="M70 44H118" stroke-width="3"/><path d="M14 46H120M14 58H112" stroke-width="3"/><path d="M14 46Q4 46 4 52Q4 58 14 58" stroke-width="3"/><path d="M118 44V52" stroke-width="3"/></g><path d="M146 22.4 160 21Q174 19 182 4Q185 2 186 6V44Q185 48 182 46Q174 30 160 27.6L146 26z" fill="currentColor"/><rect x="108" y="54" width="10" height="8" rx="2" fill="currentColor"/><rect x="60" y="40" width="6" height="22" rx="2" fill="currentColor"/></svg>';
 const STEPS=['C','D','E','F','G','A','B'];
 const STEP_PC=[0,2,4,5,7,9,11];
 const FR={C:'do',D:'ré',E:'mi',F:'fa',G:'sol',A:'la',B:'si'};
@@ -1475,8 +1504,8 @@ function renderHeader(){
   setSongBar();
   const wf=writtenFifths();
   const tl=S.transp==='C'?'Ut':'Si♭';
-  $('keyInfo').innerHTML=`<svg viewBox="0 0 188 70" role="img" aria-label="Affichage pour ${S.transp==='C'?'trompette en ut':'trompette en si bémol'}"><title>${T().label}</title><path d="M6 22.5c-2.2 0-2.2 11 0 11h2l1.6-3.6H24v-3.8H9.6L8 22.5z" fill="currentColor"/><path d="M24 26.6H100" stroke="currentColor" stroke-width="3" fill="none"/><path d="M100 25.2 148 23.6Q170 22 180 5.5Q183 3 184.5 6.5V51.5Q183 55 180 52.5Q170 36 148 33.2H100z" fill="currentColor"/><g fill="none" stroke="currentColor"><path d="M147 32.8Q157 33 157 44.5Q157 56 146 56H101" stroke-width="3"/><path d="M75 33H52Q38 33 38 45.5Q38 58 52 58H75" stroke-width="3"/><path d="M75 50H60Q56.5 50 56.5 52.5Q56.5 55 60 55H75" stroke-width="2.2"/><path d="M101 46.5H133Q136.5 46.5 136.5 49.3Q136.5 52 133 52H101" stroke-width="2.2"/><circle cx="113" cy="41.5" r="3.2" stroke-width="1.8"/><circle cx="108" cy="20.5" r="3.2" stroke-width="1.8"/></g><g fill="currentColor"><rect x="74.5" y="24" width="7" height="40" rx="1.5"/><rect x="83.5" y="24" width="7" height="40" rx="1.5"/><rect x="92.5" y="24" width="7" height="40" rx="1.5"/><rect x="74" y="62" width="8" height="5" rx="2.4"/><rect x="83" y="62" width="8" height="5" rx="2.4"/><rect x="92" y="62" width="8" height="5" rx="2.4"/><rect x="77" y="15" width="2" height="9"/><rect x="86" y="15" width="2" height="9"/><rect x="95" y="15" width="2" height="9"/><rect x="74.6" y="12.5" width="6.8" height="3" rx="1.2"/><rect x="83.6" y="12.5" width="6.8" height="3" rx="1.2"/><rect x="92.6" y="12.5" width="6.8" height="3" rx="1.2"/></g></svg><div class="tpills" role="radiogroup" aria-label="Affichage des notes"><button role="radio" data-t="Bb" aria-checked="${S.transp!=='C'}" aria-label="Trompette en si bémol">Si♭</button><button role="radio" data-t="C" aria-checked="${S.transp==='C'}" aria-label="En ut">Ut</button></div>`;
-  $('keyInfo').querySelectorAll('.tpills button').forEach(b=>b.onclick=()=>setTransp(b.dataset.t));
+  $('keyInfo').innerHTML='<button class="instrBtn" id="instrBtn" aria-haspopup="dialog" aria-label="Instrument : trompette. Changer d’instrument" title="Changer d’instrument">'+TP_ICON+'</button><button class="trPill" id="trPill" aria-label="'+(S.transp==='C'?'Affichage en ut, son réel. Toucher pour passer en si bémol':'Affichage trompette en si bémol. Toucher pour passer en ut')+'">'+(S.transp==='C'?'Ut':'Si♭')+'</button>';
+  $('instrBtn').onclick=openInstr; $('trPill').onclick=()=>setTransp(S.transp==='C'?'Bb':'C');
   $('mTot').textContent='/ '+song.measures.length;
   fillSections(); applySettingsUi();
 }
@@ -1487,7 +1516,7 @@ function vfDur(q){let best=VF_DUR[0],bd=99;for(const d of VF_DUR){const x=Math.a
 let staffMap=null;
 function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#fff';}
 function renderStaff(){
-  const box=$('staff'); box.innerHTML=''; staffMap=null;
+  const box=$('staff'); box.innerHTML=''; staffMap=null; const _stCh=[];
   if(!VF||!song) return;
   const m=song.measures[curM], ns=m.noteIdx.map(i=>song.notes[i]);
   const cw=box.clientWidth||600, z=+S.zoom;
@@ -1515,7 +1544,7 @@ function renderStaff(){
       note=new VF.StaveNote({keys:[sp.step.toLowerCase()+acc+'/'+sp.oct],duration:d,auto_stem:true});}
     if(dots) VF.Dot.buildAndAttach([note],{all:true});
     if(n.lyric){const a=new VF.Annotation(n.lyric).setVerticalJustification(VF.Annotation.VerticalJustify.BOTTOM);a.setFont('Atkinson Hyperlegible, Verdana, sans-serif',13,'bold');a.setStyle({fillStyle:curN===n.i?hi:muted});note.addModifier(a,0);}
-    for(const ch of m.chords) if(ch.q>=n.q-1e-6&&ch.q<n.q+n.dur-1e-6){const a=new VF.Annotation(chordName(ch)).setVerticalJustification(VF.Annotation.VerticalJustify.TOP);a.setFont('Righteous, Verdana, sans-serif',15,'normal');a.setStyle({fillStyle:leaf});note.addModifier(a,0);}
+    for(const ch of m.chords) if(ch.q>=n.q-1e-6&&ch.q<n.q+n.dur-1e-6){_stCh.push(ch);const a=new VF.Annotation(chordName(ch)).setVerticalJustification(VF.Annotation.VerticalJustify.TOP);a.setFont('Righteous, Verdana, sans-serif',15,'normal');a.setStyle({fillStyle:leaf});note.addModifier(a,0);}
     if(curN===n.i) note.setStyle({fillStyle:hi,strokeStyle:hi});
     notes.push(note);
   });
@@ -1539,15 +1568,11 @@ function renderStaff(){
   });
   const svg=box.querySelector('svg'); if(svg){svg.setAttribute('aria-hidden','true');
     // section label (Partie 2, A, Refrain…): pink tag above the clef, above the chord line
-    const sc0=sections().find(x=>x.a===curM);
-    if(sc0){ try{ const g=svg.querySelector('g')||svg, NS='http://www.w3.org/2000/svg';
-      const yTop=Math.min(...[...svg.querySelectorAll('text')].map(t=>+t.getAttribute('y')||999), st.getYForLine(0))-38;
-      const t=document.createElementNS(NS,'text'); t.setAttribute('x',st.getX()+10); t.setAttribute('y',yTop+16); t.setAttribute('font-family','Atkinson Hyperlegible, Verdana, sans-serif'); t.setAttribute('font-size','15'); t.setAttribute('font-weight','700'); t.setAttribute('fill','#000'); t.setAttribute('stroke','none'); t.textContent=sc0.label;
-      g.appendChild(t); const w=t.getComputedTextLength();
-      const r=document.createElementNS(NS,'rect'); r.setAttribute('x',st.getX()+2); r.setAttribute('y',yTop); r.setAttribute('width',w+16); r.setAttribute('height',22); r.setAttribute('rx',11); r.setAttribute('fill',pink); r.setAttribute('stroke','none'); g.insertBefore(r,t);
-    }catch(e){} }
     // chord names: a little higher and a little to the left
-    svg.querySelectorAll('text').forEach(t=>{ if(/Righteous/.test(t.getAttribute('font-family')||'')){ t.setAttribute('y',+t.getAttribute('y')-7); t.setAttribute('x',+t.getAttribute('x')-7); } });
+    { let ci=0; svg.querySelectorAll('text').forEach(t=>{ if(/Righteous/.test(t.getAttribute('font-family')||'')){ t.setAttribute('y',+t.getAttribute('y')-7); t.setAttribute('x',+t.getAttribute('x')-7);
+      const ch=_stCh[ci++]; if(!ch) return; t.classList.add('stChord');
+      try{ const b=t.getBBox(), NS='http://www.w3.org/2000/svg', r=document.createElementNS(NS,'rect'); r.setAttribute('x',b.x-6); r.setAttribute('y',b.y-6); r.setAttribute('width',b.width+12); r.setAttribute('height',b.height+12); r.setAttribute('fill','transparent'); r.setAttribute('stroke','none'); r.setAttribute('class','stChordHit'); r.setAttribute('aria-hidden','true'); t.parentNode.insertBefore(r,t); r.onclick=()=>openChordEdit(ch); }catch(e){}
+      t.onclick=()=>openChordEdit(ch); } }); }
     // score colours (Réglages > Couleurs de la partition)
     const inkL=ink.toLowerCase(), isInk=v=>(v||'').toLowerCase()===inkL;
     if(col==='thin'){
@@ -1611,13 +1636,19 @@ function renderMeasure(){
   const key=(song&&song.title)+'|'+S.view+'|'+S.zoom+'|'+innerWidth; if(key!==_gKey){ _gKey=key; growLockReset(); }
   const _y=window.scrollY, els=_gEls();
   els.forEach(e=>{ if(e&&!e.hidden){ const h=e.offsetHeight; e._gmax=Math.max(e._gmax||0,h); if(e._gmax) e.style.minHeight=e._gmax+'px'; } });
-  try{ renderMeasure0(); } finally {
+  try{ renderMeasure0(); alignMTop(); } finally {
     els.forEach(e=>{ if(e&&!e.hidden){ e.style.minHeight=''; const h=e.offsetHeight; e._gmax=Math.max(e._gmax||0,h); e.style.minHeight=e._gmax+'px'; } });
     if(Math.abs(window.scrollY-_y)>1) window.scrollTo(0,_y); }
 }
+function alignMTop(){ const t=document.querySelector('#measure .mTop'), st=$('staff'); if(!t) return;
+  if(st.hidden){ t.classList.remove('onStaff'); t.style.top=''; return; }
+  t.classList.add('onStaff'); const c=st.querySelector('.stChord'), mb=$('measure').getBoundingClientRect();
+  if(c){ const r=c.getBoundingClientRect(); t.style.top=Math.max(4,Math.round(r.top+r.height/2-mb.top-t.offsetHeight/2))+'px'; } else t.style.top='8px'; }
+window.addEventListener('resize',()=>{ try{ alignMTop(); }catch(e){} });
 function renderMeasure0(){
   const m=song.measures[curM];
   $('mNum').textContent=m.num;
+  { const sc=sections().find(x=>curM>=x.a&&curM<=x.b); const sp=$('secPill'); sp.hidden=!sc; sp.textContent=sc?sc.label:''; }
   { const ss=sections(), k=ss.findIndex(x=>curM>=x.a&&curM<=x.b); const v=secAll?'all':String(k); if(k>=0&&$('sSec').value!==v) $('sSec').value=v; }
   applyView();
   if(S.view==='staff'&&VF){ renderStaff(); return; }
@@ -2331,7 +2362,10 @@ function toggleFullscreen(){
 }
 function openFs(){ $('fsModal').hidden=false; $('fsClose').focus({preventScroll:true}); $('fsModal').querySelector('.card').scrollTop=0; say('Plein écran sur iPhone. Safari ne le permet pas pour une page. Ajoutez l’app à l’écran d’accueil : bouton Partager, puis Sur l’écran d’accueil, puis Ajouter. Ouvrez ensuite l’icône TBB.'); }
 function closeFs(){ $('fsModal').hidden=true; (window._fsFrom&&window._fsFrom.offsetParent?window._fsFrom:$('fsBtn')).focus(); }
-document.querySelectorAll('.fsBtn').forEach(b=>b.onclick=e=>{ window._fsFrom=b; toggleFullscreen(); }); $('fsClose').onclick=closeFs;
+document.querySelectorAll('.fsBtn').forEach(b=>b.onclick=e=>{ window._fsFrom=b; toggleFullscreen(); });
+$('sInstr').onchange=e=>{ if(e.target.value==='tb'){ e.target.value='tp'; toast('Le trombone arrive bientôt'); say('Trombone : bientôt disponible'); } };
+$('imTpIco').innerHTML=TP_ICON; $('imTbIco').innerHTML=TB_ICON; $('imClose').onclick=closeInstr; $('imTp').onclick=()=>{ closeInstr(); say('Trompette'); }; $('imTb').onclick=()=>{ toast('Le trombone arrive bientôt'); say('Trombone : bientôt disponible'); };
+$('instrModal').addEventListener('click',e=>{ if(e.target===$('instrModal')) closeInstr(); }); $('instrModal').addEventListener('keydown',e=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); closeInstr(); } }); $('fsClose').onclick=closeFs;
 $('fsModal').addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();closeFs();} });
 document.addEventListener('fullscreenchange',updateFsBtn); updateFsBtn();
 /* ---------- Karaoke ---------- */
@@ -2396,6 +2430,8 @@ $('bpmRange').oninput=e=>setBpm(+e.target.value);
 $('bpmRange').onchange=e=>say('Tempo '+bpm);
 document.querySelectorAll('#pctChips .chip').forEach(c=>c.onclick=()=>{if(song)setBpm(song.tempo*c.dataset.p/100,true);});
 $('tunerBtn').onclick=tunerToggle;
+function openInstr(){ const m=$('instrModal'); m.hidden=false; $('imTp').focus(); say('Choisir l’instrument. Trompette, sélectionnée. Trombone, bientôt disponible.'); }
+function closeInstr(){ $('instrModal').hidden=true; const b=$('instrBtn'); if(b) b.focus(); }
 function setTransp(v){ S.transp=v; saveS(); savePrefsSoon(); applySettingsUi(); if(song){renderAll(); try{updateTunerTarget();}catch(e){}} say(S.transp==='Bb'?'Affichage trompette en si bémol':'Affichage en ut, son réel'); }
 $('sTransp').onchange=e=>setTransp(e.target.value);
 $('sNaming').onchange=e=>{S.naming=e.target.value;saveS();if(song)renderAll();};
