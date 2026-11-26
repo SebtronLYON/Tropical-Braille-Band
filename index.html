@@ -1506,7 +1506,7 @@ function drawKeys(m){ const svg=$('fingSvg'); delete svg.dataset.tb; svg.removeA
   if(m!=null&&pos[m]==null&&pos[m-1]!=null) pos[m]=pos[m-1]+ww-bw/2+bw/2-ww/2;
   if(m!=null&&pos[m]!=null){ const black=!WK.includes(((m%12)+12)%12), cx=black?pos[m]+ww/2:pos[m]+ww/2, cy=black?y0+bh+34:y0+wh-30;
     lab+=`<g font-family="Righteous, Verdana, sans-serif" font-size="26" text-anchor="middle"><text x="${cx}" y="${cy}" fill="${black?'var(--sun)':'#0b2329'}" stroke="${black?'#0b2329':'none'}" stroke-width="${black?5:0}" paint-order="stroke">${nm(m)}</text></g>`; }
-  const W=x0*2+xi*ww; svg.setAttribute('viewBox','0 0 '+W+' '+(wh+y0*2));
+  const W=x0*2+xi*ww; svg.setAttribute('viewBox','0 0 '+W+' '+(wh+y0*2)); svg.style.aspectRatio='330 / 108'; /* same box as the trumpet valves: same note card layout */
   svg.innerHTML=wh_+bk_+lab;
   svg.setAttribute('aria-hidden','true'); }
 function drawFing(f){
@@ -2104,14 +2104,14 @@ const CH_Y=38, CH_PULL=11; let VOLTA_DY=24;
 function alignMTop(){ const t=document.querySelector('#measure .mTop'), st=$('staff'); if(!t) return;
   if(st.hidden||window.matchMedia('(max-width:760px)').matches){ t.classList.remove('onStaff'); t.style.top=''; return; }
   // once the pills had to leave the chord line for this song/layout, they stay on their own line (no jumping at every bar)
-  const lk=(song&&song.title)+'|'+S.view+'|'+S.zoom+'|'+innerWidth+'|'+S.staffN; if(alignMTop._k!==lk){ alignMTop._k=lk; alignMTop._drop=false; }
-  if(alignMTop._drop){ t.classList.remove('onStaff'); t.style.top=''; return; }
+  const lk=(song&&song.title)+'|'+S.view+'|'+S.zoom+'|'+innerWidth+'|'+S.staffN; if(alignMTop._k!==lk){ alignMTop._k=lk; alignMTop._drop=true; } // pills always on their own line: the screen never jumps when a chord comes under them
+  if(alignMTop._drop){ const was=t.classList.contains('onStaff'); t.classList.remove('onStaff'); t.style.top=''; if(was) fitSoon(); return; }
   t.classList.add('onStaff'); const c=st.querySelector('.stChord'), mb=$('measure').getBoundingClientRect();
   const sv=st.querySelector('svg'); let cy=null; if(c){ const r=c.getBoundingClientRect(); cy=r.top+r.height/2; } else if(sv){ const r=sv.getBoundingClientRect(), vb=(sv.getAttribute('viewBox')||'0 0 1 175').split(/[ ,]+/).map(Number), k=r.height/(vb[3]||175); cy=r.top+(CH_Y-7-vb[1])*k; }
   t.style.top=cy==null?'8px':Math.max(2,Math.round(cy-mb.top-t.offsetHeight/2))+'px';
   // a chord under the pills? then the pills go on their own line above the chords
   const sp=$('secPill'), left=(sp&&!sp.hidden?sp:$('mPillBtn')).getBoundingClientRect().left-8;
-  if([...st.querySelectorAll('.stChord')].some(x=>x.getBoundingClientRect().right>left)){ alignMTop._drop=true; t.classList.remove('onStaff'); t.style.top=''; } }
+  if([...st.querySelectorAll('.stChord')].some(x=>x.getBoundingClientRect().right>left)){ alignMTop._drop=true; t.classList.remove('onStaff'); t.style.top=''; fitSoon(); } }
 window.addEventListener('resize',()=>{ try{ alignMTop(); }catch(e){} });
 function updSec(){ if(!song) return; const ss=sections(), k=secIdx(), sc=ss[k]; if(k>=0) secI=k;
   const sp=$('secPill'); const pt=secPassTxt(sc); sp.hidden=!sc; sp.textContent=sc?sc.label+(pt?' · '+pt:''):'';
