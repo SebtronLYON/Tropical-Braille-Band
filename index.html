@@ -319,6 +319,22 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .imOpt b{font-size:1.2rem}.imOpt small{color:var(--muted)}
 .imIco{width:100%;max-width:170px;color:currentColor}.imIco svg{width:100%;height:auto;display:block}
 @media (max-width:760px){ .mPw{display:none} .secPill,.mPill{padding:1px 9px} .status .keyinfo{display:flex;margin-left:auto} .vTxt{display:none} .vIco{margin-right:0} .viewBtn{padding:0 8px} .instrBtn{padding:3px 6px} .trPill{padding:0 8px;min-width:0} .status{flex-wrap:nowrap} }
+/* fix18: status row squares, metronome split, loop */
+.viewSeg .viewBtn{width:calc(var(--sh) - 4px);padding:0!important;justify-content:center}.vTxt{display:none}.viewBtn .vIco{width:62%;height:62%;margin:0}
+.stSplit{display:inline-flex;height:var(--sh);box-sizing:border-box;border:2px solid var(--sun);border-radius:14px;overflow:hidden;flex:none;align-self:center;margin-left:6px}
+.stSplit .metTg{border:0;border-radius:0;height:100%;color:var(--sun);margin:0}.stSplit .metTg[aria-pressed="true"]{background:var(--sun);color:#000}
+.stMore{border:0;border-left:2px solid var(--sun);background:var(--panel);color:var(--sun);font-size:calc(var(--sh) * .38);width:calc(var(--sh) * .5);padding:0;cursor:pointer}
+.stMore:hover,.stSplit .metTg:hover{filter:brightness(1.15)}
+.loopBtn{border-color:var(--leaf);color:var(--leaf)}.loopBtn[aria-pressed="true"]{background:var(--leaf);color:#000}
+.secPill,.mPill{font-size:calc(1.35rem * var(--zoom));padding:5px 18px;line-height:1.3}
+.metFull.loopFull{bottom:var(--kb,120px);z-index:4}.loopFull .kHead h2{color:var(--leaf)}
+.lpBody{max-width:760px;margin:20px auto 0}.lpBody .lpCard{border-width:3px;border-color:var(--leaf)}
+.lpBody .tg{font-size:calc(1.4rem * var(--zoom));padding:16px 20px}.lpBody select{font-size:calc(1.3rem * var(--zoom))}
+.lpInfo{margin:12px 0 0;font-size:calc(1.2rem * var(--zoom));color:var(--sun);font-weight:700}
+.lpMes{color:var(--muted);font-weight:700}
+.mfAlone{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:6px;color:var(--pink);font-weight:700}.mfAlone[hidden]{display:none}
+@media (max-width:760px){ .secPill,.mPill{font-size:calc(1.05rem * var(--zoom));padding:3px 12px} }
+@media (max-width:430px){ .status{--sh:10.4vw;gap:4px} .stSplit{margin-left:0} .instrBtn{aspect-ratio:1.45;padding:2px 4px} .trPill{padding:0 5px} }
 /* Simplified header + full-screen menu */
 .top .btn-open{display:none!important}
 .top .wrap+.wrap{display:none!important}
@@ -498,7 +514,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
       <button class="viewBtn" id="vbStaff" aria-pressed="true" aria-keyshortcuts="V" aria-label="Vue Partition"><svg class="vIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M1 5h22M1 9h22M1 13h22M1 17h22M1 21h22" stroke="currentColor" stroke-width="1.3"/><ellipse cx="12" cy="15" rx="3.4" ry="2.5" fill="currentColor"/><path d="M15.2 15V3" stroke="currentColor" stroke-width="2"/></svg><span class="vTxt">Partition</span></button>
     </div>
     <button class="lyrBtn" id="lyrBtn" aria-label="Karaoké, paroles en grand" title="Karaoké, paroles en grand (K)" aria-keyshortcuts="K" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="16.2" cy="7.3" r="5.2" fill="currentColor"/><path d="M12.6 9.4 4.3 17.7a1.7 1.7 0 0 0 2.4 2.4l8.3-8.3z" fill="currentColor"/><path d="M12.3 8.3l3.7 3.7" stroke="var(--panel)" stroke-width="1.3" fill="none"/><path d="M7.4 13.6l3.2 3.2" stroke="var(--panel)" stroke-width="1.1" fill="none"/><path d="M5.3 19.6c-1.6 1.6-.4 3.6 1.3 2.8 1.5-.7 1.6-2.7 3.4-2.6 1.7.1 1.6 2.4 3.6 2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
-    <button class="lyrBtn metBtn" id="metBtn" aria-pressed="false" aria-label="Métronome en plein écran" title="Métronome en plein écran"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg></button>
+    <span class="stSplit" role="group" aria-label="Métronome"><button class="lyrBtn metTg" id="metTg" aria-pressed="false" aria-label="Métronome pendant la lecture" title="Métronome : marche / arrêt (M)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg></button><button class="stMore" id="metBtn" aria-label="Réglages du métronome, plein écran" title="Réglages du métronome">▾</button></span><button class="lyrBtn loopBtn" id="loopBtn" aria-pressed="false" aria-label="Boucle : réglages en plein écran" title="Boucle (B)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6.5H8a5.5 5.5 0 0 0 0 11h1.5M9 17.5h7a5.5 5.5 0 0 0 0-11h-1.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M11.5 3.5 8.5 6.5l3 3M12.5 14.5l3 3-3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="keyinfo" id="keyInfo"></div>
   </div>
 
@@ -529,7 +545,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     </div>
   </div>
 
-  <div class="ctrl">
+  <div class="ctrl" hidden aria-hidden="true">
     <div class="card tempo" role="group" aria-label="Tempo">
       <div class="tempoMain">
         <button class="big" id="tMinus" aria-label="Ralentir de 5" aria-keyshortcuts="-">−</button>
@@ -546,9 +562,6 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
       </div>
     </div>
     <div class="card toggles" role="group" aria-label="Options de lecture">
-      <button class="tg" data-k="loop" aria-keyshortcuts="B" id="tgLoop">Boucler la mesure</button>
-      <div class="tgSel"><label for="sLoopN">Longueur</label><select id="sLoopN"><option value="1">1 mesure</option><option value="2">2 mesures</option><option value="4">4 mesures</option><option value="8">8 mesures</option><option value="sec">la partie</option></select></div>
-      <div class="tgSel" id="secBox" hidden><label for="sSec">Partie</label><select id="sSec"></select></div>
       <button class="tg" data-k="metro" aria-keyshortcuts="M">Métronome</button>
       <button class="tg" data-k="melody">Mélodie</button>
       <button class="tg" data-k="chords">Accords</button>
@@ -608,9 +621,20 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     <button class="tg" data-k="acc" id="tgAcc">Accompagnement</button>
     <button class="tg" data-k="stepSound">Son en pas à pas</button>
     <button class="tg" data-k="countIn">Décompte avant la lecture</button>
+    <button class="tg" data-k="melody">Entendre la trompette (la partition)</button>
+    <button class="tg" data-k="chords">Entendre les accords</button>
     </div>
-    <small>Ces options sont gardées pour chaque morceau. La boucle, le tempo, le métronome, la mélodie et les accords restent sur l’écran Jouer.</small>
+    <small>Ces options sont gardées pour chaque morceau. Le tempo se règle dans le métronome, la boucle ici ou avec le bouton boucle de l’écran Jouer.</small>
   </div>
+  <div id="loopHome"><div class="card field lpCard" id="loopCard">
+    <h2>Boucle</h2>
+    <div class="toggles" role="group" aria-label="Boucle">
+      <button class="tg" data-k="loop" aria-keyshortcuts="B" id="tgLoop">Boucler la mesure</button>
+      <div class="tgSel"><label for="sLoopN">Longueur</label><select id="sLoopN"><option value="1">1 mesure</option><option value="2">2 mesures</option><option value="4">4 mesures</option><option value="8">8 mesures</option><option value="sec">la partie</option></select></div>
+      <div class="tgSel" id="secBox" hidden><label for="sSec">Partie</label><select id="sSec"></select></div>
+    </div>
+    <p class="lpInfo" id="lpInfo" aria-live="polite"></p>
+  </div></div>
 </section>
 <section class="view wrap" id="vTuner" role="tabpanel" aria-labelledby="tab-tuner" hidden>
   <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Accordeur</span><button class="btn snHome" aria-label="Jouer : revenir à l’écran Jouer"><svg class="snTr" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Jouer</span></button></div>
@@ -876,8 +900,12 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     <button class="mItem" data-go="credits"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.2l2.9 6.2 6.8.8-5 4.7 1.3 6.7L12 17.3l-6 3.3 1.3-6.7-5-4.7 6.8-.8z" fill="currentColor"/></svg><span>Infos / Crédits / Liens</span></button>
   </nav>
 </div>
+<div id="loopFull" class="metFull loopFull" hidden role="dialog" aria-modal="true" aria-labelledby="lpTitle">
+  <div class="kHead"><span class="mfCntBox lpMes" id="lpMes"></span><div class="kTitleBox"><h2 id="lpTitle" class="ovTitle"><span class="ovIco"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6.5H8a5.5 5.5 0 0 0 0 11h1.5M9 17.5h7a5.5 5.5 0 0 0 0-11h-1.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M11.5 3.5 8.5 6.5l3 3M12.5 14.5l3 3-3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>BOUCLE</span></h2><button class="songBar ovSong" id="lpSong" aria-label="Morceau en cours"><span class="sbIn"><span class="sbTxt">♪</span></span></button></div><button class="zb fsBtn fsX" id="fsLoop" aria-label="Plein écran" title="Plein écran"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9V3h6M15 3h6v6M21 15v6h-6M9 21H3v-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="btn kClose" id="lpClose" aria-label="Fermer la boucle">✕</button></div>
+  <div class="lpBody" id="lpHost"></div>
+</div>
 <div id="metFull" class="metFull" hidden role="dialog" aria-modal="true" aria-labelledby="mfTitle">
-  <div class="kHead"><span class="mfCntBox"><span class="mfCount" id="mfCount" aria-live="off">Mesures : 0</span><button class="btn mfSmall" id="mfCountReset" aria-label="Remettre le compteur de mesures à zéro">↺</button></span><div class="kTitleBox"><h2 id="mfTitle" class="ovTitle"><span class="ovIco"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg></span><span>MÉTRONOME</span></h2><button class="songBar ovSong" id="mfSong" aria-label="Morceau en cours"><span class="sbIn"><span class="sbTxt">♪</span></span></button></div><button class="zb fsBtn fsX" id="fsMet" aria-label="Plein écran" title="Plein écran"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9V3h6M15 3h6v6M21 15v6h-6M9 21H3v-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="btn kClose" id="mfClose" aria-label="Fermer le métronome">✕</button></div>
+  <div class="kHead"><span class="mfCntBox"><span class="mfCount" id="mfCount" aria-live="off">Mesures : 0</span><button class="btn mfSmall" id="mfCountReset" aria-label="Remettre le compteur de mesures à zéro">↺</button></span><div class="kTitleBox"><h2 id="mfTitle" class="ovTitle"><span class="ovIco"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg></span><span>MÉTRONOME</span></h2><button class="songBar ovSong" id="mfSong" aria-label="Morceau en cours"><span class="sbIn"><span class="sbTxt">♪</span></span></button><div class="mfAlone" id="mfAloneBar" hidden><span>Métronome autonome : il ne suit plus la partition.</span><button class="btn mfSmall" id="mfRelink">Revenir au morceau</button></div></div><button class="zb fsBtn fsX" id="fsMet" aria-label="Plein écran" title="Plein écran"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9V3h6M15 3h6v6M21 15v6h-6M9 21H3v-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="btn kClose" id="mfClose" aria-label="Fermer le métronome">✕</button></div>
   <div class="mfBody">
     <div class="mfQuad">
       <div class="mfCell mfCellDial">
@@ -999,6 +1027,13 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     <div class="row"><button class="btn pri" id="fsClose">J’ai compris</button></div>
   </div>
 </div>
+<div id="mfAloneModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="maT">
+  <div class="card">
+    <h2 id="maT">Métrique liée au morceau</h2>
+    <p id="maTxt" style="margin:0"></p>
+    <div class="row"><button class="btn pri" id="maYes">Oui, métronome autonome</button><button class="btn" id="maNo">Non, garder le morceau</button></div>
+  </div>
+</div>
 <div id="chordModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="cmTitle">
   <div class="card">
     <h2 id="cmTitle">Corriger l’accord</h2>
@@ -1006,6 +1041,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     <label for="cmInput" class="sr">Nom de l’accord</label>
     <input id="cmInput" autocomplete="off" spellcheck="false">
     <small style="color:var(--muted)">Exemples : Am, Bmin7, F#7/C#, Dmaj7. Écrit dans la tonalité affichée.</small>
+    <div class="toggles" style="margin-top:6px"><button class="tg" data-k="chords">Entendre les accords pendant la lecture</button></div>
     <div class="row">
       <button class="btn pri" id="cmOk">Valider</button>
       <button class="btn" id="cmReset">Revenir à l’original</button>
@@ -2302,7 +2338,7 @@ function applySettingsUi(){
   $('tgAcc').hidden=!(song&&song.acc&&song.acc.length); $('tgRep').hidden=!hasRepeats();
   $('zVal').textContent=Math.round(S.zoom*100)+' %'; $('zPlus').setAttribute('aria-disabled',String(S.zoom==='2.5')); $('zMinus').setAttribute('aria-disabled',String(S.zoom==='0.8'));
   $('sProfile').value=S.profile||'low'; $('sSound').value=S.sound; $('sTransp').value=S.transp; $('sNaming').value=S.naming; $('sZoom').value=S.zoom; $('sTheme').value=S.theme; $('sRate').value=S.rate; $('sRef').value=S.ref;
-  document.querySelectorAll('.tg[data-k]').forEach(b=>b.setAttribute('aria-pressed',String(!!S[b.dataset.k])));
+  document.querySelectorAll('.tg[data-k]').forEach(b=>b.setAttribute('aria-pressed',String(!!S[b.dataset.k]))); try{ $('metTg').setAttribute('aria-pressed',String(!!S.metro)); $('loopBtn').setAttribute('aria-pressed',String(!!S.loop)); lpInfo(); }catch(e){}
 }
 const TG_SAY={metroAcc:'Accent sur le 1er temps',ramp:'Tempo qui monte',echo:'Écoute puis joue',echoMic:'Vérification au micro',repeats:'Suivre les reprises',acc:'Accompagnement',loop:'Boucle',metro:'Métronome',melody:'Mélodie',chords:'Accords',countIn:'Décompte',stepSound:'Son en pas à pas',tunerSpeak:'Annonce vocale',follow:'Avancer quand la note est juste',voice:'Voix',alt:'Doigtés alternatifs',readFing:'Lecture des doigtés'};
 function toggle(k){
@@ -2324,7 +2360,7 @@ for(const k in VIEWS) $('tab-'+k).addEventListener('click',()=>showView(k));
 $('openBtn').onclick=$('libImport').onclick=openImport;
 $('libBtn').onclick=openLib;
 $('tabImport').onclick=openImport;
-function setSongBar(){ ['kSong','mfSong'].forEach(id=>{ const b=$(id); if(b) sbFill(b,b.querySelector('.sbTxt'),b.querySelector('.sbIn')); }); sbFill($('songBar'),$('sbTxt'),$('sbIn')); }
+function setSongBar(){ ['kSong','mfSong','lpSong'].forEach(id=>{ const b=$(id); if(b) sbFill(b,b.querySelector('.sbTxt'),b.querySelector('.sbIn')); }); sbFill($('songBar'),$('sbTxt'),$('sbIn')); }
 function sbFill(bar,t,inn){ if(!bar) return;
   const title=song?song.title:'Aucune partition';
   t.textContent='♪ '+title; bar.setAttribute('aria-label','Morceau en cours : '+title+'. Ouvrir mes morceaux');
@@ -2333,7 +2369,7 @@ function sbFill(bar,t,inn){ if(!bar) return;
     if(over>4){ bar.style.setProperty('--sbx',(-over-8)+'px'); bar.style.setProperty('--sbd',Math.max(8,(over/30)/0.7+3)+'s'); bar.classList.add('scroll'); } });
 }
 $('songBar').onclick=()=>openLib();
-$('kSong').onclick=()=>{ toggleKaraoke(false); openLib(); }; $('mfSong').onclick=()=>{ closeMetFull(); openLib(); };
+$('kSong').onclick=()=>{ toggleKaraoke(false); openLib(); }; $('mfSong').onclick=()=>{ closeMetFull(); openLib(); }; $('lpSong').onclick=()=>{ closeLoop(); openLib(); };
 let sbT=null; window.addEventListener('resize',()=>{clearTimeout(sbT);sbT=setTimeout(setSongBar,200);});
 /* ---------- Menu ---------- */
 var curView='pupitre';
@@ -2718,7 +2754,7 @@ function mfTick(t,i,dur0,silentQ){
   if(!silentQ) MFR.q.push({t,i});
 }
 function mfPolyBar(t,bar,q){ if(!MF.poly) return; _mfg=(MF.polyVol??100)/100; for(let j=0;j<MF.polyN;j++){ const tt=t+j*bar/MF.polyN; mfSound(tt,MF.polySn||'clap',j===0); if(q) MFR.q.push({t:tt,poly:j}); } _mfg=1; }
-function metroHit(t,beat,dur,beats){ ac(); mfTick(t,beat,dur,true); if(beat===0) mfPolyBar(t,dur*(beats||MF.x),false); }
+function metroHit(t,beat,dur,beats){ ac(); if(MF.alone){ metroHit0(t,beat,dur,beats); return; } mfTick(t,beat,dur,true); if(beat===0) mfPolyBar(t,dur*(beats||MF.x),false); }
 function mfSched(){
   if(!MFR.on) return; const ahead=ctx.currentTime+0.15;
   while(MFR.next<ahead){
@@ -2841,7 +2877,8 @@ function closeMetFull(){ mfStop(); $('metFull').hidden=true; $('metBtn').setAttr
   dial.addEventListener('pointerup',()=>{ if(drag){drag=false; say('Tempo '+bpm);} });
   dial.addEventListener('wheel',e=>{ e.preventDefault(); mfSetBpm(bpm+(e.deltaY<0?1:-1)); },{passive:false});
   dial.addEventListener('keydown',e=>{ const m={ArrowUp:1,ArrowRight:1,ArrowDown:-1,ArrowLeft:-1,PageUp:10,PageDown:-10}[e.key]; if(m){ e.preventDefault(); e.stopPropagation(); mfSetBpm(bpm+m,true); } });
-  const reMeter=(x,y,g)=>{ mfPush(); MF.x=x; MF.y=y; MF.g=g||null; MF.pads=mfDefPads(); MFR.k=0; mfSave(); mfRender(); say('Mesure '+mfLabel().replace('/',' sur ')); };
+  const reMeter=(x,y,g)=>mfGuard(()=>reMeter0(x,y,g));
+  const reMeter0=(x,y,g)=>{ mfPush(); MF.x=x; MF.y=y; MF.g=g||null; MF.pads=mfDefPads(); MFR.k=0; mfSave(); mfRender(); say('Mesure '+mfLabel().replace('/',' sur ')); };
   sx.onchange=()=>reMeter(+sx.value,MF.y); $('mfY').onchange=e=>reMeter(MF.x,+e.target.value);
   $('mfGrpOk').onclick=()=>{ const g=$('mfGrp').value.split(/[^0-9]+/).filter(Boolean).map(Number).filter(v=>v>0); const n=g.reduce((a,b)=>a+b,0);
     if(g.length<2||n<2||n>16){ toast('Écrivez des groupes, par exemple 2+2+3 (16 temps au plus)'); return; } reMeter(n,8,g); };
@@ -2853,7 +2890,7 @@ function closeMetFull(){ mfStop(); $('metFull').hidden=true; $('metBtn').setAttr
   $('mfKon').onclick=()=>{ mfPush(); MF.kon=!MF.kon; if(MF.kon) MF.vox=false; mfSave(); mfRender(); say(MF.kon?'Konnakol activé':'Konnakol coupé'); };
   $('mfPoly').onclick=()=>{ mfPush(); MF.poly=!MF.poly; mfSave(); mfRender(); say(MF.poly?'Polyrythmie, '+MF.polyN+' coups':'Polyrythmie coupée'); };
   $('mfPolyVol').oninput=e=>{ MF.polyVol=+e.target.value; $('mfPolyVolVal').textContent=e.target.value+' %'; mfSave(); };
-  $('mfOrig').onclick=()=>{ if(!song){ toast('Chargez d’abord un morceau'); return; } mfPush(); const m=song.measures[Math.min(curM||0,song.measures.length-1)];
+  $('mfOrig').onclick=()=>{ if(!song){ toast('Chargez d’abord un morceau'); return; } mfPush(); MF.alone=false; const m=song.measures[Math.min(curM||0,song.measures.length-1)];
     if(m&&m.beats&&m.beatType){ MF.x=m.beats; MF.y=m.beatType; MF.g=null; MF.pads=mfSongPads(MF.x,MF.y); MFR.k=0; }
     mfSave(); mfSetBpm(song.tempo); mfRender(); say('Réglages d’origine du morceau : tempo '+song.tempo+', mesure '+MF.x+' sur '+MF.y); };
   $('mfFlash').onclick=()=>{ MF.flash=MF.flash===false; mfSave(); mfRender(); say(MF.flash?'Flash lumineux activé':'Flash lumineux coupé'); };
@@ -2865,9 +2902,31 @@ function closeMetFull(){ mfStop(); $('metFull').hidden=true; $('metBtn').setAttr
 function mfSongPads(x,y){ const out=[]; const comp=y===8&&x>=6&&x%3===0;
   for(let i=0;i<x;i++){ if(comp) out.push({lv:i===0?2:(i%3===0?2:1),sn:i%3===0?(i===0?'kick':'snare'):'hat'}); else out.push({lv:i===0?2:1,sn:i%2===0?'kick':'snare'}); }
   if(comp&&x>=6){ for(let i=0;i<x;i+=3) out[i].sn=(i/3)%2===0?'kick':'snare'; } return out; }
-function mfFromSong(){ if(!song||!song.measures||!song.measures.length) return; const m=song.measures[Math.min(curM||0,song.measures.length-1)];
+function mfFromSong(){ if(!song||!song.measures||!song.measures.length||MF.alone) return; const m=song.measures[Math.min(curM||0,song.measures.length-1)];
   if(!m.beats||!m.beatType) return; if(m.beats===MF.x&&m.beatType===MF.y) return;
   MF.x=m.beats; MF.y=m.beatType; MF.g=null; MF.pads=mfSongPads(MF.x,MF.y); MFR.k=0; mfSave(); if(!$('metFull').hidden) mfRender(); }
-{ const _ss=setSong; setSong=function(){ const r=_ss.apply(this,arguments); try{ mfFromSong(); }catch(e){} return r; }; }
+{ const _ss=setSong; setSong=function(){ const r=_ss.apply(this,arguments); try{ MF.alone=false; mfFromSong(); mfAloneUi(); }catch(e){} return r; }; }
+function mfAloneUi(){ const b=$('mfAloneBar'); if(!b) return; b.hidden=!MF.alone||!song; }
+function mfGuard(fn){ if(!song||MF.alone){ fn(); return; }
+  const m=song.measures[Math.min(curM||0,song.measures.length-1)], lab=m&&m.beats?m.beats+'/'+m.beatType:mfLabel();
+  $('maTxt').textContent='Ce n’est pas possible tant que le métronome suit le morceau en cours (« '+song.title+' », mesure en '+lab+'). Voulez-vous vraiment changer la métrique ? Le métronome devient alors autonome : un outil de travail qui ne suit plus la partition.';
+  const md=$('mfAloneModal'); md.hidden=false; $('maNo').focus(); say('Métrique liée au morceau. '+$('maTxt').textContent+' Boutons : Oui, métronome autonome. Non, garder le morceau.');
+  const end=ok=>{ md.hidden=true; $('maYes').onclick=$('maNo').onclick=null; if(ok){ MF.alone=true; fn(); mfAloneUi(); say('Métronome autonome'); } else { mfRender(); say('Métrique du morceau gardée'); } setTimeout(()=>{ const f=$('mfOpenSet'); if(f) f.focus(); },0); };
+  $('maYes').onclick=()=>end(true); $('maNo').onclick=()=>end(false);
+  md.onkeydown=e=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); end(false); } }; }
+$('mfRelink').onclick=()=>{ MF.alone=false; MF.x=0; mfFromSong(); mfRender(); mfAloneUi(); say('Le métronome suit de nouveau le morceau'); };
+
+$('metTg').onclick=()=>toggle('metro');
+function lpInfo(){ const e=$('lpInfo'); if(!e) return; let t='';
+  if(!song) t='Aucun morceau chargé.';
+  else if(!S.loop) t='Boucle coupée : la lecture continue jusqu’à la fin.';
+  else { const sc=S.loopN==='sec'?secOf(curM):null, last=song.measures.length-1, a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last);
+    t=a===b?'La lecture tourne sur la mesure '+song.measures[a].num+'.':'La lecture tourne de la mesure '+song.measures[a].num+' à la mesure '+song.measures[b].num+'.'; }
+  e.textContent=t; const m=$('lpMes'); if(m) m.textContent=song?'Mesure '+song.measures[curM].num+' / '+song.measures.length:''; }
+function openLoop(){ { const t=document.querySelector('.transport'); $('loopFull').style.setProperty('--kb',(t?t.offsetHeight:0)+'px'); } $('lpHost').append($('loopCard')); $('loopFull').hidden=false; setSongBar(); lpInfo(); $('tgLoop').focus(); say('Boucle, plein écran. '+$('lpInfo').textContent+' Échap pour fermer.'); }
+function closeLoop(){ $('loopHome').append($('loopCard')); $('loopFull').hidden=true; $('loopBtn').focus(); }
+$('loopBtn').onclick=()=>$('loopFull').hidden?openLoop():closeLoop(); $('lpClose').onclick=closeLoop;
+document.addEventListener('keydown',e=>{ if($('loopFull').hidden) return; if(e.key==='Escape'){ e.preventDefault(); e.stopImmediatePropagation(); closeLoop(); } },true);
+{ const _rm=renderMeasure; renderMeasure=function(){ const r=_rm.apply(this,arguments); try{ lpInfo(); }catch(e){} return r; }; }
 </script>
 </body></html>
