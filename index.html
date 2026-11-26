@@ -973,7 +973,7 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
     <small>Laissez la souris immobile sur un bouton : une bulle explique à quoi il sert.</small></div>
   <div class="card">
     <h2>Pour travailler</h2>
-    <p><b>Parties</b> : l’application lit les repères du fichier (A, B, Thème, Refrain…) ; s’il n’y en a pas, elle découpe le morceau aux doubles barres (Partie 1, 2, 3). Le choix « Partie » permet d’y sauter, et « Longueur : la partie » de la boucler.</p>
+    <p><b>Parties</b> : l’application lit les repères du fichier (A, B, Thème, Refrain…) ; seuls les noms de parties écrits dans le fichier sont utilisés ; s’il n’y en a pas, le morceau se joue en entier, sans parties. Le choix « Partie » permet d’y sauter, et « Longueur : la partie » de la boucler.</p>
     <p><b>Boucle</b> : rejoue la mesure en cours, ou 2, 4 ou 8 mesures, ou toute la partie. <b>Tempo qui monte</b> : à chaque tour de boucle, le tempo gagne 5, jusqu’au tempo original.</p>
     <p>Dans le menu, l’écran <b>Loop / Entraînement</b> (aussi avec le bouton loop de Jouer) regroupe : la boucle (mesure, partie ou morceau entier), tempo qui monte, écoute puis joue, vérifier mes notes au micro, suivre les reprises, accompagnement et son en pas à pas.</p>
     <p><b>Écoute puis joue</b> : l’application joue une mesure, puis laisse une mesure avec seulement le click pour que vous la rejouiez. Avec <b>Vérifier mes notes au micro</b>, elle dit combien de notes étaient justes.</p>
@@ -2278,8 +2278,7 @@ function sections(){
   const key=(S.repeats&&hasRepeats())?1:0;
   if(song._secs&&song._secsK===key) return song._secs;
   const had=!!song._secs; song._secsK=key; song._secs=null;
-  const sm=key?smartParts():null;
-  song._secs=(sm&&sm.length>1)?sm:plainSections();
+  song._secs=plainSections(); // parts = names written in the file only (no automatic splitting)
   if(had) setTimeout(()=>{try{fillSections();renderMeasure();}catch(e){}},0);
   return song._secs;
 }
@@ -2334,7 +2333,7 @@ function secPassTxt(sc){ if(!sc||!sc.passes||sc.passes.length<2) return ''; let 
 function plainSections(){
   const M=song.measures, n=M.length; let starts=[];
   if(M.some(m=>m.sec)){ starts=M.map((m,i)=>m.sec?[i,m.sec]:null).filter(Boolean); if(starts[0][0]!==0) starts.unshift([0,'Début']); }
-  else{
+  else if(false){
     let br=M.map((m,i)=>m.dbl==='light-heavy'&&i<n-1?i+1:null).filter(x=>x!=null);
     if(!br.length) br=M.map((m,i)=>m.dbl&&i<n-1?i+1:null).filter(x=>x!=null);
     M.forEach((m,i)=>{ if(m.dblL&&i>0&&!br.includes(i)&&!M.some(x=>x.dbl==='light-heavy')) br.push(i); });
