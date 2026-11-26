@@ -1854,11 +1854,14 @@ function measureSummary(mi,full){
   const m=song.measures[mi];
   const ns=m.noteIdx.map(i=>song.notes[i]).filter(n=>n.midi!=null&&!n.tieStop);
   const c=song.chords.length?chordAt(m.startQ+ (m.chords.length?m.chords[0].q-m.startQ:0)):null;
-  const sc0=sections().find(x=>x.a===mi);
-  let s=(sc0?'Début de '+sc0.label+'. ':'')+'Mesure '+m.num+'. '+marksSay(m);
-  if(m.chords.length) s+='Accord '+m.chords.map(chordSay).join(', puis ')+'. ';
-  if(!ns.length) return s+'Silence.';
-  s+=ns.map(n=>{const sp=writtenOf(n);return noteSay(sp)+(S.readFing?' ('+fingSay(FING[sp.midi])+')':'');}).join(', ')+'.';
+  const scs=sections(), sc0=scs.find(x=>x.a===mi), scIn=scs.find(x=>mi>=x.a&&mi<=x.b);
+  const sc=full?scIn:sc0;
+  const mk=marksSay(m); let s=(sc?sc.label+'. ':'')+'Mesure '+m.num+' sur '+song.measures.length+'. '+(mk?mk[0].toUpperCase()+mk.slice(1):'');
+  if(m.chords.length) s+=(m.chords.length>1?'Accords : ':'Accord : ')+m.chords.map(chordSay).join(', puis ')+'. ';
+  if(!ns.length) return s+'Notes : silence.';
+  s+=(S.readFing?'Notes et doigtés : ':'Notes : ')+ns.map(n=>{const sp=writtenOf(n);return noteSay(sp)+(S.readFing?' ('+fingSay(FING[sp.midi])+')':'');}).join(', ')+'. ';
+  const ly=m.noteIdx.map(i=>song.notes[i]).filter(n=>n.lyric).map(n=>n.lyric);
+  if(ly.length) s+='Paroles : '+ly.join(', ')+'.';
   return s;
 }
 let voices=[];
