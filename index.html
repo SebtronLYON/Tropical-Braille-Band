@@ -1505,7 +1505,7 @@ function parseMusicXML(text,fname){
   for(const p of parts){const c=p.querySelectorAll('note > pitch').length; if(c>best){best=c;part=p;}}
   let divisions=1,beats=4,beatType=4,fifths=null,mode='major',tempo=null;
   let absQ=0, curEnd=null;
-  const measures=[],notes=[],chords=[];
+  const measures=[],notes=[],chords=[], PG=[], SLO={};
   for(const mEl of part.querySelectorAll(':scope > measure')){
     let pos=0,maxPos=0,voice=null;
     const m={num:mEl.getAttribute('number'),startQ:absQ,beats,beatType,chords:[],noteIdx:[]};
@@ -1555,7 +1555,10 @@ function parseMusicXML(text,fname){
       } else if(tag==='backup'){ pos-=(+txt(c,'duration')||0)/divisions; }
       else if(tag==='forward'){ pos+=(+txt(c,'duration')||0)/divisions; maxPos=Math.max(maxPos,pos); }
       else if(tag==='note'){
-        if(c.querySelector('grace')||c.querySelector(':scope > cue')) continue;
+        if(c.querySelector(':scope > cue')) continue;
+        if(c.querySelector(':scope > grace')){ if(c.querySelector(':scope > chord')) continue; const gv=txt(c,':scope > voice')||'1', gs=txt(c,':scope > staff')||'1'; const gp=c.querySelector(':scope > pitch');
+          if(gp&&gs==='1'&&(voice==null||gv===voice)){ const sp={step:txt(gp,'step'),alter:Math.round(+(txt(gp,'alter')||0)),oct:+txt(gp,'octave')}; PG.push({sp,midi:midiOf(sp.step,sp.alter,sp.oct),slash:c.querySelector(':scope > grace').getAttribute('slash')==='yes'}); }
+          continue; }
         const dur=(+txt(c,':scope > duration')||0)/divisions;
         const isChord=!!c.querySelector(':scope > chord');
         const v=txt(c,':scope > voice')||'1', st=txt(c,':scope > staff')||'1';
@@ -1570,7 +1573,12 @@ function parseMusicXML(text,fname){
         if(ly){ const t=[...ly.querySelectorAll('text')].map(e=>e.textContent).join('').trim(); const sy=txt(ly,'syllabic'); lyric=t+(t&&(sy==='begin'||sy==='middle')?'-':''); }
         const ties=[...c.querySelectorAll(':scope > tie')].map(e=>e.getAttribute('type'));
         const fing=[...c.querySelectorAll(':scope > notations > technical > fingering')].map(e=>e.textContent.trim()).filter(Boolean).join('-');
-        mNotes.push({q:absQ+pos,dur,midi,sp,lyric,fing,tieStart:ties.includes('start'),tieStop:ties.includes('stop')});
+        const nn={q:absQ+pos,dur,midi,sp,lyric,fing,tieStart:ties.includes('start'),tieStop:ties.includes('stop')};
+        if(PG.length){ if(midi!=null) nn.grace=PG.slice(); PG.length=0; }
+        for(const sl of c.querySelectorAll(':scope > notations > slur')){ const k=sl.getAttribute('number')||'1', ty=sl.getAttribute('type');
+          if(ty==='stop'){ const a=SLO[k]; delete SLO[k]; if(a&&Math.abs(a.next-nn.q)<1e-6&&midi!=null&&a.n.midi===midi&&!a.n.tieStart&&!nn.tieStop&&!nn.grace){ a.n.tieStart=true; nn.tieStop=true; } }
+          else if(ty==='start') SLO[k]={n:nn,next:nn.q+dur}; }
+        mNotes.push(nn);
         pos+=dur; maxPos=Math.max(maxPos,pos);
       }
     }
@@ -1876,6 +1884,8 @@ function renderStaff(){
     else{const sp=writtenOf(n); const acc={'-2':'bb','-1':'b','0':'','1':'#','2':'##'}[sp.alter]||'';
       note=new VF.StaveNote({clef:isTb()&&tbF()?'bass':'treble',keys:[sp.step.toLowerCase()+acc+'/'+sp.oct],duration:d,auto_stem:true});}
     if(dots) VF.Dot.buildAndAttach([note],{all:true});
+    if(n.grace&&n.midi!=null){ try{ const gn=n.grace.map(g=>{ const w=writtenOf(g), ac={'-2':'bb','-1':'b','0':'','1':'#','2':'##'}[w.alter]||''; const x=new VF.GraceNote({clef:isTb()&&tbF()?'bass':'treble',keys:[w.step.toLowerCase()+ac+'/'+w.oct],duration:n.grace.length>1?'16':'8',slash:g.slash&&n.grace.length===1}); if(ac) x.addModifier(new VF.Accidental(ac),0); return x; });
+      note.addModifier(new VF.GraceNoteGroup(gn,n.grace.length>1).beamNotes(),0); }catch(e){} }
     if(n.lyric){const a=new VF.Annotation(n.lyric).setVerticalJustification(VF.Annotation.VerticalJustify.BOTTOM);a.setFont('Atkinson Hyperlegible, Verdana, sans-serif',13,'bold');a.setStyle({fillStyle:curN===n.i?hi:muted});note.addModifier(a,0);}
     for(const ch of mm.chords) if(ch.q>=n.q-1e-6&&ch.q<n.q+n.dur-1e-6){_stCh.push(ch);const a=new VF.Annotation(chordName(ch)).setVerticalJustification(VF.Annotation.VerticalJustify.TOP);a.setFont('Righteous, Verdana, sans-serif',15,'normal');a.setStyle({fillStyle:leaf});note.addModifier(a,0);}
     if(curN===n.i) note.setStyle({fillStyle:hi,strokeStyle:hi});
@@ -2383,6 +2393,7 @@ function buildEvents(order){
       const n=song.notes[i]; if(n.midi==null||n.tieStop) continue;
       let dur=n.dur, j=i; while(song.notes[j].tieStart&&song.notes[j+1]&&song.notes[j+1].tieStop&&song.notes[j+1].midi===n.midi){j++;dur+=song.notes[j].dur;}
       if(!contNext) dur=Math.min(dur,base+m.len-n.q);
+      if(n.grace){ const gl=0.125, G=n.grace.length; n.grace.forEach((g,gi)=>{ const gq=t0+n.q-base-(G-gi)*gl; if(gq>=-1e-6){ if(gi===0){ for(let z=ev.length-1;z>=0;z--){ const pe=ev[z]; if(pe.type==='note'&&!pe.grace){ if(pe.q+pe.dur>gq) pe.dur=Math.max(0.05,gq-pe.q); break; } } } ev.push({q:gq,type:'note',midi:g.midi,dur:gl*0.95,grace:true}); } }); }
       ev.push({q:t0+n.q-base,type:'note',midi:n.midi,dur});
     }
     const quiet=sg.listen&&S.echoMic;
@@ -2688,7 +2699,8 @@ function tbOct(k){ if(!isTb()||!song) return 0; const v=S.tbOct||'auto'; if(v===
   const ms=song.notes.filter(n=>n.midi!=null).map(n=>(n._o?n._o.midi:n.midi)+k).sort((a,b)=>a-b); if(!ms.length) return 0; return ms[ms.length>>1]>62?-12:0; }
 function applyKeyShift(){ if(!song) return; const k=+S.keyShift||0; if(song._f0==null) song._f0=song.fifths;
   const {nf,steps}=ksCalc(song._f0,k); song.fifths=nf; song._ks={semi:k,steps}; const o=tbOct(k), tot=k+o, st=steps+(o?-7:0); song._oct=o;
-  for(const n of song.notes){ if(n.midi==null) continue; if(!n._o) n._o={midi:n.midi,sp:n.sp}; n.midi=n._o.midi+tot; n.sp=n._o.sp?(tot?transposeSp(n._o.sp,tot,st,nf):n._o.sp):n._o.sp; n._wk=null; n._w=null; }
+  for(const n of song.notes){ if(n.midi==null) continue; if(!n._o) n._o={midi:n.midi,sp:n.sp}; n.midi=n._o.midi+tot; n.sp=n._o.sp?(tot?transposeSp(n._o.sp,tot,st,nf):n._o.sp):n._o.sp; n._wk=null; n._w=null;
+    if(n.grace) for(const g of n.grace){ if(!g._o) g._o={midi:g.midi,sp:g.sp}; g.midi=g._o.midi+tot; g.sp=tot?transposeSp(g._o.sp,tot,st,nf):g._o.sp; g._wk=null; g._w=null; } }
   for(const n of (song.acc||[])){ if(n.midi==null) continue; if(n._om==null) n._om=n.midi; n.midi=n._om+k; }
   applyChordEdits(); }
 function ksLabel(){ if(!song) return '–'; const k=+S.keyShift||0; return keyNameShort(writtenFifths(),songMode())+(k?' ('+(k>0?'+':'−')+Math.abs(k)+')':''); }
