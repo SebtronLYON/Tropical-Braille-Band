@@ -549,6 +549,12 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 .mfSongL{display:none!important}
 .mfCtlBtns .mfSplit .mfIcoBtn{min-height:100px}
 @media (max-width:520px){ .mfCtlBtns .mfSplit .mfIcoBtn{min-height:80px} }
+/* Lecture: content grows a little on hover */
+.tp.play svg,.tp.play .tl{transition:transform .15s ease}
+@media (hover:hover){ .tpG .tp.play:hover svg{transform:scale(1.12)} .tpG .tp.play:hover .tl{transform:scale(1.08)} }
+@media (prefers-reduced-motion:reduce){ .tp.play svg,.tp.play .tl{transition:none} }
+/* fingering text in capitals (display only) */
+.fingTxt{text-transform:uppercase;letter-spacing:.03em}
 </style>
 
 <header class="top">
