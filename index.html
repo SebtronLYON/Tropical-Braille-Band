@@ -545,6 +545,10 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 .goList.keys button small{margin-top:2px}
 /* transport hover: the inside fills with the group colour (no pink frame) */
 @media (hover:hover){ .tpG .tp:hover{outline:none;background:color-mix(in srgb,var(--gc) 80%,var(--panel2));color:#0b1d22} .tpG .tp.play:hover{outline:none;background:color-mix(in srgb,var(--sun) 80%,#fff)} }
+/* Click: no 'Tempo du morceau' line, taller Click/Voix/Poly faders */
+.mfSongL{display:none!important}
+.mfCtlBtns .mfSplit .mfIcoBtn{min-height:100px}
+@media (max-width:520px){ .mfCtlBtns .mfSplit .mfIcoBtn{min-height:80px} }
 </style>
 
 <header class="top">
