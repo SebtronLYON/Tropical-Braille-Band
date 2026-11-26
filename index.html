@@ -815,6 +815,7 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
       <select id="sProfile">
         <option value="blind">Cécité totale, avec lecteur d’écran</option>
         <option value="low">Malvoyance, avec fort grossissement</option>
+        <option value="std">Vue standard, sans voix</option>
       </select>
       <label for="sStaffCol" style="margin-top:10px">Couleurs de la partition</label>
       <select id="sStaffCol">
@@ -847,8 +848,8 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
       <button class="tg" data-k="voice">Voix de l’application</button>
       <small>Coupez-la si vous utilisez un lecteur d’écran : les annonces passent alors par celui-ci.</small>
       <label for="sSayBtn">Bouton LIRE (barre du bas)</label>
-      <select id="sSayBtn"><option value="auto">Automatique : masqué quand la voix est coupée</option><option value="on">Toujours affiché</option><option value="off">Masqué</option></select>
-      <small>Appui long sur LIRE : coupe ou rallume la voix de l’application. En profil cécité, LIRE reste toujours affiché.</small>
+      <select id="sSayBtn"><option value="on">Affiché</option><option value="off">Masqué</option></select>
+      <small>Appui long sur LIRE : coupe la voix de l’application (haut-parleur barré) ou la rallume. En profil cécité, LIRE reste toujours affiché.</small>
       <button class="tg" data-k="readFing">Lire aussi les doigtés de la mesure</button>
       <label for="sRate">Vitesse de la voix</label>
       <select id="sRate">
@@ -1036,6 +1037,7 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
     <p style="margin:0">Choisissez le réglage qui vous convient. Vous pourrez le changer dans Accessibilité, en haut du menu.</p>
     <button class="btn pri" id="pmBlind" style="font-size:1.4rem;padding:18px">Cécité totale, avec lecteur d’écran (VoiceOver, NVDA)</button>
     <button class="btn pri" id="pmLow" style="font-size:1.4rem;padding:18px;background:var(--pink);border-color:var(--pink);color:#000">Malvoyance, avec fort grossissement</button>
+    <button class="btn" id="pmStd" style="font-size:1.4rem;padding:18px">Vue standard, sans voix</button>
   </div>
 </div>
 <div id="menu" class="menu" hidden role="dialog" aria-modal="true" aria-label="Menu">
@@ -2788,10 +2790,10 @@ $('bSay').onclick=e=>{ if($('bSay')._long){ $('bSay')._long=false; return; } if(
   b.addEventListener('contextmenu',e=>e.preventDefault()); }
 $('sSayBtn').onchange=e=>{ S.sayBtn=e.target.value; saveS(); applySettingsUi(); };
 function updSayBtn(){ const g=document.querySelector('.gSay'), b=$('bSay'); if(!g||!b) return;
-  const show=S.profile==='blind'||S.sayBtn==='on'||((S.sayBtn||'auto')==='auto'&&S.voice);
+  const show=S.profile==='blind'||S.sayBtn!=='off';
   const was=g.hidden; g.hidden=!show; b.classList.toggle('mute',!S.voice);
   b.setAttribute('aria-label','Lire la mesure à voix haute'+(S.voice?'':' (voix de l’application coupée)')+'. Appui long : '+(S.voice?'couper':'rallumer')+' la voix');
-  try{ $('sSayBtn').value=S.sayBtn||'auto'; }catch(e){}
+  try{ $('sSayBtn').value=S.sayBtn==='off'?'off':'on'; }catch(e){}
   if(was!==g.hidden) try{ fitSoon(); }catch(e){} }
 $('tMinus').onclick=()=>setBpm(bpm-5,true);
 $('tPlus').onclick=()=>setBpm(bpm+5,true);
@@ -2874,14 +2876,16 @@ window.addEventListener('drop',e=>{e.preventDefault();dragN=0;$('drop').hidden=t
 
 function setProfile(p,announce){
   S.profile=p;
-  if(p==='blind'){S.voice=false;S.zoom='1';S.readFing=true;}
-  else {S.voice=true;S.zoom='1';S.theme='max'===S.theme?'max':'tbb';S.readFing=false;}
+  if(p==='blind'){S.voice=false;S.zoom='1';S.readFing=true;S.sayBtn='on';}
+  else if(p==='std'){S.voice=false;S.zoom='0.8';S.theme='max'===S.theme?'max':'tbb';S.readFing=false;S.sayBtn='off';}
+  else {S.voice=true;S.zoom='1';S.theme='max'===S.theme?'max':'tbb';S.readFing=false;S.sayBtn='on';}
   saveS(); applySettingsUi(); $('profileModal').hidden=true;
-  if(announce) say(p==='blind'?'Profil lecteur d’écran. Les annonces sont lues par votre lecteur d’écran. Flèches gauche et droite pour les notes, Espace pour jouer, H pour l’aide.':'Profil malvoyance. Affichage très grand, voix de l’application activée.');
+  if(announce) say(p==='std'?'Profil vue standard. Voix de l’application coupée.':p==='blind'?'Profil lecteur d’écran. Les annonces sont lues par votre lecteur d’écran. Flèches gauche et droite pour les notes, Espace pour jouer, H pour l’aide.':'Profil malvoyance. Affichage très grand, voix de l’application activée.');
   if(song) renderAll();
 }
 $('pmBlind').onclick=()=>setProfile('blind',true);
 $('pmLow').onclick=()=>setProfile('low',true);
+$('pmStd').onclick=()=>setProfile('std',true);
 $('sProfile').onchange=e=>setProfile(e.target.value,true);
 $('exportBtn').onclick=exportMusicXML;
 
