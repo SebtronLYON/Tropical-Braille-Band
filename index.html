@@ -1669,6 +1669,10 @@ function renderStaff(){
       const ch=_stCh[ci++]; if(!ch) return; t.classList.add('stChord');
       try{ const b=t.getBBox(), NS='http://www.w3.org/2000/svg', r=document.createElementNS(NS,'rect'); r.setAttribute('x',b.x-6); r.setAttribute('y',b.y-6); r.setAttribute('width',b.width+12); r.setAttribute('height',b.height+12); r.setAttribute('fill','transparent'); r.setAttribute('stroke','none'); r.setAttribute('class','stChordHit'); r.setAttribute('aria-hidden','true'); t.parentNode.insertBefore(r,t); r.onclick=()=>openChordEdit(ch); }catch(e){}
       t.onclick=()=>openChordEdit(ch); } }); }
+    // time signature: Bravura digits blob on dark bg -> redraw with the app font
+    svg.querySelectorAll('.vf-timesignature').forEach(g=>{ try{ const bb=g.getBBox(); if(!bb.width) return; const NS='http://www.w3.org/2000/svg', cx=bb.x+bb.width/2, mid=bb.y+bb.height/2;
+      g.querySelectorAll('path').forEach(p=>p.setAttribute('visibility','hidden'));
+      [[m.beats,mid-bb.height/4],[m.beatType,mid+bb.height/4]].forEach(([v,y])=>{ const t=document.createElementNS(NS,'text'); t.setAttribute('x',cx); t.setAttribute('y',y); t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','central'); t.setAttribute('font-family','Righteous, sans-serif'); t.setAttribute('font-size',String(bb.height*0.66)); t.setAttribute('fill',ink); t.setAttribute('class','tsDigit'); t.textContent=v; g.appendChild(t); }); }catch(e){} });
     // score colours (Réglages > Couleurs de la partition)
     const inkL=ink.toLowerCase(), isInk=v=>(v||'').toLowerCase()===inkL;
     if(col==='thin'){
