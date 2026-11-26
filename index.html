@@ -141,7 +141,7 @@ input[type=range]{width:100%;accent-color:var(--sun);height:36px}
 .tp.play{background:var(--sun);color:var(--sun-ink);border-color:var(--sun);max-width:220px;flex-grow:1.6}
 .tp.play svg{width:44px;height:44px}
 .transport .wrap{flex-wrap:wrap}
-.tp .tl{line-height:1}
+.tp svg{margin:auto 0}.tp .tl{margin-top:auto;line-height:1;text-transform:uppercase;letter-spacing:.02em}
 [data-labels="off"] .tp .tl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 #bPrevN,#bNextN{border-color:var(--leaf)}
 #bSay{border-color:var(--pink)}
@@ -161,7 +161,7 @@ input[type=range]{width:100%;accent-color:var(--sun);height:36px}
   .tp.play{flex-grow:1.4}
   .tp svg{width:30px;height:30px}
   .tp.play svg{width:36px;height:36px}
-  .tp .tl{font-size:.62rem}
+  .tp .tl{font-size:.56rem;letter-spacing:0}
   main{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
   [data-labels="off"] .tp{min-height:52px}
   [data-labels="off"] .tp svg{width:34px;height:34px}
@@ -314,7 +314,7 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .mTop.onStaff{position:absolute;left:12px;right:12px;margin:0;pointer-events:none;z-index:1}.mTop.onStaff>*{pointer-events:auto}
 .mTop{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:calc(1.9rem * var(--zoom));margin-bottom:4px}
 .secPill,.mPill{background:var(--pink);color:#000;border-radius:999px;padding:2px 12px;font-weight:700;font-size:calc(1rem * var(--zoom));line-height:1.5;white-space:nowrap}
-.mPill{margin-left:auto}.mPill b{font-size:1.15em}.mPill #mTot{margin-left:.2em}
+.mPill{margin-left:0}.mTop{justify-content:flex-end!important;gap:8px}.mTop .secPill{margin-left:auto}.mPill b{font-size:1.15em}.mPill #mTot{margin-left:.2em}
 .stChord,.stChordHit{cursor:pointer}.stChord:hover{fill:var(--sun)}
 .vIco{width:1.4em;height:1.4em;flex:none;margin-right:.35em}
 .instrBtn,.trPill{height:var(--sh);box-sizing:border-box;border:2px solid var(--sun);border-radius:14px;background:var(--panel);color:var(--sun);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:none}
@@ -347,6 +347,16 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 #vPupitre .now .noteSide{font-size:calc(var(--nb) * .3 * var(--fit))}
 #vPupitre .now .reg,#vPupitre .now .fingTxt{font-size:calc(1.5rem * var(--zoom) * max(var(--fit),.7))}
 #vPupitre .now .fingCard svg{max-height:var(--fsvg,none);width:auto;max-width:100%}
+/* fix32: Partie / Mesure pills open a chooser */
+.secPill,.mPill{border:0;cursor:pointer;font-family:inherit}.secPill:hover,.mPill:hover{filter:brightness(1.1);box-shadow:0 0 0 2px var(--sun)}
+.goCard{max-width:640px;width:100%;max-height:80vh;display:flex;flex-direction:column;gap:12px}
+.goList{overflow:auto;display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(64px,1fr))}
+.goList.secs{grid-template-columns:1fr}
+.goList button{font:inherit;font-weight:700;font-size:calc(1.15rem * var(--zoom));padding:10px 8px;border-radius:12px;border:2px solid var(--line);background:var(--panel2);color:var(--ink);cursor:pointer;text-align:center}
+.goList.secs button{text-align:left;padding:12px 16px}
+.goList button small{display:block;font-weight:400;color:var(--muted);font-size:.75em}
+.goList button[aria-current="true"]{border-color:var(--pink);background:var(--pink);color:#000}.goList button[aria-current="true"] small{color:#000}
+.goList button .gSec{display:block;font-size:.6em;color:var(--pink);font-weight:800;line-height:1}.goList button[aria-current="true"] .gSec{color:#000}
 /* fix18: status row squares, metronome split, loop */
 .viewSeg .viewBtn{width:calc(var(--sh) - 4px);padding:0!important;justify-content:center}.vTxt{display:none}.viewBtn .vIco{width:62%;height:62%;margin:0}
 .stSplit{display:inline-flex;height:var(--sh);box-sizing:border-box;border:2px solid var(--sun);border-radius:14px;overflow:hidden;flex:none;align-self:center;margin-left:6px}
@@ -546,7 +556,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     <div class="keyinfo" id="keyInfo"></div>
   </div>
 
-  <div class="measure" id="measure"><div class="mTop"><span class="secPill" id="secPill" hidden></span><div class="mPill" aria-live="off"><span class="mPw">Mesure </span><b id="mNum">–</b><span id="mTot">/ –</span></div></div>
+  <div class="measure" id="measure"><div class="mTop"><button class="secPill" id="secPill" hidden aria-haspopup="dialog"></button><button class="mPill" id="mPillBtn" aria-haspopup="dialog" aria-live="off"><span class="mPw">Mesure </span><b id="mNum">–</b><span id="mTot">/ –</span></button></div>
     <div class="chordsRow" id="chordsRow"></div>
     <div class="roll" id="roll" role="group" aria-label="Notes de la mesure"></div>
     <div class="staff" id="staff" hidden aria-label="Partition de la mesure" role="img"></div>
@@ -1076,6 +1086,12 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     <h2 id="maT">Métrique liée au morceau</h2>
     <p id="maTxt" style="margin:0"></p>
     <div class="row"><button class="btn pri" id="maYes">Oui, click autonome</button><button class="btn" id="maNo">Non, garder le morceau</button></div>
+  </div>
+</div>
+<div id="goModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="goT">
+  <div class="card goCard">
+    <div class="mfPopHead"><h2 id="goT" style="margin:0"></h2><button class="btn mfSmall" id="goClose" aria-label="Fermer">✕</button></div>
+    <div class="goList" id="goList"></div>
   </div>
 </div>
 <div id="chordModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="cmTitle">
@@ -1725,12 +1741,15 @@ function alignMTop(){ const t=document.querySelector('#measure .mTop'), st=$('st
   if(st.hidden||window.matchMedia('(max-width:760px)').matches){ t.classList.remove('onStaff'); t.style.top=''; return; }
   t.classList.add('onStaff'); const c=st.querySelector('.stChord'), mb=$('measure').getBoundingClientRect();
   const sv=st.querySelector('svg'); let cy=null; if(c){ const r=c.getBoundingClientRect(); cy=r.top+r.height/2; } else if(sv){ const r=sv.getBoundingClientRect(), vb=(sv.getAttribute('viewBox')||'0 0 1 175').split(/[ ,]+/).map(Number), k=r.height/(vb[3]||175); cy=r.top+(CH_Y-7-vb[1])*k; }
-  t.style.top=cy==null?'8px':Math.max(2,Math.round(cy-mb.top-t.offsetHeight/2))+'px'; }
+  t.style.top=cy==null?'8px':Math.max(2,Math.round(cy-mb.top-t.offsetHeight/2))+'px';
+  // a chord under the pills? then the pills go on their own line above the chords
+  const sp=$('secPill'), left=(sp&&!sp.hidden?sp:$('mPillBtn')).getBoundingClientRect().left-8;
+  if([...st.querySelectorAll('.stChord')].some(x=>x.getBoundingClientRect().right>left)){ t.classList.remove('onStaff'); t.style.top=''; } }
 window.addEventListener('resize',()=>{ try{ alignMTop(); }catch(e){} });
 function renderMeasure0(){
   const m=song.measures[curM];
   $('mNum').textContent=m.num;
-  { const sc=sections().find(x=>curM>=x.a&&curM<=x.b); const sp=$('secPill'); sp.hidden=!sc; sp.textContent=sc?sc.label:''; }
+  { const sc=sections().find(x=>curM>=x.a&&curM<=x.b); const sp=$('secPill'); sp.hidden=!sc; sp.textContent=sc?sc.label:''; if(sc) sp.setAttribute('aria-label','Partie : '+sc.label+'. Choisir une autre partie'); $('mPillBtn').setAttribute('aria-label','Mesure '+song.measures[curM].num+' sur '+song.measures.length+'. Aller à une autre mesure'); }
   { const ss=sections(), k=ss.findIndex(x=>curM>=x.a&&curM<=x.b); const v=secAll?'all':String(k); if(k>=0&&$('sSec').value!==v) $('sSec').value=v; }
   applyView();
   if(S.view==='staff'&&VF){ renderStaff(); return; }
@@ -3020,5 +3039,23 @@ window.addEventListener('resize',fitSoon); window.addEventListener('orientationc
 try{ new ResizeObserver(fitSoon).observe(document.querySelector('#measure')); }catch(e){}
 { const _sv=showView; showView=function(){ const r=_sv.apply(this,arguments); fitSoon(); return r; }; const _as=applySettingsUi; applySettingsUi=function(){ const r=_as.apply(this,arguments); fitSoon(); return r; }; }
 setTimeout(fitJouer,300); if(document.fonts) document.fonts.ready.then(fitSoon);
+
+/* Partie / Mesure pills: choose a section or a bar */
+function openGo(kind){ if(!song) return; const L=$('goList'), M=$('goModal'); L.innerHTML=''; L.className='goList'+(kind==='sec'?' secs':'');
+  const close=()=>{ M.hidden=true; const b=$(kind==='sec'?'secPill':'mPillBtn'); if(b&&!b.hidden) b.focus(); };
+  if(kind==='sec'){ $('goT').textContent='Choisir la partie'; const ss=sections(), cur=ss.findIndex(x=>curM>=x.a&&curM<=x.b);
+    ss.forEach((sc,i)=>{ const b=document.createElement('button'); b.innerHTML='<span></span><small></small>'; b.firstChild.textContent=sc.label; b.lastChild.textContent='mesures '+song.measures[sc.a].num+' à '+song.measures[sc.b].num;
+      if(i===cur&&!secAll) b.setAttribute('aria-current','true'); b.onclick=()=>{ M.hidden=true; const s=$('sSec'); s.value=String(i); s.onchange({target:s}); }; L.append(b); });
+    const all=document.createElement('button'); all.innerHTML='<span>Tout le morceau</span><small>depuis la mesure 1</small>'; if(secAll) all.setAttribute('aria-current','true');
+    all.onclick=()=>{ M.hidden=true; const s=$('sSec'); s.value='all'; s.onchange({target:s}); }; L.append(all);
+  } else { $('goT').textContent='Aller à la mesure'; const ss=sections();
+    song.measures.forEach((m,i)=>{ const b=document.createElement('button'); const sc=ss.find(x=>x.a===i);
+      b.innerHTML=(sc?'<span class="gSec"></span>':'')+'<span></span>'; if(sc) b.firstChild.textContent=sc.label; b.lastChild.textContent=m.num;
+      b.setAttribute('aria-label','Mesure '+m.num+(sc?', début de '+sc.label:'')); if(i===curM) b.setAttribute('aria-current','true');
+      b.onclick=()=>{ M.hidden=true; gotoMeasure(i,true); }; L.append(b); }); }
+  M.hidden=false; const c=L.querySelector('[aria-current="true"]')||L.firstChild; if(c){ c.focus(); c.scrollIntoView({block:'center'}); }
+  say($('goT').textContent); $('goClose').onclick=close; M.onclick=e=>{ if(e.target===M) close(); };
+  M.onkeydown=e=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); close(); } }; }
+$('secPill').onclick=()=>openGo('sec'); $('mPillBtn').onclick=()=>openGo('mes');
 </script>
 </body></html>
