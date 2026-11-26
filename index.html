@@ -328,8 +328,8 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .loopBtn{border-color:var(--leaf);color:var(--leaf)}.loopBtn[aria-pressed="true"]{background:var(--leaf);color:#000}
 .secPill,.mPill{font-size:calc(1.35rem * var(--zoom));padding:5px 18px;line-height:1.3}
 .metFull.loopFull{bottom:var(--kb,120px);z-index:4}.loopFull .kHead h2{color:var(--leaf)}
-.lpBody{max-width:760px;margin:20px auto 0}.lpBody .lpCard{border-width:3px;border-color:var(--leaf)}
-.lpBody .tg{font-size:calc(1.4rem * var(--zoom));padding:16px 20px}.lpBody select{font-size:calc(1.3rem * var(--zoom))}
+.lpBody{max-width:760px;margin:20px auto 0}.lpBody .lpCard{border-width:3px;border-color:var(--leaf)}.lpBody .trCard{margin-top:16px}#trainBody .lpCard{margin-bottom:12px}
+.lpBody .lpCard .tg{font-size:calc(1.3rem * var(--zoom));padding:14px 18px}.lpBody .lpCard select{font-size:calc(1.15rem * var(--zoom))}.lpBody .lpCard .toggles{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.lpBody .trCard .toggles{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}.lpBody .trCard .tg{word-break:normal;hyphens:none}
 .lpInfo{margin:12px 0 0;font-size:calc(1.2rem * var(--zoom));color:var(--sun);font-weight:700}
 .lpMes{color:var(--muted);font-weight:700}
 .mfAlone{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:6px;color:var(--pink);font-weight:700}.mfAlone[hidden]{display:none}
@@ -494,7 +494,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
       <button class="tab" role="tab" id="tab-pupitre" aria-selected="true" aria-controls="vPupitre"><svg class="tIco" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg>Jouer</button>
       <button class="tab" role="tab" id="tab-lib" aria-selected="false" aria-controls="vLib">Mes morceaux</button>
       <button class="tab" role="tab" id="tab-import" aria-selected="false" aria-controls="vImport">Importer</button>
-      <button class="tab" role="tab" id="tab-train" aria-selected="false" aria-controls="vTrain">Entraînement</button>
+      <button class="tab" role="tab" id="tab-train" aria-selected="false" aria-controls="vTrain">Loop / Entraînement</button>
       <button class="tab" role="tab" id="tab-tuner" aria-selected="false" aria-controls="vTuner">Accordeur</button>
       <button class="tab" role="tab" id="tab-settings" aria-selected="false" aria-controls="vSettings">Accessibilité</button>
       <button class="tab" role="tab" id="tab-instr" aria-selected="false" aria-controls="vInstr">Instrument</button>
@@ -514,7 +514,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
       <button class="viewBtn" id="vbStaff" aria-pressed="true" aria-keyshortcuts="V" aria-label="Vue Partition"><svg class="vIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M1 5h22M1 9h22M1 13h22M1 17h22M1 21h22" stroke="currentColor" stroke-width="1.3"/><ellipse cx="12" cy="15" rx="3.4" ry="2.5" fill="currentColor"/><path d="M15.2 15V3" stroke="currentColor" stroke-width="2"/></svg><span class="vTxt">Partition</span></button>
     </div>
     <button class="lyrBtn" id="lyrBtn" aria-label="Karaoké, paroles en grand" title="Karaoké, paroles en grand (K)" aria-keyshortcuts="K" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="16.2" cy="7.3" r="5.2" fill="currentColor"/><path d="M12.6 9.4 4.3 17.7a1.7 1.7 0 0 0 2.4 2.4l8.3-8.3z" fill="currentColor"/><path d="M12.3 8.3l3.7 3.7" stroke="var(--panel)" stroke-width="1.3" fill="none"/><path d="M7.4 13.6l3.2 3.2" stroke="var(--panel)" stroke-width="1.1" fill="none"/><path d="M5.3 19.6c-1.6 1.6-.4 3.6 1.3 2.8 1.5-.7 1.6-2.7 3.4-2.6 1.7.1 1.6 2.4 3.6 2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
-    <span class="stSplit" role="group" aria-label="Métronome"><button class="lyrBtn metTg" id="metTg" aria-pressed="false" aria-label="Métronome pendant la lecture" title="Métronome : marche / arrêt (M)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg></button><button class="stMore" id="metBtn" aria-label="Réglages du métronome, plein écran" title="Réglages du métronome">▾</button></span><button class="lyrBtn loopBtn" id="loopBtn" aria-pressed="false" aria-label="Boucle : réglages en plein écran" title="Boucle (B)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6.5H8a5.5 5.5 0 0 0 0 11h1.5M9 17.5h7a5.5 5.5 0 0 0 0-11h-1.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M11.5 3.5 8.5 6.5l3 3M12.5 14.5l3 3-3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <span class="stSplit" role="group" aria-label="Métronome"><button class="lyrBtn metTg" id="metTg" aria-pressed="false" aria-label="Métronome pendant la lecture" title="Métronome : marche / arrêt (M)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg></button><button class="stMore" id="metBtn" aria-label="Réglages du métronome, plein écran" title="Réglages du métronome">▾</button></span><button class="lyrBtn loopBtn" id="loopBtn" aria-pressed="false" aria-label="Loop et entraînement, plein écran" title="Loop / Entraînement"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6.5H8a5.5 5.5 0 0 0 0 11h1.5M9 17.5h7a5.5 5.5 0 0 0 0-11h-1.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M11.5 3.5 8.5 6.5l3 3M12.5 14.5l3 3-3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="keyinfo" id="keyInfo"></div>
   </div>
 
@@ -610,9 +610,19 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
   </div>
 </section>
 <section class="view wrap" id="vTrain" role="tabpanel" aria-labelledby="tab-train" hidden>
-  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Entraînement</span><button class="btn snHome" aria-label="Jouer : revenir à l’écran Jouer"><svg class="snTr" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Jouer</span></button></div>
-  <div class="card field">
-    <h2>Options de travail</h2>
+  <div class="subNav"><button class="btn snBack" aria-label="Retour au menu">← Menu</button><span class="snTitle" aria-hidden="true">Loop / Entraînement</span><button class="btn snHome" aria-label="Jouer : revenir à l’écran Jouer"><svg class="snTr" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Jouer</span></button></div>
+  <div id="trainHome"><div id="trainBody">
+<div class="card field lpCard" id="loopCard">
+    <h2>Boucle</h2>
+    <div class="toggles" role="group" aria-label="Boucle">
+      <button class="tg" data-k="loop" aria-keyshortcuts="B" id="tgLoop">Boucler la mesure</button>
+      <div class="tgSel"><label for="sLoopN">Longueur</label><select id="sLoopN"><option value="1">1 mesure</option><option value="2">2 mesures</option><option value="4">4 mesures</option><option value="8">8 mesures</option><option value="sec">la partie</option><option value="all">le morceau entier</option></select></div>
+      <div class="tgSel" id="secBox" hidden><label for="sSec">Partie</label><select id="sSec"></select></div>
+    </div>
+    <p class="lpInfo" id="lpInfo" aria-live="polite"></p>
+  </div>
+  <div class="card field trCard" id="trainCard">
+    <h2>Entraînement</h2>
     <div class="toggles" role="group" aria-label="Options d’entraînement">
     <button class="tg" data-k="ramp">Tempo qui monte (+5 à chaque tour)</button>
     <button class="tg" data-k="echo" aria-keyshortcuts="E">Écoute puis joue</button>
@@ -626,14 +636,6 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     </div>
     <small>Ces options sont gardées pour chaque morceau. Le tempo se règle dans le métronome, la boucle ici ou avec le bouton boucle de l’écran Jouer.</small>
   </div>
-  <div id="loopHome"><div class="card field lpCard" id="loopCard">
-    <h2>Boucle</h2>
-    <div class="toggles" role="group" aria-label="Boucle">
-      <button class="tg" data-k="loop" aria-keyshortcuts="B" id="tgLoop">Boucler la mesure</button>
-      <div class="tgSel"><label for="sLoopN">Longueur</label><select id="sLoopN"><option value="1">1 mesure</option><option value="2">2 mesures</option><option value="4">4 mesures</option><option value="8">8 mesures</option><option value="sec">la partie</option></select></div>
-      <div class="tgSel" id="secBox" hidden><label for="sSec">Partie</label><select id="sSec"></select></div>
-    </div>
-    <p class="lpInfo" id="lpInfo" aria-live="polite"></p>
   </div></div>
 </section>
 <section class="view wrap" id="vTuner" role="tabpanel" aria-labelledby="tab-tuner" hidden>
@@ -815,7 +817,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     <h2>Pour travailler</h2>
     <p><b>Parties</b> : l’application lit les repères du fichier (A, B, Thème, Refrain…) ; s’il n’y en a pas, elle découpe le morceau aux doubles barres (Partie 1, 2, 3). Le choix « Partie » permet d’y sauter, et « Longueur : la partie » de la boucler.</p>
     <p><b>Boucle</b> : rejoue la mesure en cours, ou 2, 4 ou 8 mesures, ou toute la partie. <b>Tempo qui monte</b> : à chaque tour de boucle, le tempo gagne 5, jusqu’au tempo original.</p>
-    <p>Dans le menu, l’écran <b>Entraînement</b> regroupe : tempo qui monte, écoute puis joue, vérifier mes notes au micro, suivre les reprises, accompagnement et son en pas à pas.</p>
+    <p>Dans le menu, l’écran <b>Loop / Entraînement</b> (aussi avec le bouton loop de Jouer) regroupe : la boucle (mesure, partie ou morceau entier), tempo qui monte, écoute puis joue, vérifier mes notes au micro, suivre les reprises, accompagnement et son en pas à pas.</p>
     <p><b>Écoute puis joue</b> : l’application joue une mesure, puis laisse une mesure avec seulement le métronome pour que vous la rejouiez. Avec <b>Vérifier mes notes au micro</b>, elle dit combien de notes étaient justes.</p>
     <p><b>Suivre les reprises</b> : la lecture respecte les barres de reprise, les fins 1 et 2, D.C., D.S., Coda et Fine. <b>Accompagnement</b> : si le fichier contient d’autres instruments, ils jouent doucement avec vous.</p>
     <p><b>Partitions du groupe</b> (dans Mes morceaux) : les morceaux partagés par le groupe, à ouvrir d’un toucher. <b>Sauvegarde</b> : enregistre tous vos morceaux dans un fichier, pour les retrouver sur un autre appareil. Sur le site du groupe, l’application marche aussi sans internet une fois ouverte une première fois.</p>
@@ -891,8 +893,8 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     <button class="mItem" data-go="pupitre"><svg class="mIco mTr" viewBox="0 0 48 24" aria-hidden="true" focusable="false"><path d="M2 13h3l2-1.5v4L5 14H2z" fill="currentColor"/><rect x="6" y="12" width="28" height="3" rx="1" fill="currentColor"/><path d="M34 12.5 46 5v17l-12-7.5z" fill="currentColor"/><rect x="15" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="20" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="25" y="5" width="3" height="10" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="19" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><rect x="24" y="3" width="5" height="2.4" rx="1" fill="currentColor"/><path d="M10 15v4h20v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Jouer</span></button>
     <button class="mItem" data-go="settings" aria-label="Accessibilité : affichage et VoiceOver"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg><span class="mTwo">Accessibilité<small class="mSub">affichage &amp; VoiceOver</small></span></button>
     <button class="mItem" data-go="lib"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="4.5" width="12" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="10" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="10.5" width="12" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="16" width="4" height="4" rx="1" fill="currentColor"/><rect x="9" y="16.5" width="12" height="3" rx="1.2" fill="currentColor"/></svg><span>Mes morceaux</span></button>
-    <button class="mItem" data-go="import"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 5 10h4.5v6h5v-6H19z" fill="currentColor"/><rect x="4" y="18" width="16" height="3" rx="1.2" fill="currentColor"/></svg><span>Importer une partition</span></button>
-    <button class="mItem" data-go="train"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="5.2" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg><span>Entraînement</span></button>
+    <button class="mItem" data-go="import"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.5 7H6a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3v-8a3 3 0 0 0-3-3h-2.5M12 2.5v11.5M8 10.5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Importer une partition</span></button>
+    <button class="mItem" data-go="train"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6.5H8a5.5 5.5 0 0 0 0 11h1.5M9 17.5h7a5.5 5.5 0 0 0 0-11h-1.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M11.5 3.5 8.5 6.5l3 3M12.5 14.5l3 3-3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Loop / Entraînement</span></button>
     <button class="mItem" data-go="tuner"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 2v9a4 4 0 0 0 8 0V2h-2.6v9a1.4 1.4 0 0 1-2.8 0V2z" fill="currentColor"/><rect x="10.7" y="14" width="2.6" height="8" rx="1" fill="currentColor"/></svg><span>Accordeur</span></button>
     <button class="mItem" data-go="metro"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg><span>Métronome</span></button>
     <button class="mItem" data-go="instr"><svg class="mIco" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="7" width="4.4" height="14" rx="1.2" fill="currentColor"/><rect x="9.8" y="7" width="4.4" height="14" rx="1.2" fill="currentColor"/><rect x="16.6" y="7" width="4.4" height="14" rx="1.2" fill="currentColor"/><rect x="2" y="2" width="6.4" height="3" rx="1.2" fill="currentColor"/><rect x="8.8" y="2" width="6.4" height="3" rx="1.2" fill="currentColor"/><rect x="15.6" y="2" width="6.4" height="3" rx="1.2" fill="currentColor"/><rect x="4.4" y="4.5" width="1.6" height="3" fill="currentColor"/><rect x="11.2" y="4.5" width="1.6" height="3" fill="currentColor"/><rect x="18" y="4.5" width="1.6" height="3" fill="currentColor"/></svg><span>Instrument</span></button>
@@ -901,7 +903,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
   </nav>
 </div>
 <div id="loopFull" class="metFull loopFull" hidden role="dialog" aria-modal="true" aria-labelledby="lpTitle">
-  <div class="kHead"><span class="mfCntBox lpMes" id="lpMes"></span><div class="kTitleBox"><h2 id="lpTitle" class="ovTitle"><span class="ovIco"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6.5H8a5.5 5.5 0 0 0 0 11h1.5M9 17.5h7a5.5 5.5 0 0 0 0-11h-1.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M11.5 3.5 8.5 6.5l3 3M12.5 14.5l3 3-3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>BOUCLE</span></h2><button class="songBar ovSong" id="lpSong" aria-label="Morceau en cours"><span class="sbIn"><span class="sbTxt">♪</span></span></button></div><button class="zb fsBtn fsX" id="fsLoop" aria-label="Plein écran" title="Plein écran"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9V3h6M15 3h6v6M21 15v6h-6M9 21H3v-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="btn kClose" id="lpClose" aria-label="Fermer la boucle">✕</button></div>
+  <div class="kHead"><span class="mfCntBox lpMes" id="lpMes"></span><div class="kTitleBox"><h2 id="lpTitle" class="ovTitle"><span class="ovIco"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6.5H8a5.5 5.5 0 0 0 0 11h1.5M9 17.5h7a5.5 5.5 0 0 0 0-11h-1.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M11.5 3.5 8.5 6.5l3 3M12.5 14.5l3 3-3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>LOOP / ENTRAÎNEMENT</span></h2><button class="songBar ovSong" id="lpSong" aria-label="Morceau en cours"><span class="sbIn"><span class="sbTxt">♪</span></span></button></div><button class="zb fsBtn fsX" id="fsLoop" aria-label="Plein écran" title="Plein écran"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9V3h6M15 3h6v6M21 15v6h-6M9 21H3v-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="btn kClose" id="lpClose" aria-label="Fermer loop et entraînement">✕</button></div>
   <div class="lpBody" id="lpHost"></div>
 </div>
 <div id="metFull" class="metFull" hidden role="dialog" aria-modal="true" aria-labelledby="mfTitle">
@@ -1953,7 +1955,7 @@ function playOrder(){
 }
 function makeOrder(){
   const last=song.measures.length-1; let idx=[];
-  if(S.loop){ const sc=S.loopN==='sec'?secOf(curM):null; const a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last); for(let i=a;i<=b;i++) idx.push(i); }
+  if(S.loop){ const sc=S.loopN==='all'?{a:0,b:last}:S.loopN==='sec'?secOf(curM):null; const a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last); for(let i=a;i<=b;i++) idx.push(i); }
   else { const po=playOrder(); let k=(resumeK!=null&&po[resumeK]===curM)?resumeK:po.indexOf(curM); if(k<0){for(let i=curM;i<=last;i++)idx.push(i);} else idx=po.slice(k); P.k0=k<0?0:k; }
   resumeK=null;
   const order=[];
@@ -2332,7 +2334,7 @@ function renderLib(){
 function applySettingsUi(){
   document.documentElement.style.setProperty('--zoom',S.zoom);
   document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white';     $('sLoopN').value=String(S.loopN||1);
-  const ln=+S.loopN||1; $('tgLoop').textContent=S.loopN==='sec'?'Boucler la partie':(ln===1?'Boucler la mesure':'Boucler '+ln+' mesures');
+  const ln=+S.loopN||1; $('tgLoop').textContent=S.loopN==='all'?'Boucler le morceau entier':S.loopN==='sec'?'Boucler la partie':(ln===1?'Boucler la mesure':'Boucler '+ln+' mesures');
   if(S.loopN==='sec'&&!sections().length){S.loopN='1';$('sLoopN').value='1';}
   $('secBox').hidden=!sections().length;
   $('tgAcc').hidden=!(song&&song.acc&&song.acc.length); $('tgRep').hidden=!hasRepeats();
@@ -2375,7 +2377,7 @@ let sbT=null; window.addEventListener('resize',()=>{clearTimeout(sbT);sbT=setTim
 var curView='pupitre';
 function openMenu(){ const m=$('menu'); m.hidden=false; $('menuBtn').setAttribute('aria-expanded','true');
   m.querySelectorAll('.mItem').forEach(b=>{ if(b.dataset.go===curView) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
-  (m.querySelector('.mItem[aria-current]')||m.querySelector('.mItem')).focus(); say('Menu. Jouer, Accessibilité, Mes morceaux, Importer une partition, Entraînement, Accordeur, Métronome, Instrument, Aide, Infos, crédits et liens.'); }
+  (m.querySelector('.mItem[aria-current]')||m.querySelector('.mItem')).focus(); say('Menu. Jouer, Accessibilité, Mes morceaux, Importer une partition, Loop et entraînement, Accordeur, Métronome, Instrument, Aide, Infos, crédits et liens.'); }
 function closeMenu(){ $('menu').hidden=true; $('menuBtn').setAttribute('aria-expanded','false'); }
 $('menuBtn').onclick=()=>{ $('menu').hidden?openMenu():closeMenu(); };
 $('menuClose').onclick=()=>{ closeMenu(); if(curView!=='pupitre'){showView('pupitre');say('Jouer');} $('menuBtn').focus(); };
@@ -2384,7 +2386,7 @@ document.querySelectorAll('#menu .mItem').forEach(b=>b.addEventListener('click',
 function menuGo(b){ const g=b.dataset.go; closeMenu();
   if(g==='metro'){ openMetFull(); return; }
   if(g==='import'){ openImport(); return; } if(g==='lib'){ openLib(); return; } showView(g);
-  const t={pupitre:'Jouer',train:'Entraînement',lib:'Mes morceaux',tuner:'Accordeur',metro:'Métronome',settings:'Accessibilité',instr:'Instrument',help:'Aide',credits:'Infos, crédits et liens'}[g]; if(t&&g!=='tuner') say(t); }
+  const t={pupitre:'Jouer',train:'Loop et entraînement',lib:'Mes morceaux',tuner:'Accordeur',metro:'Métronome',settings:'Accessibilité',instr:'Instrument',help:'Aide',credits:'Infos, crédits et liens'}[g]; if(t&&g!=='tuner') say(t); }
 function toggleView(){ if(!VF){toast('Partition indisponible (bibliothèque non chargée)');return;} S.view=S.view==='staff'?'roll':'staff'; saveS(); if(song){renderMeasure();} say(S.view==='staff'?'Affichage partition classique':'Affichage en blocs de notes'); }
 $('vbNotes').onclick=()=>{if(S.view!=='roll')toggleView();}; $('vbStaff').onclick=()=>{if(S.view!=='staff')toggleView();};
 let rzT=null; window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(song&&S.view==='staff')renderStaff();},150);});
@@ -2488,7 +2490,7 @@ function fillSections(){ const sel=$('sSec'); sel.innerHTML=''; secAll=false; { 
 document.querySelectorAll('.snBack').forEach(b=>b.onclick=()=>openMenu());
 document.querySelectorAll('.snHome').forEach(b=>b.onclick=()=>{showView('pupitre');say('Jouer');});
 $('sLabels').onchange=e=>{S.labels=e.target.value;saveS();applySettingsUi();say(S.labels==='off'?'Pictos seuls':'Mots sous les pictos');};
-$('sLoopN').onchange=e=>{S.loopN=e.target.value;saveS();applySettingsUi();savePrefsSoon();say(S.loopN==='sec'?'Boucle de la partie':'Boucle de '+S.loopN+' mesure'+(S.loopN>1?'s':''));if(P.on&&S.loop){const r=curM;stopPlay();curM=r;startPlay();}};
+$('sLoopN').onchange=e=>{S.loopN=e.target.value;saveS();applySettingsUi();savePrefsSoon();say(S.loopN==='all'?'Boucle du morceau entier':S.loopN==='sec'?'Boucle de la partie':'Boucle de '+S.loopN+' mesure'+(S.loopN>1?'s':''));if(P.on&&S.loop){const r=curM;stopPlay();curM=r;startPlay();}};
 $('sTheme').onchange=e=>{S.theme=e.target.value;saveS();applySettingsUi();if(song){renderMeasure();renderNow();}};
 $('sRate').onchange=e=>{S.rate=e.target.value;saveS();say('Vitesse de la voix modifiée');};
 $('sVoice').onchange=e=>{S.voiceName=e.target.value;saveS();say('Bonjour, je suis la voix du Tropical Braille Band.');};
@@ -2920,11 +2922,11 @@ $('metTg').onclick=()=>toggle('metro');
 function lpInfo(){ const e=$('lpInfo'); if(!e) return; let t='';
   if(!song) t='Aucun morceau chargé.';
   else if(!S.loop) t='Boucle coupée : la lecture continue jusqu’à la fin.';
-  else { const sc=S.loopN==='sec'?secOf(curM):null, last=song.measures.length-1, a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last);
+  else { const last=song.measures.length-1, sc=S.loopN==='all'?{a:0,b:last}:S.loopN==='sec'?secOf(curM):null, a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last);
     t=a===b?'La lecture tourne sur la mesure '+song.measures[a].num+'.':'La lecture tourne de la mesure '+song.measures[a].num+' à la mesure '+song.measures[b].num+'.'; }
   e.textContent=t; const m=$('lpMes'); if(m) m.textContent=song?'Mesure '+song.measures[curM].num+' / '+song.measures.length:''; }
-function openLoop(){ { const t=document.querySelector('.transport'); $('loopFull').style.setProperty('--kb',(t?t.offsetHeight:0)+'px'); } $('lpHost').append($('loopCard')); $('loopFull').hidden=false; setSongBar(); lpInfo(); $('tgLoop').focus(); say('Boucle, plein écran. '+$('lpInfo').textContent+' Échap pour fermer.'); }
-function closeLoop(){ $('loopHome').append($('loopCard')); $('loopFull').hidden=true; $('loopBtn').focus(); }
+function openLoop(){ { const t=document.querySelector('.transport'); $('loopFull').style.setProperty('--kb',(t?t.offsetHeight:0)+'px'); } $('lpHost').append($('trainBody')); $('loopFull').hidden=false; setSongBar(); lpInfo(); $('tgLoop').focus(); say('Loop et entraînement, plein écran. '+$('lpInfo').textContent+' Échap pour fermer.'); }
+function closeLoop(){ $('trainHome').append($('trainBody')); $('loopFull').hidden=true; $('loopBtn').focus(); }
 $('loopBtn').onclick=()=>$('loopFull').hidden?openLoop():closeLoop(); $('lpClose').onclick=closeLoop;
 document.addEventListener('keydown',e=>{ if($('loopFull').hidden) return; if(e.key==='Escape'){ e.preventDefault(); e.stopImmediatePropagation(); closeLoop(); } },true);
 { const _rm=renderMeasure; renderMeasure=function(){ const r=_rm.apply(this,arguments); try{ lpInfo(); }catch(e){} return r; }; }
