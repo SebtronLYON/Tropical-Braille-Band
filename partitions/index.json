@@ -1,3 +1,8 @@
 [
-  {"title":"Janela para o mundo (thème et refrain)","file":"Janela para o mundo - Thème et refrain en UT.xml"}
+  {"folder":"Janela para o mundo","title":"Janela para o mundo - Thème et refrain","file":"Janela para o mundo - Thème et refrain en UT.xml"},
+  {"folder":"Janela para o mundo","title":"Janela para o mundo - Thème - Voix 1 (basse)","file":"Janela para o mundo - Thème - voix 1.xml"},
+  {"folder":"Janela para o mundo","title":"Janela para o mundo - Thème - Voix 2","file":"Janela para o mundo - Thème - voix 2.xml"},
+  {"folder":"Janela para o mundo","title":"Janela para o mundo - Thème - Voix 3","file":"Janela para o mundo - Thème - voix 3.xml"},
+  {"folder":"Janela para o mundo","title":"Janela para o mundo - Thème - Voix 4","file":"Janela para o mundo - Thème - voix 4.xml"},
+  {"folder":"Janela para o mundo","title":"Janela para o mundo - Thème - Souba (basse)","file":"Janela para o mundo - Thème - BASSE.xml"}
 ]
