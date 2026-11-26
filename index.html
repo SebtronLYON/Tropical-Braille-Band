@@ -514,6 +514,35 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
 .tpG .tp:focus-visible{outline:3px solid var(--sun);outline-offset:-4px}
 .tpG .tp.play:focus-visible{outline-color:var(--sun-ink)}
 @media (max-width:760px){ .transport .wrap{gap:4px} .tpG{border-width:2.5px;border-radius:14px;padding:0;gap:0} .transport .tp{min-height:60px} .transport .tp svg{width:32px;height:32px} .transport .tp .tl{font-size:.6rem} }
+/* no double-tap zoom on buttons (phones) */
+button,.transport,.tp,.tpG{touch-action:manipulation}
+/* key transposition (desktop/tablet only; phone: Instrument screen) */
+.ksBox{margin:0 auto;align-self:center;display:inline-flex;align-items:stretch;height:var(--sh);box-sizing:border-box;border:2px solid var(--sun);border-radius:14px;overflow:hidden;background:var(--panel);color:var(--sun);flex:none}
+.ksBox button{background:transparent;border:0;color:inherit;font-family:var(--f-display);cursor:pointer;touch-action:manipulation}
+.ksBox .ksB{font-size:calc(var(--sf) * .9);width:calc(var(--sh) * .8);line-height:1}
+.ksBox .ksB:hover{background:color-mix(in srgb,var(--sun) 18%,transparent)}
+.ksBox .ksLbl{border-left:2px solid var(--sun);border-right:2px solid var(--sun);padding:0 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:6.2em;line-height:1.05}
+.ksBox .ksLbl small{font-size:calc(var(--sf) * .32);letter-spacing:.06em;opacity:.85}
+.ksBox .ksLbl b{font-size:calc(var(--sf) * .55);white-space:nowrap}
+.ksBox.on{background:color-mix(in srgb,var(--sun) 14%,var(--panel))}
+.ksBox button:focus-visible{outline:3px solid var(--sun);outline-offset:-4px}
+@media (min-width:761px){ .ksBox:not([hidden])~.keyinfo{margin-left:0} }
+@media (max-width:760px){ .ksBox{display:none} }
+@media (min-width:761px) and (max-width:1100px){ .status{flex-wrap:nowrap} .ksBox .ksB{width:calc(var(--sh) * .55)} .ksBox .ksLbl{min-width:0;padding:0 6px} }
+.ksBox button:focus:not(:focus-visible){outline:none;box-shadow:none}
+/* Tonalité v2 */
+.ksBox .ksB{display:flex;align-items:center;justify-content:center}
+.ksBox .ksB svg{width:calc(var(--sf) * .85);height:calc(var(--sf) * .85);fill:currentColor}
+.ksBox .ksLbl{min-width:5.4em}
+.ksBox .ksLbl small{font-family:var(--f-body,inherit);font-weight:800}
+.ksBox .ksRow{display:flex;align-items:center;gap:6px}
+.ksBox .ksLbl b{font-size:calc(var(--sf) * .78)}
+.ksBadge{font-style:normal;font-family:var(--f-display);background:var(--pink);color:#000;border-radius:999px;padding:1px 7px;font-size:calc(var(--sf) * .4);line-height:1.3}
+.ksBox.on{border-color:var(--pink);background:color-mix(in srgb,var(--pink) 12%,var(--panel))}
+.ksBox.on .ksLbl{border-color:var(--pink)} .ksBox.on .ksLbl small{color:var(--pink)}
+.goList.keys{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.goList.keys button.orig{border-color:var(--sun)}
+.goList.keys button small{margin-top:2px}
 </style>
 
 <header class="top">
@@ -561,6 +590,7 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
     </div>
     <button class="lyrBtn" id="lyrBtn" aria-label="Karaoké, paroles en grand" title="Karaoké, paroles en grand (K)" aria-keyshortcuts="K" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="16.2" cy="7.3" r="5.2" fill="currentColor"/><path d="M12.6 9.4 4.3 17.7a1.7 1.7 0 0 0 2.4 2.4l8.3-8.3z" fill="currentColor"/><path d="M12.3 8.3l3.7 3.7" stroke="var(--panel)" stroke-width="1.3" fill="none"/><path d="M7.4 13.6l3.2 3.2" stroke="var(--panel)" stroke-width="1.1" fill="none"/><path d="M5.3 19.6c-1.6 1.6-.4 3.6 1.3 2.8 1.5-.7 1.6-2.7 3.4-2.6 1.7.1 1.6 2.4 3.6 2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
     <button class="lyrBtn metBtn" id="metBtn" aria-pressed="false" aria-label="Click, plein écran" title="Click"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 2h5.6l4.7 20H4.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 17h12" stroke="currentColor" stroke-width="2"/><path d="M12 17 16.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="15.3" cy="8.6" r="1.8" fill="currentColor"/></svg></button><button class="lyrBtn loopBtn" id="loopBtn" aria-pressed="false" aria-label="Loop et entraînement, plein écran" title="Loop / Entraînement"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6.5H8a5.5 5.5 0 0 0 0 11h1.5M9 17.5h7a5.5 5.5 0 0 0 0-11h-1.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M11.5 3.5 8.5 6.5l3 3M12.5 14.5l3 3-3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="ksBox" id="ksBox" role="group" aria-label="Transposition de la tonalité"><button class="ksB" id="ksDn" aria-label="Transposer un demi-ton plus grave" title="Un demi-ton plus grave"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h16l-8 10z"/></svg></button><button class="ksLbl" id="ksLbl" aria-haspopup="dialog" title="Choisir la tonalité"><small>TONALITÉ</small><span class="ksRow"><b id="ksTxt">–</b><i class="ksBadge" id="ksBadge" hidden></i></span></button><button class="ksB" id="ksUp" aria-label="Transposer un demi-ton plus aigu" title="Un demi-ton plus aigu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 16h16l-8-10z"/></svg></button></div>
     <div class="keyinfo" id="keyInfo"></div>
   </div>
 
@@ -781,6 +811,8 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
         <option value="Bb">Trompette en si♭ (écrit un ton au-dessus)</option>
         <option value="C">En ut (son réel, comme le fichier)</option>
       </select>
+      <label for="sKey" style="margin-top:10px">Transposer la tonalité</label>
+      <select id="sKey"></select>
       <label for="sNaming">Nom des notes</label>
       <select id="sNaming">
         <option value="fr">Do ré mi</option>
@@ -1300,7 +1332,7 @@ function parseMusicXML(text,fname){
   if(root.nodeName!=='score-partwise') throw new Error('Ce fichier n’est pas une partition MusicXML.');
   const soft=txt(root,'identification software')||'';
   const isLogic=/logic/i.test(soft);
-  let title=fname.replace(/\.[^.]+$/,'').trim()||txt(root,'movement-title')||txt(root,'work work-title')||'Sans titre';
+  let title=cleanTitle(fname.replace(/\.[^.]+$/,'').trim()||txt(root,'movement-title')||txt(root,'work work-title')||'Sans titre');
   const parts=[...root.querySelectorAll(':scope > part')];
   if(!parts.length) throw new Error('Aucune portée trouvée dans le fichier.');
   let part=parts[0], best=-1;
@@ -1591,16 +1623,17 @@ function applyChordEdits(){
   for(const ch of song.chords){
     Object.assign(ch,ch.orig);
     const e=ed[ch.id];
-    if(e){const p=parseChordStr(e.str); if(p){const t=TRANSP[e.transp]||TRANSP.C;
+    if(e){const p=parseChordStr(e.str); if(p){const t0=TRANSP[e.transp]||TRANSP.C, ek=+e.ks||0, es=ek?ksCalc(song._f0!=null?song._f0:song.fifths,ek).steps:0, t={semi:t0.semi+ek,steps:t0.steps+es};
       const r=transposeRoot(p.step,p.alter,-t.semi,-t.steps); const b=p.bassStep?transposeRoot(p.bassStep,p.bassAlter,-t.semi,-t.steps):null;
       Object.assign(ch,{step:r.step,alter:r.alter,suffix:p.suffix,bassStep:b?b.step:null,bassAlter:b?b.alter:0,inferred:false,edited:true});}}
   }
+  const ks=song._ks; if(ks&&ks.semi) for(const ch of song.chords){ const r=transposeRoot(ch.step,ch.alter,ks.semi,ks.steps); ch.step=r.step; ch.alter=r.alter; if(ch.bassStep){ const b=transposeRoot(ch.bassStep,ch.bassAlter,ks.semi,ks.steps); ch.bassStep=b.step; ch.bassAlter=b.alter; } }
 }
 
 /* ---------- Rendering ---------- */
 const durName=q=>{const t={4:'ronde',3:'blanche pointée',2:'blanche',1.5:'noire pointée',1:'noire',0.75:'croche pointée',0.5:'croche',0.25:'double croche',0.125:'triple croche'}; for(const k in t) if(Math.abs(q-k)<0.02) return t[k]; return (Math.round(q*100)/100)+' temps';};
 function noteHTML(sp){const n=noteName(sp);return n.base+(n.acc?`<sup>${n.acc}</sup>`:'');}
-function renderAll(){ if(!song){renderEmpty();return;} renderHeader(); renderMeasure(); renderNow(); }
+function renderAll(){ try{ksUi()}catch(e){} if(!song){renderEmpty();return;} renderHeader(); renderMeasure(); renderNow(); }
 function renderEmpty(){ $('roll').innerHTML='<div class="empty">Ouvrez une partition (.mid ou MusicXML)</div>'; }
 function renderHeader(){
   $('songLine').innerHTML='';
@@ -2070,7 +2103,7 @@ let resumeAt=null, resumeK=null;
 function startPlay(){
   if(!song) return; ac();
   const a=curM; P.k0=0;
-  const order=makeOrder();
+  const order=makeOrder(); P.order=order;
   const {ev,L,segs}=buildEvents(order);
   const m=song.measures[a];
   const off=(resumeAt!=null&&resumeAt>=m.startQ&&resumeAt<m.startQ+m.len)?resumeAt-m.startQ:0; resumeAt=null;
@@ -2292,7 +2325,7 @@ function saveChordEdit(reset){
   if(!editing) return;
   let ed={}; try{ed=JSON.parse(localStorage.getItem('tbb-chords:'+song.title)||'{}')}catch(e){}
   if(reset) delete ed[editing.id];
-  else{ const v=$('cmInput').value; if(!parseChordStr(v)){toast('Nom d’accord non reconnu (ex. Am, F#7/C#)');return;} ed[editing.id]={str:v,transp:S.transp}; }
+  else{ const v=$('cmInput').value; if(!parseChordStr(v)){toast('Nom d’accord non reconnu (ex. Am, F#7/C#)');return;} ed[editing.id]={str:v,transp:S.transp,ks:+S.keyShift||0}; }
   try{localStorage.setItem('tbb-chords:'+song.title,JSON.stringify(ed))}catch(e){}
   if(!reset){ // apply even if storage fails
     const p=parseChordStr($('cmInput').value), t=T();
@@ -2319,11 +2352,13 @@ const b64=buf=>{let s='';const u=new Uint8Array(buf);for(let i=0;i<u.length;i+=0
 const unb64=s=>{const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u.buffer;};
 function setSong(s,announce,id){
   if(P.on) stopPlay(); resumeAt=null;
+  if(s&&s.title){ const raw=s.title; s.title=cleanTitle(raw); if(raw!==s.title){ try{ const o=localStorage.getItem('tbb-chords:'+raw); if(o&&!localStorage.getItem('tbb-chords:'+s.title)) localStorage.setItem('tbb-chords:'+s.title,o); }catch(e){} } }
   song=s; curId=id||'demo'; try{localStorage.setItem('tbb-cur',curId)}catch(e){}
   const e=libIndex().find(x=>x.id===curId); const pr=(e&&e.prefs)||{};
   for(const k of PREF_KEYS) if(pr[k]!=null&&!(k==='sub'&&pr.subV!==3)) S[k]=pr[k];
+  S.keyShift=+pr.keyShift||0;
   saveS(); applySettingsUi();
-  applyChordEdits();
+  applyKeyShift();
   curM=Math.max(0,Math.min(song.measures.length-1,(pr.m||1)-1)); curN=firstNoteOfMeasure(curM);
   restoring=true; setBpm(pr.bpm||Math.round(song.tempo*0.5)); restoring=false; renderAll();
   if(e){e.used=Date.now(); if(e.id!=='demo') e.title=song.title; libSaveIndex();}
@@ -2337,8 +2372,33 @@ function loadDemo(announce){ try{ setSong(parseMusicXML(DEMO_XML,'Janela para o 
 
 /* ---------- Library (Mes morceaux) ---------- */
 let curId='demo', restoring=false, prefTimer=null;
-const PREF_KEYS=['transp','loop','loopN','ramp','echo','metro','metroSnd','sub','melody','chords','countIn','acc'];
-function libIndex(){ try{return JSON.parse(localStorage.getItem('tbb-lib')||'[]')}catch(e){return []} }
+const PREF_KEYS=['keyShift','transp','loop','loopN','ramp','echo','metro','metroSnd','sub','melody','chords','countIn','acc'];
+function cleanTitle(t){ return String(t==null?'':t).replace(/\s*\(\s*en\s+ut\s*\)/gi,'').replace(/\s*[-–]?\s+en\s+ut\b/gi,'').replace(/\s{2,}/g,' ').trim()||String(t||''); }
+try{ for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(!k||k.indexOf('tbb-chords:')) continue; const n='tbb-chords:'+cleanTitle(k.slice(11)); if(n!==k&&!localStorage.getItem(n)) localStorage.setItem(n,localStorage.getItem(k)); } }catch(e){}
+/* ---------- Key transposition (semitones, per song) ---------- */
+const KEY_MAJ={fr:['Do♭','Sol♭','Ré♭','La♭','Mi♭','Si♭','Fa','Do','Sol','Ré','La','Mi','Si','Fa♯','Do♯'],en:['C♭','G♭','D♭','A♭','E♭','B♭','F','C','G','D','A','E','B','F♯','C♯']};
+function keyName(f,mode){ const L=KEY_MAJ[S.naming==='en'?'en':'fr']; if(mode==='minor'){ const M=S.naming==='en'?['A♭','E♭','B♭','F','C','G','D','A','E','B','F♯','C♯','G♯','D♯','A♯']:['La♭','Mi♭','Si♭','Fa','Do','Sol','Ré','La','Mi','Si','Fa♯','Do♯','Sol♯','Ré♯','La♯']; return M[f+7]+(S.naming==='en'?'m':' mineur'); } return L[f+7]+(S.naming==='en'?'':' majeur'); }
+function songMode(){ if(!song) return 'major'; if(song.mode==='minor') return 'minor'; const c=song.chords.find(c=>c.orig)||song.chords[0]; if(c){ const o=c.orig||c, f=song._f0!=null?song._f0:song.fifths; const pc=(STEP_PC[STEPS.indexOf(o.step)]+o.alter+12)%12, rel=((f*7%12)+12+9)%12; if(pc===rel&&/^(m(?!aj)|min|-)/.test(o.suffix||'')) return 'minor'; } return 'major'; }
+function keyNameShort(f,mode){ return keyName(f,mode).replace(' majeur','').replace(' mineur',' m'); }
+function ksCalc(f0,k){ if(!k) return {nf:f0,steps:0}; const x=normFifths((((f0+7*k)%12)+12)%12), wAdd=S.transp==='Bb'?2:0;
+  const nf=[x-12,x,x+12].filter(c=>c>=-7&&c<=7).sort((a,b)=>Math.abs(a+wAdd)-Math.abs(b+wAdd)||Math.abs(a)-Math.abs(b))[0], let_=f=>'CGDAEBF'[((f%7)+7)%7];
+  let st=(STEPS.indexOf(let_(nf))-STEPS.indexOf(let_(f0))+7)%7; if(k<0&&st>0) st-=7; return {nf,steps:st}; }
+function applyKeyShift(){ if(!song) return; const k=+S.keyShift||0; if(song._f0==null) song._f0=song.fifths;
+  const {nf,steps}=ksCalc(song._f0,k); song.fifths=nf; song._ks={semi:k,steps};
+  for(const n of song.notes){ if(n.midi==null) continue; if(!n._o) n._o={midi:n.midi,sp:n.sp}; n.midi=n._o.midi+k; n.sp=n._o.sp?(k?transposeSp(n._o.sp,k,steps,nf):n._o.sp):n._o.sp; n._wk=null; n._w=null; }
+  for(const n of (song.acc||[])){ if(n.midi==null) continue; if(n._om==null) n._om=n.midi; n.midi=n._om+k; }
+  applyChordEdits(); }
+function ksLabel(){ if(!song) return '–'; const k=+S.keyShift||0; return keyNameShort(writtenFifths(),songMode())+(k?' ('+(k>0?'+':'−')+Math.abs(k)+')':''); }
+function ksSayTxt(){ const k=+S.keyShift||0; return 'Tonalité '+keyName(writtenFifths(),songMode())+(k?', transposé de '+Math.abs(k)+' demi-ton'+(Math.abs(k)>1?'s':'')+(k>0?' plus haut':' plus bas'):', tonalité d’origine'); }
+function ksUi(){ const b=$('ksBox'); if(!b) return; b.hidden=!song; if(!song) return; const k=+S.keyShift||0; $('ksTxt').textContent=keyNameShort(writtenFifths(),songMode()); const bd=$('ksBadge'); bd.hidden=!k; bd.textContent=(k>0?'+':'−')+Math.abs(k); b.classList.toggle('on',!!k);
+  $('ksLbl').setAttribute('aria-label',ksSayTxt()+'. Choisir une autre tonalité');
+  const sel=$('sKey'); if(sel){ const f0=song._f0!=null?song._f0:song.fifths, wAdd=S.transp==='Bb'?2:0; sel.innerHTML='';
+    for(let i=6;i>=-6;i--){ const o=document.createElement('option'); o.value=i; const nf=ksCalc(f0,i).nf; o.textContent=(i?(i>0?'+':'−')+Math.abs(i)+' demi-ton'+(Math.abs(i)>1?'s':'')+' : ':'Original : ')+keyName(normFifths(nf+wAdd),songMode()); sel.append(o); }
+    sel.value=String(k); } }
+function setKeyShift(k){ if(!song) return; k=Math.max(-6,Math.min(6,Math.round(+k||0))); S.keyShift=k; saveS(); savePrefsSoon(); applyKeyShift();
+  if(P.on&&P.order){ try{ const r=buildEvents(P.order); if(r.ev.length===P.ev.length) P.ev=r.ev; }catch(e){} }
+  renderAll(); try{updateTunerTarget();}catch(e){} ksUi(); say(ksSayTxt()); }
+function libIndex(){ try{ const a=JSON.parse(localStorage.getItem('tbb-lib')||'[]'); a.forEach(e=>{ if(e&&e.title) e.title=cleanTitle(e.title); }); return a; }catch(e){return []} }
 let _idx=null;
 function libSaveIndex(idx){ if(idx) _idx=idx; try{localStorage.setItem('tbb-lib',JSON.stringify(_idx||libIndex()))}catch(e){} }
 function libAdd(s,store){
@@ -2548,8 +2608,10 @@ document.querySelectorAll('#pctChips .chip').forEach(c=>c.onclick=()=>{if(song)s
 $('tunerBtn').onclick=tunerToggle;
 function openInstr(){ const m=$('instrModal'); m.hidden=false; $('imTp').focus(); say('Choisir l’instrument. Trompette, sélectionnée. Trombone, bientôt disponible.'); }
 function closeInstr(){ $('instrModal').hidden=true; const b=$('instrBtn'); if(b) b.focus(); }
-function setTransp(v){ S.transp=v; saveS(); savePrefsSoon(); applySettingsUi(); if(song){renderAll(); try{updateTunerTarget();}catch(e){}} say(S.transp==='Bb'?'Affichage trompette en si bémol':'Affichage en ut, son réel'); }
+function setTransp(v){ S.transp=v; saveS(); savePrefsSoon(); applySettingsUi(); if(song){applyKeyShift(); renderAll(); try{updateTunerTarget();}catch(e){}} say(S.transp==='Bb'?'Affichage trompette en si bémol':'Affichage en ut, son réel'); }
 $('sTransp').onchange=e=>setTransp(e.target.value);
+$('sKey').onchange=e=>setKeyShift(+e.target.value);
+$('ksDn').onclick=()=>setKeyShift((+S.keyShift||0)-1); $('ksUp').onclick=()=>setKeyShift((+S.keyShift||0)+1); $('ksLbl').onclick=()=>openGo('key');
 $('sNaming').onchange=e=>{S.naming=e.target.value;saveS();if(song)renderAll();};
 $('sZoom').onchange=e=>{S.zoom=e.target.value;saveS();applySettingsUi();};
 const ZOOMS=['0.8','1','1.25','1.5','1.75','2','2.5'];
@@ -2714,7 +2776,7 @@ function renderBand(){
   box.hidden=false; ul.innerHTML='';
   for(const x of bandItems){
     const li=document.createElement('li'); const b=document.createElement('button'); b.className='li-main';
-    const t=document.createElement('b'); t.textContent=x.title||x.file.replace(/\.[^.]+$/,''); const sp=document.createElement('span'); sp.textContent=x.info||'Partition partagée par le groupe';
+    const t=document.createElement('b'); t.textContent=cleanTitle(x.title||x.file.replace(/\.[^.]+$/,'')); const sp=document.createElement('span'); sp.textContent=x.info||'Partition partagée par le groupe';
     b.append(t,sp); b.setAttribute('aria-label','Partition du groupe : '+t.textContent+'. Ouvrir');
     b.onclick=()=>openBand(x); li.append(b); ul.append(li);
   }
@@ -3056,9 +3118,14 @@ try{ new ResizeObserver(fitSoon).observe(document.querySelector('#measure')); }c
 setTimeout(fitJouer,300); if(document.fonts) document.fonts.ready.then(fitSoon);
 
 /* Partie / Mesure pills: choose a section or a bar */
-function openGo(kind){ if(!song) return; const L=$('goList'), M=$('goModal'); L.innerHTML=''; L.className='goList'+(kind==='sec'?' secs':'');
-  const close=()=>{ M.hidden=true; const b=$(kind==='sec'?'secPill':'mPillBtn'); if(b&&!b.hidden) b.focus(); };
-  if(kind==='sec'){ $('goT').textContent='Choisir la partie'; const ss=sections(), cur=ss.findIndex(x=>curM>=x.a&&curM<=x.b);
+function openGo(kind){ if(!song) return; const L=$('goList'), M=$('goModal'); L.innerHTML=''; L.className='goList'+(kind==='sec'?' secs':kind==='key'?' keys':'');
+  const close=()=>{ M.hidden=true; const b=$(kind==='sec'?'secPill':kind==='key'?'ksLbl':'mPillBtn'); if(b&&!b.hidden) b.focus(); };
+  if(kind==='key'){ $('goT').textContent='Choisir la tonalité'; const f0=song._f0!=null?song._f0:song.fifths, wAdd=S.transp==='Bb'?2:0, cur=+S.keyShift||0;
+    for(let i=-6;i<=6;i++){ const b=document.createElement('button'); const nm=keyName(normFifths(ksCalc(f0,i).nf+wAdd),songMode()); b.innerHTML='<span></span><small></small>'; b.firstChild.textContent=nm.replace(' majeur','').replace(' mineur',' m');
+      b.lastChild.textContent=i?(i>0?'+':'−')+Math.abs(i)+' demi-ton'+(Math.abs(i)>1?'s':''):'original'; if(!i) b.classList.add('orig'); if(i===cur) b.setAttribute('aria-current','true');
+      b.setAttribute('aria-label',nm+(i?', '+Math.abs(i)+' demi-ton'+(Math.abs(i)>1?'s':'')+(i>0?' plus aigu':' plus grave'):', tonalité d’origine'));
+      b.onclick=()=>{ M.hidden=true; setKeyShift(i); close(); }; L.append(b); }
+  } else if(kind==='sec'){ $('goT').textContent='Choisir la partie'; const ss=sections(), cur=ss.findIndex(x=>curM>=x.a&&curM<=x.b);
     ss.forEach((sc,i)=>{ const b=document.createElement('button'); b.innerHTML='<span></span><small></small>'; b.firstChild.textContent=sc.label; b.lastChild.textContent='mesures '+song.measures[sc.a].num+' à '+song.measures[sc.b].num;
       if(i===cur&&!secAll) b.setAttribute('aria-current','true'); b.onclick=()=>{ M.hidden=true; const s=$('sSec'); s.value=String(i); s.onchange({target:s}); }; L.append(b); });
     const all=document.createElement('button'); all.innerHTML='<span>Tout le morceau</span><small>depuis la mesure 1</small>'; if(secAll) all.setAttribute('aria-current','true');
