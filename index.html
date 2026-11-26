@@ -71,7 +71,7 @@ section.view{padding-block:14px;display:flex;flex-direction:column;gap:14px}
 .chordsRow button.inf::after{content:"?";color:var(--warn);font-size:.7em;vertical-align:super;margin-left:2px}
 .lyricsRow span{position:absolute;top:0;font-size:calc(1.15rem * var(--zoom));color:var(--muted);white-space:nowrap}
 .lyricsRow span.cur{color:var(--sun);font-weight:700}
-.roll{position:relative;height:calc(clamp(150px,30vh,320px) * var(--zoom));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.roll{position:relative;height:min(calc(clamp(150px,30vh,320px) * var(--zoom)),30vh);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .beat{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed var(--line)}
 .beat.down{border-left:2px solid var(--line)}
 .blk{position:absolute;height:34%;border-radius:12px;border:3px solid var(--ink);background:var(--panel2);color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:700;padding:0;cursor:pointer;overflow:hidden;font-size:clamp(.8rem,calc(var(--w) * .42cqi),3.4rem);line-height:1}
@@ -341,6 +341,12 @@ h2{font-family:var(--f-display);font-weight:400;color:var(--sun);margin:0 0 6px;
 .vfPct{left:0;right:0;text-align:center}
 #mfOpenMet,#mfOpenVox{color:var(--sun)!important;border-left-color:var(--sun)!important}
 @media (max-width:520px){ .mfCtlBtns .mfSplit .mfIcoBtn{min-height:62px;padding:12px 2px 4px!important} .vfPct{font-size:.55rem} .mfCtlBtns .mfSplit .mfGear{padding:0 3px!important} }
+/* fix29: fit the whole JOUER screen in the viewport */
+#vPupitre .now{--fit:1}
+#vPupitre .now .noteBig{font-size:calc(var(--nb) * var(--fit))}
+#vPupitre .now .noteSide{font-size:calc(var(--nb) * .3 * var(--fit))}
+#vPupitre .now .reg,#vPupitre .now .fingTxt{font-size:calc(1.5rem * var(--zoom) * max(var(--fit),.7))}
+#vPupitre .now .fingCard svg{max-height:var(--fsvg,none);width:auto;max-width:100%}
 /* fix18: status row squares, metronome split, loop */
 .viewSeg .viewBtn{width:calc(var(--sh) - 4px);padding:0!important;justify-content:center}.vTxt{display:none}.viewBtn .vIco{width:62%;height:62%;margin:0}
 .stSplit{display:inline-flex;height:var(--sh);box-sizing:border-box;border:2px solid var(--sun);border-radius:14px;overflow:hidden;flex:none;align-self:center;margin-left:6px}
@@ -1597,7 +1603,7 @@ function renderStaff(){
   const wf=writtenFifths(), key=VF_KEYS[wf]||'C';
   const showTs=curM===0||song.measures[curM-1].beats!==m.beats||song.measures[curM-1].beatType!==m.beatType;
   const need=70+Math.abs(wf)*10+(showTs?25:0)+ns.length*30;
-  let sc=Math.min(4,2*z); let W=cw/sc; if(W<need){sc=Math.max(0.9,cw/need);W=cw/sc;}
+  let sc=Math.min(4,2*z,Math.max(0.9,window.innerHeight*0.31/170)); let W=cw/sc; if(W<need){sc=Math.max(0.9,cw/need);W=cw/sc;}
   const ink=cssVar('--ink'), sun=cssVar('--sun'), leaf=cssVar('--leaf'), muted=cssVar('--muted'), pink=cssVar('--pink'), col=S.staffCol||'white', hi=col==='yellow'?pink:sun;
   const r=new VF.Renderer(box,VF.Renderer.Backends.SVG); r.resize(cw,Math.round(175*sc)); const c=r.getContext(); c.scale(sc,sc); c.setFillStyle(ink); c.setStrokeStyle(ink);
   const st=new VF.Stave(2,42,W-6); st.addClef('treble').addKeySignature(key); if(showTs) st.addTimeSignature(m.beats+'/'+m.beatType);
@@ -1716,7 +1722,7 @@ function renderMeasure(){
 }
 const CH_Y=38, CH_PULL=11;
 function alignMTop(){ const t=document.querySelector('#measure .mTop'), st=$('staff'); if(!t) return;
-  if(st.hidden){ t.classList.remove('onStaff'); t.style.top=''; return; }
+  if(st.hidden||window.matchMedia('(max-width:760px)').matches){ t.classList.remove('onStaff'); t.style.top=''; return; }
   t.classList.add('onStaff'); const c=st.querySelector('.stChord'), mb=$('measure').getBoundingClientRect();
   const sv=st.querySelector('svg'); let cy=null; if(c){ const r=c.getBoundingClientRect(); cy=r.top+r.height/2; } else if(sv){ const r=sv.getBoundingClientRect(), vb=(sv.getAttribute('viewBox')||'0 0 1 175').split(/[ ,]+/).map(Number), k=r.height/(vb[3]||175); cy=r.top+(CH_Y-7-vb[1])*k; }
   t.style.top=cy==null?'8px':Math.max(2,Math.round(cy-mb.top-t.offsetHeight/2))+'px'; }
@@ -2992,5 +2998,27 @@ function updStop(){ const b=$('bStop'); if(!b) return; const on=!!P.on;
 { const _sp=startPlay; startPlay=function(){ const r=_sp.apply(this,arguments); try{updStop()}catch(e){} return r; };
   const _st=stopPlay; stopPlay=function(){ const r=_st.apply(this,arguments); try{updStop()}catch(e){} return r; }; }
 updStop();
+
+/* Fit JOUER in the screen: shrink the note + fingering area until everything is visible */
+function fitJouer(){ const v=$('vPupitre'); if(!v||v.hidden) return; const now=v.querySelector('.now'); if(!now) return;
+  const tr=document.querySelector('.transport'), limit=window.innerHeight-(tr?tr.offsetHeight:0)-10;
+  const cards=[...now.querySelectorAll('.noteCard')]; cards.forEach(c=>{ c.style.minHeight=''; c._gmax=0; });
+  const svg=now.querySelector('.fingCard svg'), roll=$('roll');
+  now.style.setProperty('--fit','1'); now.style.removeProperty('--fsvg'); if(roll){ roll.style.height=''; }
+  const over=()=>now.getBoundingClientRect().bottom-limit;
+  if(over()<=0) return;
+  const sh=svg?svg.getBoundingClientRect().height:0;
+  const setF=f=>{ now.style.setProperty('--fit',String(f)); if(svg&&sh) now.style.setProperty('--fsvg',Math.round(sh*f)+'px'); };
+  const shrinkTo=(floor)=>{ let f=+now.style.getPropertyValue('--fit')||1; for(let k=0;k<7&&over()>0&&f>floor;k++){ const h=now.offsetHeight; f=Math.max(floor,f*(h-over())/h*0.98); setF(f); } };
+  shrinkTo(.6);
+  if(over()>0&&roll&&!roll.hidden){ roll._gmax=0; roll.style.minHeight=''; const rh=roll.offsetHeight; roll.style.height=Math.max(110,rh-over())+'px'; }
+  if(over()>0) shrinkTo(.35); }
+let _fitT=null; const fitSoon=()=>{ clearTimeout(_fitT); _fitT=setTimeout(()=>{ try{fitJouer()}catch(e){} },30); };
+window.addEventListener('resize',fitSoon); window.addEventListener('orientationchange',fitSoon);
+{ const _rm2=renderMeasure; renderMeasure=function(){ const r=_rm2.apply(this,arguments); fitSoon(); return r; };
+  const _rn2=renderNow; renderNow=function(){ const r=_rn2.apply(this,arguments); fitSoon(); return r; }; }
+try{ new ResizeObserver(fitSoon).observe(document.querySelector('#measure')); }catch(e){}
+{ const _sv=showView; showView=function(){ const r=_sv.apply(this,arguments); fitSoon(); return r; }; const _as=applySettingsUi; applySettingsUi=function(){ const r=_as.apply(this,arguments); fitSoon(); return r; }; }
+setTimeout(fitJouer,300); if(document.fonts) document.fonts.ready.then(fitSoon);
 </script>
 </body></html>
