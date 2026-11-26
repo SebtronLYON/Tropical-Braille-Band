@@ -602,6 +602,9 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
 @media (max-height:560px){ .imIco{max-width:110px} .imOpt{padding:8px 6px} }
 #tbOpts:not([hidden]){display:flex;flex-direction:column;gap:6px}#tbOpts select{width:100%}
 #vPupitre .now .fingCard.tbFill svg[data-tb]{overflow:visible}
+#bSay .sayX{display:none}#bSay.mute .sayX{display:inline}#bSay.mute{opacity:.75}
+#bSay{-webkit-touch-callout:none;user-select:none}
+.tpG[hidden]{display:none!important}
 </style>
 
 <header class="top">
@@ -843,6 +846,9 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
       <h3 style="margin:16px 0 4px">Voix</h3>
       <button class="tg" data-k="voice">Voix de l’application</button>
       <small>Coupez-la si vous utilisez un lecteur d’écran : les annonces passent alors par celui-ci.</small>
+      <label for="sSayBtn">Bouton LIRE (barre du bas)</label>
+      <select id="sSayBtn"><option value="auto">Automatique : masqué quand la voix est coupée</option><option value="on">Toujours affiché</option><option value="off">Masqué</option></select>
+      <small>Appui long sur LIRE : coupe ou rallume la voix de l’application. En profil cécité, LIRE reste toujours affiché.</small>
       <button class="tg" data-k="readFing">Lire aussi les doigtés de la mesure</button>
       <label for="sRate">Vitesse de la voix</label>
       <select id="sRate">
@@ -1015,7 +1021,7 @@ button,.transport,.tp,.tpG{touch-action:manipulation}
     <button class="tp" id="bNextN" aria-label="Note suivante"><svg viewBox="0 0 24 24"><path d="M8 5v14l10-7z"/></svg><span class="tl">Note</span></button>
     </div>
     <div class="tpG gSay" role="group" aria-label="Écouter">
-    <button class="tp" id="bSay" aria-label="Lire la mesure à voix haute" aria-keyshortcuts="L"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg><span class="tl">Lire</span></button>
+    <button class="tp" id="bSay" aria-label="Lire la mesure à voix haute" aria-keyshortcuts="L"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/><path class="sayX" d="M2.5 2.5 21.5 21.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg><span class="tl">Lire</span></button>
     </div>
   </div>
 </footer>
@@ -1787,7 +1793,7 @@ function renderStaff(){
   try{
     if(m.fwd) st.setBegBarType(VF.Barline.type.REPEAT_BEGIN);
     if(m.bwd) st.setEndBarType(VF.Barline.type.REPEAT_END);
-    if(m.endings){ const pv=song.measures[curM-1]; const first=!(pv&&pv.endings&&pv.endings.join()===m.endings.join()); st.setVoltaType(first?VF.Volta.type.BEGIN:VF.Volta.type.MID,first?m.endings.join(', ')+'.':'',0); }
+    if(m.endings){ const pv=song.measures[curM-1]; const first=!(pv&&pv.endings&&pv.endings.join()===m.endings.join()); st.setVoltaType(first?VF.Volta.type.BEGIN:VF.Volta.type.MID,first?m.endings.join(', ')+'.':'',VOLTA_DY); }
     const mk=marksText(m); if(mk) st.setText(mk,VF.Modifier.Position.ABOVE,{shift_y:-6,justification:VF.TextNote.Justification.RIGHT});
     
   }catch(e){}
@@ -1901,7 +1907,7 @@ function renderMeasure(){
     els.forEach(e=>{ if(e&&!e.hidden){ e.style.minHeight=''; const h=e.offsetHeight; e._gmax=Math.max(e._gmax||0,h); e.style.minHeight=e._gmax+'px'; } });
     if(Math.abs(window.scrollY-_y)>1) window.scrollTo(0,_y); }
 }
-const CH_Y=38, CH_PULL=11;
+const CH_Y=38, CH_PULL=11; let VOLTA_DY=24;
 function alignMTop(){ const t=document.querySelector('#measure .mTop'), st=$('staff'); if(!t) return;
   if(st.hidden||window.matchMedia('(max-width:760px)').matches){ t.classList.remove('onStaff'); t.style.top=''; return; }
   t.classList.add('onStaff'); const c=st.querySelector('.stChord'), mb=$('measure').getBoundingClientRect();
@@ -2634,7 +2640,7 @@ function renderLib(){
 }
 
 /* ---------- UI wiring ---------- */
-function applySettingsUi(){
+function applySettingsUi(){ try{ updSayBtn(); }catch(e){}
   document.documentElement.style.setProperty('--zoom',S.zoom);
   document.documentElement.dataset.contrast=S.theme==='max'?'max':''; document.documentElement.dataset.labels=S.labels==='off'?'off':'on'; $('sLabels').value=S.labels||'on'; $('sStaffCol').value=S.staffCol||'white';     $('sLoopN').value=String(S.loopN||1);
   const ln=+S.loopN||1; $('tgLoop').textContent=S.loopN==='all'?'Boucler le morceau entier':S.loopN==='sec'?'Boucler la partie':(ln===1?'Boucler la mesure':'Boucler '+ln+' mesures');
@@ -2773,7 +2779,20 @@ $('bPrevM').onclick=()=>gotoMeasure(curM-1,true);
 $('bNextM').onclick=()=>gotoMeasure(curM+1,true);
 $('bPrevN').onclick=()=>stepNote(-1);
 $('bNextN').onclick=()=>stepNote(1);
-$('bSay').onclick=()=>{if(song)say(measureSummary(curM,true));};
+$('bSay').onclick=e=>{ if($('bSay')._long){ $('bSay')._long=false; return; } if(song)say(measureSummary(curM,true)); };
+{ const b=$('bSay'); let tm=null;
+  const down=()=>{ clearTimeout(tm); b._long=false; tm=setTimeout(()=>{ b._long=true; S.voice=!S.voice; saveS(); applySettingsUi();
+      if(S.voice) say('Voix de l’application activée'); else { try{speechSynthesis.cancel();}catch(e){} $('live').textContent='Voix de l’application coupée'; toast('Voix coupée'); } },650); };
+  const up=()=>clearTimeout(tm);
+  b.addEventListener('pointerdown',down); ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,up));
+  b.addEventListener('contextmenu',e=>e.preventDefault()); }
+$('sSayBtn').onchange=e=>{ S.sayBtn=e.target.value; saveS(); applySettingsUi(); };
+function updSayBtn(){ const g=document.querySelector('.gSay'), b=$('bSay'); if(!g||!b) return;
+  const show=S.profile==='blind'||S.sayBtn==='on'||((S.sayBtn||'auto')==='auto'&&S.voice);
+  const was=g.hidden; g.hidden=!show; b.classList.toggle('mute',!S.voice);
+  b.setAttribute('aria-label','Lire la mesure à voix haute'+(S.voice?'':' (voix de l’application coupée)')+'. Appui long : '+(S.voice?'couper':'rallumer')+' la voix');
+  try{ $('sSayBtn').value=S.sayBtn||'auto'; }catch(e){}
+  if(was!==g.hidden) try{ fitSoon(); }catch(e){} }
 $('tMinus').onclick=()=>setBpm(bpm-5,true);
 $('tPlus').onclick=()=>setBpm(bpm+5,true);
 $('bpmRange').oninput=e=>setBpm(+e.target.value);
