@@ -1255,10 +1255,11 @@ const ACC_SAY={'-2':' double bémol','-1':' bémol','0':'','1':' dièse','2':' d
 const TRANSP={Bb:{semi:2,steps:1,label:'trompette en si♭'},C:{semi:0,steps:0,label:'en ut'}};
 
 /* ---------- Settings ---------- */
-const S={view:'staff',metroVol:'100',metroAcc:true,metroSnd:'click',sub:'1',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'1',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
-  melody:true,metro:true,chords:false,countIn:true,loop:false,stepSound:true,follow:false,tunerSpeak:true,readFing:false};
+const S={view:'staff',metroVol:'100',metroAcc:true,metroSnd:'click',sub:'1',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'all',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
+  melody:true,metro:true,chords:false,countIn:true,loop:true,stepSound:true,follow:false,tunerSpeak:true,readFing:false};
 try{Object.assign(S,JSON.parse(localStorage.getItem('tbb-settings')||'{}'))}catch(e){}
 if(S.subV!==3){S.sub='1';S.subV=3;if(S.mfV!==2){delete S.mf;S.mfV=2;}try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
+if(S.loopV!==1){S.loop=true;S.loopN='all';S.loopV=1;try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
 function saveS(){try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
 
 /* ---------- Pitch spelling ---------- */
@@ -2198,7 +2199,7 @@ function sections(){
   song._secs=starts.map(([a,l],k)=>({a,b:(k+1<starts.length?starts[k+1][0]:n)-1,label:l}));
   return song._secs;
 }
-let secAll=false;
+let secAll=true;
 const secOf=mi=>secAll&&song?{a:0,b:song.measures.length-1,label:'Tout'}:(sections().find(x=>mi>=x.a&&mi<=x.b)||null);
 const hasRepeats=()=>!!song&&song.measures.some(m=>m.fwd||m.bwd||m.dc||m.ds||m.endings);
 function playOrder(){
@@ -2832,7 +2833,7 @@ $('zMinus').onclick=()=>zoomStep(-1);
 $('sStaffCol').onchange=e=>{S.staffCol=e.target.value;saveS();if(song)renderMeasure();say({white:'Partition tout en blanc',thin:'Lignes fines, notes plus épaisses',yellow:'Notes en jaune, note jouée en rose'}[S.staffCol]);};
 $('sSec').onchange=e=>{ if(e.target.value==='all'){ secAll=true; gotoMeasure(0,false); say('Tout lire, depuis la mesure 1'+(S.loop&&S.loopN==='sec'?'. Boucle sur tout le morceau.':'')); startPlay(); return; }
   secAll=false; const sc=sections()[+e.target.value]; if(!sc) return; const was=P.on; gotoMeasure(sc.a,false); say(sc.label+', mesure '+song.measures[sc.a].num+(S.loop&&S.loopN==='sec'?'. Boucle de la partie.':'')); if(was) startPlay(); };
-function fillSections(){ const sel=$('sSec'); sel.innerHTML=''; secAll=false; { const o=document.createElement('option'); o.value='all'; o.textContent='Tout lire (mes. 1 à '+song.measures.length+')'; sel.append(o); } sections().forEach((x,k)=>{const o=document.createElement('option');o.value=k;o.textContent=x.label+' (mes. '+song.measures[x.a].num+' à '+song.measures[x.b].num+')';sel.append(o);}); }
+function fillSections(){ const sel=$('sSec'); sel.innerHTML=''; secAll=true; { const o=document.createElement('option'); o.value='all'; o.textContent='Tout lire (mes. 1 à '+song.measures.length+')'; sel.append(o); } sections().forEach((x,k)=>{const o=document.createElement('option');o.value=k;o.textContent=x.label+' (mes. '+song.measures[x.a].num+' à '+song.measures[x.b].num+')';sel.append(o);}); }
 document.querySelectorAll('.snBack').forEach(b=>b.onclick=()=>openMenu());
 document.querySelectorAll('.snHome').forEach(b=>b.onclick=()=>{showView('pupitre');say('Jouer');});
 $('sLabels').onchange=e=>{S.labels=e.target.value;saveS();applySettingsUi();say(S.labels==='off'?'Pictos seuls':'Mots sous les pictos');};
