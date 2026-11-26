@@ -1928,11 +1928,15 @@ function alignMTop(){ const t=document.querySelector('#measure .mTop'), st=$('st
   const sp=$('secPill'), left=(sp&&!sp.hidden?sp:$('mPillBtn')).getBoundingClientRect().left-8;
   if([...st.querySelectorAll('.stChord')].some(x=>x.getBoundingClientRect().right>left)){ t.classList.remove('onStaff'); t.style.top=''; } }
 window.addEventListener('resize',()=>{ try{ alignMTop(); }catch(e){} });
+function updSec(){ if(!song) return; const ss=sections(), k=secIdx(), sc=ss[k]; if(k>=0) secI=k;
+  const sp=$('secPill'); const pt=secPassTxt(sc); sp.hidden=!sc; sp.textContent=sc?sc.label+(pt?' · '+pt:''):'';
+  if(sc) sp.setAttribute('aria-label','Partie : '+sc.label+(pt?', passage '+pt.replace('/',' sur '):'')+'. Choisir une autre partie');
+  const v=secAll?'all':String(k); if(k>=0&&$('sSec').value!==v) $('sSec').value=v; }
 function renderMeasure0(){
   const m=song.measures[curM];
   $('mNum').textContent=m.num;
-  { const sc=sections().find(x=>curM>=x.a&&curM<=x.b); const sp=$('secPill'); sp.hidden=!sc; sp.textContent=sc?sc.label:''; if(sc) sp.setAttribute('aria-label','Partie : '+sc.label+'. Choisir une autre partie'); $('mPillBtn').setAttribute('aria-label','Mesure '+song.measures[curM].num+' sur '+song.measures.length+'. Aller à une autre mesure'); }
-  { const ss=sections(), k=ss.findIndex(x=>curM>=x.a&&curM<=x.b); const v=secAll?'all':String(k); if(k>=0&&$('sSec').value!==v) $('sSec').value=v; }
+  updSec(); { $('mPillBtn').setAttribute('aria-label','Mesure '+song.measures[curM].num+' sur '+song.measures.length+'. Aller à une autre mesure'); }
+
   applyView();
   if(S.view==='staff'&&VF){ renderStaff(); return; }
   const roll=$('roll'), cr=$('chordsRow'), lr=$('lyricsRow');
@@ -1998,7 +2002,7 @@ function renderNow0(){
 function firstNoteOfMeasure(mi){const m=song.measures[mi];for(const i of m.noteIdx){const n=song.notes[i];if(n.midi!=null)return i;}return null;}
 function gotoMeasure(mi,speak){
   if(!song) return; mi=Math.max(0,Math.min(song.measures.length-1,mi));
-  const was=P.on; if(was) stopPlay(); resumeAt=null;
+  const was=P.on; if(was) stopPlay(); resumeAt=null; curPos=null;
   curM=mi; curN=firstNoteOfMeasure(mi); renderMeasure(); renderNow(); savePrefsSoon();
   if(speak) say(measureSummary(mi,false));
   if(was) startPlay();
@@ -2033,7 +2037,7 @@ function measureSummary(mi,full){
   const m=song.measures[mi];
   const ns=m.noteIdx.map(i=>song.notes[i]).filter(n=>n.midi!=null&&!n.tieStop);
   const c=song.chords.length?chordAt(m.startQ+ (m.chords.length?m.chords[0].q-m.startQ:0)):null;
-  const scs=sections(), sc0=scs.find(x=>x.a===mi), scIn=scs.find(x=>mi>=x.a&&mi<=x.b);
+  const scs=sections(), scIn=scs[secIdx(mi)]||null, sc0=scIn&&scIn.a===mi?scIn:null;
   const sc=full?scIn:sc0;
   const mk=marksSay(m); let s=(sc?sc.label+'. ':'')+'Mesure '+m.num+' sur '+song.measures.length+'. '+(mk?mk[0].toUpperCase()+mk.slice(1):'');
   if(m.chords.length) s+=(m.chords.length>1?'Accords : ':'Accord : ')+m.chords.map(chordSay).join(', puis ')+'. ';
@@ -2186,7 +2190,60 @@ function pad(ch,t,dur){
 const P={on:false};
 function sections(){
   if(!song) return [];
-  if(song._secs) return song._secs;
+  const key=(S.repeats&&hasRepeats())?1:0;
+  if(song._secs&&song._secsK===key) return song._secs;
+  const had=!!song._secs; song._secsK=key; song._secs=null;
+  const sm=key?smartParts():null;
+  song._secs=(sm&&sm.length>1)?sm:plainSections();
+  if(had) setTimeout(()=>{try{fillSections();renderMeasure();}catch(e){}},0);
+  return song._secs;
+}
+// Smart parts: built from the order really played (repeats, endings 1-2-3-4, D.C./D.S.).
+// One letter per repeated block (A, B, C…), numbered by pass (A1, A2…); short passes are grouped into ~8-bar phrases.
+function smartParts(){
+  const M=song.measures, po=playOrder(); if(!po.length) return null;
+  const passes=[]; let s0=0;
+  // a pass ends where the music jumps back (repeat, D.C., D.S.) or where a new repeat starts; skipping forward over an ending does not split
+  const pl=plainSections(), plStart=new Map(pl.filter(x=>x.a>0).map(x=>[x.a,x]));
+  for(let k=1;k<=po.length;k++){ if(k===po.length||po[k]<=po[k-1]||M[po[k]].fwd){ passes.push([s0,k-1]); s0=k; } }
+  // long passes (more than 12 bars) are cut at the score's own sections (rehearsal marks, double bars)
+  for(let j=0;j<passes.length;j++){ const [x,y]=passes[j]; if(y-x+1<=12) continue;
+    for(let k=x+1;k<=y;k++){ if(plStart.has(po[k])&&po[k]===po[k-1]+1&&k-x>=4&&y-k+1>=4){ passes.splice(j,1,[x,k-1],[k,y]); break; } } }
+  // a pass made only of the pickup bar joins the next one
+  for(let j=0;j<passes.length-1;j++){ const p=passes[j]; if(p[0]===p[1]&&M[po[p[0]]].pickup){ passes[j+1][0]=p[0]; passes.splice(j,1); j--; } }
+  const meas=p=>po.slice(p[0],p[1]+1), cnt=p=>meas(p).filter(i=>!M[i].pickup).length;
+  // a very short intro (1-2 bars) that leads straight into the next pass joins it
+  for(let j=0;j<passes.length-1;j++){ const p=passes[j], q=passes[j+1]; if(cnt(p)<=2&&po[q[0]]===po[p[1]]+1){ q[0]=p[0]; passes.splice(j,1); j--; } }
+  const groups=[]; let g=null;
+  passes.forEach(p=>{ const ms=meas(p); if(g&&ms.some(x=>g.ms.has(x))){ g.p.push(p); ms.forEach(x=>g.ms.add(x)); } else { g={p:[p],ms:new Set(ms)}; groups.push(g); } });
+  let nextL=0; const LET='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  groups.forEach((g,gi)=>{
+    const prev=groups.slice(0,gi).find(h=>[...g.ms].some(x=>h.ms.has(x)));
+    const first=po[g.p[0][0]]===0&&M[0].pickup&&g.p[0][1]>g.p[0][0]?po[g.p[0][0]+1]:po[g.p[0][0]];
+    const sec=M[first]&&M[first].sec?String(M[first].sec).trim():''; const rh=sec&&!/^(d[ée]but|partie\s*\d+)$/i.test(sec)?(/^[a-z]$/i.test(sec)?sec.toUpperCase():sec):null;
+    g.L=prev?prev.L:(rh||LET[Math.min(nextL++,25)]);
+    g.parts=[]; let cur=null;
+    g.p.forEach(p=>{ if(cur&&cur.n<6){ cur.ps.push(p); cur.n+=cnt(p); } else { if(cur) g.parts.push(cur); cur={ps:[p],n:cnt(p)}; } });
+    if(cur) g.parts.push(cur);
+  });
+  const tot={}; groups.forEach(g=>tot[g.L]=(tot[g.L]||0)+g.parts.length);
+  const num={}, out=[];
+  groups.forEach(g=>g.parts.forEach(pt=>{ num[g.L]=(num[g.L]||0)+1;
+    const k0=pt.ps[0][0], k1=pt.ps[pt.ps.length-1][1], seq=po.slice(k0,k1+1);
+    out.push({label:g.L+(tot[g.L]>1?(g.L.length>1?' ':'')+num[g.L]:''),seq,k0,k1,passes:pt.ps,a:seq[0],b:Math.max(...seq),smart:true}); }));
+  return out;
+}
+const secHas=(sc,mi)=>sc&&(sc.seq?sc.seq.includes(mi):mi>=sc.a&&mi<=sc.b);
+const secNums=sc=>sc.seq?sc.seq.map(i=>song.measures[i].num).join(' '):song.measures[sc.a].num+' à '+song.measures[sc.b].num;
+let curPos=null, secI=-1;
+function secIdx(mi){ const ss=sections(); if(mi==null) mi=curM;
+  if(curPos!=null){ const k=ss.findIndex(x=>x.seq&&curPos>=x.k0&&curPos<=x.k1); if(k>=0) return k; }
+  if(secI>=0&&secHas(ss[secI],mi)) return secI;
+  return ss.findIndex(x=>secHas(x,mi)); }
+function secPassTxt(sc){ if(!sc||!sc.passes||sc.passes.length<2) return ''; let j=0;
+  if(curPos!=null){ const f=sc.passes.findIndex(p=>curPos>=p[0]&&curPos<=p[1]); if(f>=0) j=f; }
+  return (j+1)+'/'+sc.passes.length; }
+function plainSections(){
   const M=song.measures, n=M.length; let starts=[];
   if(M.some(m=>m.sec)){ starts=M.map((m,i)=>m.sec?[i,m.sec]:null).filter(Boolean); if(starts[0][0]!==0) starts.unshift([0,'Début']); }
   else{
@@ -2196,11 +2253,10 @@ function sections(){
     br=[...new Set(br)].sort((a,b)=>a-b);
     if(br.length) starts=[[0,'Partie 1'],...br.map((b,k)=>[b,'Partie '+(k+2)])];
   }
-  song._secs=starts.map(([a,l],k)=>({a,b:(k+1<starts.length?starts[k+1][0]:n)-1,label:l}));
-  return song._secs;
+  return starts.map(([a,l],k)=>({a,b:(k+1<starts.length?starts[k+1][0]:n)-1,label:l}));
 }
 let secAll=true;
-const secOf=mi=>secAll&&song?{a:0,b:song.measures.length-1,label:'Tout'}:(sections().find(x=>mi>=x.a&&mi<=x.b)||null);
+const secOf=mi=>secAll&&song?{a:0,b:song.measures.length-1,label:'Tout'}:(sections()[secIdx(mi)]||null);
 const hasRepeats=()=>!!song&&song.measures.some(m=>m.fwd||m.bwd||m.dc||m.ds||m.endings);
 function playOrder(){
   const M=song.measures, n=M.length;
@@ -2225,11 +2281,16 @@ function playOrder(){
   return out;
 }
 function makeOrder(){
-  const last=song.measures.length-1; let idx=[];
+  const last=song.measures.length-1; let idx=[]; P.kmap=null;
+  const rot=(arr,r)=>r>0?arr.slice(r).concat(arr.slice(0,r)):arr;
   if(S.loop){ const sc=S.loopN==='all'?{a:0,b:last}:S.loopN==='sec'?secOf(curM):null; const a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last);
-    if(sc&&S.repeats&&hasRepeats()){ const po=playOrder(); idx=po.filter(i=>i>=a&&i<=b); let k=idx.indexOf(curM); if(k>0) idx=idx.slice(k).concat(idx.slice(0,k)); }
-    if(!idx.length) for(let i=a;i<=b;i++) idx.push(i); }
-  else { const po=playOrder(); let k=(resumeK!=null&&po[resumeK]===curM)?resumeK:po.indexOf(curM); if(k<0){for(let i=curM;i<=last;i++)idx.push(i);} else idx=po.slice(k); P.k0=k<0?0:k; }
+    if(sc&&sc.seq){ let r=(curPos!=null&&curPos>=sc.k0&&curPos<=sc.k1)?curPos-sc.k0:sc.seq.indexOf(curM); if(r<0)r=0;
+      idx=rot(sc.seq,r); P.kmap=rot(sc.seq.map((_,j)=>sc.k0+j),r); }
+    else if(sc&&S.repeats&&hasRepeats()){ const po=playOrder(); const pr=po.map((m,k)=>[m,k]).filter(x=>x[0]>=a&&x[0]<=b);
+      let r=(curPos!=null)?pr.findIndex(x=>x[1]===curPos):-1; if(r<0||pr[r][0]!==curM) r=pr.findIndex(x=>x[0]===curM); if(r<0)r=0;
+      idx=rot(pr.map(x=>x[0]),r); P.kmap=rot(pr.map(x=>x[1]),r); }
+    if(!idx.length){ for(let i=a;i<=b;i++) idx.push(i); P.kmap=null; } }
+  else { const po=playOrder(); let k=(resumeK!=null&&po[resumeK]===curM)?resumeK:po.indexOf(curM); if(k<0){for(let i=curM;i<=last;i++)idx.push(i);} else { idx=po.slice(k); P.kmap=idx.map((_,j)=>k+j); } P.k0=k<0?0:k; }
   resumeK=null;
   const order=[];
   for(const mi of idx){ order.push({mi,listen:false}); if(S.echo) order.push({mi,listen:true}); }
@@ -2292,7 +2353,7 @@ function curRq(){ let q=nowQ(); if(S.loop) q=((q%P.L)+P.L)%P.L; return Math.min(
 function currentAbs(){ if(!P.on) return null; const q=nowQ(); if(q<P.off) return null; const rq=curRq(), sg=P.segs[segAt(rq)]; return song.measures[sg.mi].startQ+(rq-sg.t0); }
 function togglePlay(){
   if(!song) return;
-  if(P.on){ const abs=currentAbs(); const k=P.segs?segAt(curRq()):0; const rk=S.loop?null:(P.k0||0)+(S.echo?Math.floor(k/2):k); stopPlay(); resumeAt=abs; resumeK=rk; say('Pause, mesure '+song.measures[curM].num); }
+  if(P.on){ const abs=currentAbs(); const k=P.segs?segAt(curRq()):0; const rk=curPos!=null?curPos:(S.loop?null:(P.k0||0)+(S.echo?Math.floor(k/2):k)); stopPlay(); resumeAt=abs; resumeK=rk; say('Pause, mesure '+song.measures[curM].num); }
   else { if(resumeAt==null) say('Lecture, mesure '+song.measures[curM].num); startPlay(); }
 }
 function stopAll(){
@@ -2339,6 +2400,7 @@ function frame(){
     const pass=S.loop?Math.floor(q/P.L):0;
     if(k!==P.lastK||pass!==P.lastPass){ echoSegChange(sg); P.lastK=k; P.lastPass=pass; }
     if(sg.listen) echoListen(mi,abs);
+    { const kk=P.kmap?P.kmap[S.echo?Math.floor(k/2):k]:null; if(kk!==undefined&&kk!==curPos){ curPos=kk; if(mi===curM) updSec(); } }
     if(mi!==curM){curM=mi;curN=null;renderMeasure();}
     const m=song.measures[curM];
     let ni=null; for(const i of m.noteIdx){const n=song.notes[i]; if(n.midi!=null&&abs>=n.q-1e-6&&abs<n.q+n.dur){ni=n.tieStop?ni??i:i;}}
@@ -2832,8 +2894,10 @@ $('zPlus').onclick=()=>zoomStep(1);
 $('zMinus').onclick=()=>zoomStep(-1);
 $('sStaffCol').onchange=e=>{S.staffCol=e.target.value;saveS();if(song)renderMeasure();say({white:'Partition tout en blanc',thin:'Lignes fines, notes plus épaisses',yellow:'Notes en jaune, note jouée en rose'}[S.staffCol]);};
 $('sSec').onchange=e=>{ if(e.target.value==='all'){ secAll=true; gotoMeasure(0,false); say('Tout lire, depuis la mesure 1'+(S.loop&&S.loopN==='sec'?'. Boucle sur tout le morceau.':'')); startPlay(); return; }
-  secAll=false; const sc=sections()[+e.target.value]; if(!sc) return; const was=P.on; gotoMeasure(sc.a,false); say(sc.label+', mesure '+song.measures[sc.a].num+(S.loop&&S.loopN==='sec'?'. Boucle de la partie.':'')); if(was) startPlay(); };
-function fillSections(){ const sel=$('sSec'); sel.innerHTML=''; secAll=true; { const o=document.createElement('option'); o.value='all'; o.textContent='Tout lire (mes. 1 à '+song.measures.length+')'; sel.append(o); } sections().forEach((x,k)=>{const o=document.createElement('option');o.value=k;o.textContent=x.label+' (mes. '+song.measures[x.a].num+' à '+song.measures[x.b].num+')';sel.append(o);}); }
+  secAll=false; const si=+e.target.value, sc=sections()[si]; if(!sc) return; const was=P.on; if(was) stopPlay(); secI=si; gotoMeasure(sc.a,false);
+  if(sc.seq){ curPos=sc.k0; resumeK=sc.k0; updSec(); }
+  say(sc.label+(sc.seq?', mesures '+secNums(sc):', mesure '+song.measures[sc.a].num)+(S.loop&&S.loopN==='sec'?'. Boucle de la partie.':'')); if(was) startPlay(); };
+function fillSections(){ const sel=$('sSec'); sel.innerHTML=''; secAll=true; curPos=null; secI=-1; { const o=document.createElement('option'); o.value='all'; o.textContent='Tout lire (mes. 1 à '+song.measures.length+')'; sel.append(o); } sections().forEach((x,k)=>{const o=document.createElement('option');o.value=k;o.textContent=x.label+' (mes. '+secNums(x)+')';sel.append(o);}); }
 document.querySelectorAll('.snBack').forEach(b=>b.onclick=()=>openMenu());
 document.querySelectorAll('.snHome').forEach(b=>b.onclick=()=>{showView('pupitre');say('Jouer');});
 $('sLabels').onchange=e=>{S.labels=e.target.value;saveS();applySettingsUi();say(S.labels==='off'?'Pictos seuls':'Mots sous les pictos');};
@@ -3271,7 +3335,7 @@ function lpInfo(){ const e=$('lpInfo'); if(!e) return; let t='';
   if(!song) t='Aucun morceau chargé.';
   else if(!S.loop) t='Boucle coupée : la lecture continue jusqu’à la fin.';
   else { const last=song.measures.length-1, sc=S.loopN==='all'?{a:0,b:last}:S.loopN==='sec'?secOf(curM):null, a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last);
-    t=a===b?'La lecture tourne sur la mesure '+song.measures[a].num+'.':'La lecture tourne de la mesure '+song.measures[a].num+' à la mesure '+song.measures[b].num+'.'; }
+    t=sc&&sc.seq?'La lecture tourne sur '+sc.label+' : mesures '+secNums(sc)+'.':a===b?'La lecture tourne sur la mesure '+song.measures[a].num+'.':'La lecture tourne de la mesure '+song.measures[a].num+' à la mesure '+song.measures[b].num+'.'; }
   e.textContent=t; const m=$('lpMes'); if(m) m.textContent=song?'Mesure '+song.measures[curM].num+' / '+song.measures.length:''; }
 function openLoop(){ { const t=document.querySelector('.transport'); $('loopFull').style.setProperty('--kb',(t?t.offsetHeight:0)+'px'); } $('lpHost').append($('trainBody')); $('loopFull').hidden=false; setSongBar(); lpInfo(); $('tgLoop').focus(); say('Loop et entraînement, plein écran. '+$('lpInfo').textContent+' Échap pour fermer.'); }
 function closeLoop(){ $('trainHome').append($('trainBody')); $('loopFull').hidden=true; $('loopBtn').focus(); }
@@ -3367,8 +3431,8 @@ function openGo(kind){ if(!song) return; const L=$('goList'), M=$('goModal'); L.
       b.lastChild.textContent=i?(i>0?'+':'−')+Math.abs(i)+' demi-ton'+(Math.abs(i)>1?'s':''):'original'; if(!i) b.classList.add('orig'); if(i===cur) b.setAttribute('aria-current','true');
       b.setAttribute('aria-label',nm+(i?', '+Math.abs(i)+' demi-ton'+(Math.abs(i)>1?'s':'')+(i>0?' plus aigu':' plus grave'):', tonalité d’origine'));
       b.onclick=()=>{ M.hidden=true; setKeyShift(i); close(); }; L.append(b); }
-  } else if(kind==='sec'){ $('goT').textContent='Choisir la partie'; const ss=sections(), cur=ss.findIndex(x=>curM>=x.a&&curM<=x.b);
-    ss.forEach((sc,i)=>{ const b=document.createElement('button'); b.innerHTML='<span></span><small></small>'; b.firstChild.textContent=sc.label; b.lastChild.textContent='mesures '+song.measures[sc.a].num+' à '+song.measures[sc.b].num;
+  } else if(kind==='sec'){ $('goT').textContent='Choisir la partie'; const ss=sections(), cur=secIdx();
+    ss.forEach((sc,i)=>{ const b=document.createElement('button'); b.innerHTML='<span></span><small></small>'; b.firstChild.textContent=sc.label; b.lastChild.textContent='mesures '+secNums(sc);
       if(i===cur&&!secAll) b.setAttribute('aria-current','true'); b.onclick=()=>{ M.hidden=true; const s=$('sSec'); s.value=String(i); s.onchange({target:s}); }; L.append(b); });
     const all=document.createElement('button'); all.innerHTML='<span>Tout le morceau</span><small>depuis la mesure 1</small>'; if(secAll) all.setAttribute('aria-current','true');
     all.onclick=()=>{ M.hidden=true; const s=$('sSec'); s.value='all'; s.onchange({target:s}); }; L.append(all);
