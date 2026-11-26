@@ -145,6 +145,15 @@ input[type=range]{width:100%;accent-color:var(--sun);height:36px}
 [data-labels="off"] .tp .tl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 #bPrevN,#bNextN{border-color:var(--leaf)}
 #bSay{border-color:var(--pink)}
+#bPrevM,#bNextM{border-color:#6ec6ff}
+#bPlay,#bStop{border-color:var(--sun)}
+/* transport groups: one colour per family, framed together */
+.tpG{display:flex;gap:6px;padding:5px;border-radius:18px;border:2px solid var(--gc);background:color-mix(in srgb,var(--gc) 16%,transparent);flex:2 1 0;min-width:0;max-width:360px}
+.tpG.gPlay{--gc:var(--sun);flex-grow:2.6;max-width:420px}.tpG.gMes{--gc:#6ec6ff}.tpG.gNote{--gc:var(--leaf)}.tpG.gSay{--gc:var(--pink);flex:1 1 0;max-width:180px}
+.tpG .tp{max-width:none;border-color:var(--gc);color:var(--gc);background:color-mix(in srgb,var(--gc) 10%,var(--panel2))}
+.tpG .tp.play{color:var(--sun-ink);background:var(--sun)}
+.transport .wrap{gap:12px}
+@media (max-width:760px){ .transport .wrap{gap:5px;padding-inline:4px} .tpG{gap:3px;padding:3px;border-radius:14px;border-width:2px} .tpG .tp{border-width:1.5px} }
 @media (max-width:760px){
   /* one single row of 8 transport buttons */
   .transport .wrap{flex-wrap:nowrap;gap:4px;padding-inline:6px;padding-block:8px}
@@ -876,13 +885,21 @@ button:active,a:active,summary:active,select:active{outline:4px solid var(--pink
 
 <footer class="transport" aria-label="Lecture">
   <div class="wrap">
-    <button class="tp" id="bPrevM" aria-label="Mesure précédente"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14l-10-7z"/></svg><span class="tl">Mesure</span></button>
+    <div class="tpG gPlay" role="group" aria-label="Lecture">
     <button class="tp play" id="bPlay" aria-label="Jouer" aria-keyshortcuts="Space"><svg viewBox="0 0 24 24" id="playIco"><path d="M7 4v16l13-8z"/></svg><span id="playLbl" class="tl">Lecture</span></button>
     <button class="tp" id="bStop" aria-label="Stop : un appui met en pause, un second appui revient au début du morceau" aria-keyshortcuts="S Home"><svg viewBox="0 0 24 24" id="stopIco"><path d="M6 6h12v12H6z"/></svg><span class="tl" id="stopLbl">Stop</span></button>
+    </div>
+    <div class="tpG gMes" role="group" aria-label="Mesures">
+    <button class="tp" id="bPrevM" aria-label="Mesure précédente"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14l-10-7z"/></svg><span class="tl">Mesure</span></button>
     <button class="tp" id="bNextM" aria-label="Mesure suivante"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l10-7z"/></svg><span class="tl">Mesure</span></button>
+    </div>
+    <div class="tpG gNote" role="group" aria-label="Notes">
     <button class="tp" id="bPrevN" aria-label="Note précédente"><svg viewBox="0 0 24 24"><path d="M16 5v14L6 12z"/></svg><span class="tl">Note</span></button>
-    <button class="tp" id="bSay" aria-label="Lire la mesure à voix haute" aria-keyshortcuts="L"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg><span class="tl">Lire</span></button>
     <button class="tp" id="bNextN" aria-label="Note suivante"><svg viewBox="0 0 24 24"><path d="M8 5v14l10-7z"/></svg><span class="tl">Note</span></button>
+    </div>
+    <div class="tpG gSay" role="group" aria-label="Écouter">
+    <button class="tp" id="bSay" aria-label="Lire la mesure à voix haute" aria-keyshortcuts="L"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg><span class="tl">Lire</span></button>
+    </div>
   </div>
 </footer>
 <div id="echoBan" class="echoBan" hidden aria-hidden="true">À VOUS !</div>
