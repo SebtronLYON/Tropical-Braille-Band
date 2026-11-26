@@ -1680,8 +1680,8 @@ function renderStaff(){
       lab('Notes :',yN);
       ns.forEach((n,i)=>{ if(n.midi==null||n.tieStop) return; const sp=writtenOf(n);
         const t=document.createElementNS('http://www.w3.org/2000/svg','text'); t.setAttribute('x',notes[i].getAbsoluteX()+5); t.setAttribute('y',yN); t.setAttribute('text-anchor','middle');
-        t.setAttribute('font-family','Atkinson Hyperlegible, Verdana, sans-serif'); t.setAttribute('font-size','12'); t.setAttribute('font-weight','700'); t.setAttribute('stroke','none'); t.setAttribute('fill',curN===n.i?hi:ink);
-        t.textContent=(S.naming==='fr'?FR[sp.step]:sp.step)+(ACC_SYM[sp.alter]||''); (svg.querySelector('g')||svg).appendChild(t); });
+        t.setAttribute('font-family','Atkinson Hyperlegible, Verdana, sans-serif'); t.setAttribute('font-size','11'); t.setAttribute('font-weight','700'); t.setAttribute('letter-spacing','0.3'); t.setAttribute('stroke','none'); t.setAttribute('fill',curN===n.i?hi:ink);
+        t.textContent=(S.naming==='fr'?FR[sp.step]:sp.step).toUpperCase()+(ACC_SYM[sp.alter]||''); (svg.querySelector('g')||svg).appendChild(t); });
     }catch(e){}
     // crop empty space above/below the drawing
     try{const vb=(svg.getAttribute('viewBox')||('0 0 '+cw+' '+Math.round(175*sc))).split(/[ ,]+/).map(Number);
