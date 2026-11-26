@@ -1437,13 +1437,18 @@ function chordIntervals(suf){
   if(/aug|\+/.test(lower)) fifth=8;
   if(/sus2/.test(lower)) third=2; else if(/sus/.test(lower)) third=5;
   if(/b5|ø/.test(s)){fifth=6;}
+  // the 7th is decided on the chord itself, not on added notes in brackets or 'add'
+  const core=s.replace(/\(.*?\)/g,'').replace(/add\s*[#b]?\d+/gi,'');
   if(/maj7|ma7|maj9|Δ/i.test(s)) ext.push(11);
-  else if(/7|9|(^|[^#b])11|13/.test(s) && !/dim/.test(lower)) ext.push(10);
-  if(/(^|[^1])6/.test(s)) ext.push(9);
-  if(/9/.test(s)) ext.push(14);
-  if(/#11/.test(s)) ext.push(18);
+  else if(/7|9|(^|[^#b])11|13/.test(core) && !/dim/.test(lower)) ext.push(10);
+  if(/(^|[^1])6/.test(s.replace(/[#b]\d+/g,''))) ext.push(9);
+  if(/b9/.test(s)) ext.push(13); if(/#9/.test(s)) ext.push(15); if(/(^|[^#b1])9/.test(s)) ext.push(14);
+  if(/#11/.test(s)) ext.push(18); else if(/b11/.test(s)) ext.push(16); else if(/(^|[^#b])11/.test(s)&&/add|\(/.test(s)) ext.push(17);
+  if(/b13/.test(s)) ext.push(20); else if(/(^|[^#b])13/.test(s)) ext.push(21);
+  if(/#5/.test(s)) fifth=8;
+  if(/no3/.test(s)) third=null; if(/no5/.test(s)) fifth=null;
   if(s==='5') return [0,7];
-  return [0,third,fifth,...ext];
+  return [0,third,fifth,...ext].filter(x=>x!=null);
 }
 function chordParts(ch){
   const t=T();
@@ -1461,6 +1466,7 @@ function chordName(ch){
 function sufSay(s){
   if(!s) return '';
   let t=' '+s.replace(/♭/g,'b').replace(/♯/g,'#')+' ';
+  t=t.replace(/no3/g,' sans tierce ').replace(/no5/g,' sans quinte ').replace(/([#b])(\d+)/g,(_,a,d)=>' '+d+(a==='#'?' §7 ':' §8 '));
   t=t.replace(/maj/g,' §1 ').replace(/dim/g,' §2 ').replace(/aug|\+/g,' §3 ').replace(/sus/g,' §4 ').replace(/add/g,' §5 ')
      .replace(/min|mi|m|-/g,' §6 ').replace(/#/g,' §7 ').replace(/b/g,' §8 ').replace(/ø/g,' §9 ').replace(/°/g,' §2 ');
   const map={1:'majeur',2:'diminué',3:'augmenté',4:'sus',5:'ajout',6:'mineur',7:'dièse',8:'bémol',9:'demi-diminué'};
@@ -1538,8 +1544,13 @@ function parseMusicXML(text,fname){
         const kEl=c.querySelector('kind'); const kind=kEl?kEl.textContent.trim():'major';
         const ktext=kEl?kEl.getAttribute('text'):null;
         const off=+(txt(c,':scope > offset')||0)/divisions;
+        // added / altered / removed notes (<degree>): D + add ♯11 -> D(#11), B7 + add ♭9 -> B7(b9)
+        let suf0=(ktext? ktext : (KIND_SUF[kind]??''));
+        { const dg=[...c.querySelectorAll(':scope > degree')].map(d=>{ const v=txt(d,'degree-value'), a=+(txt(d,'degree-alter')||0), ty=(txt(d,'degree-type')||'add').toLowerCase();
+            const acc=a>0?'#'.repeat(a):a<0?'b'.repeat(-a):''; return ty==='subtract'?'no'+v:acc+v; }).filter(x=>x&&!(ktext&&ktext.includes(x)));
+          if(dg.length) suf0+='('+dg.join(',')+')'; }
         mChords.push({pos:pos+off,step:rs,alter:+(txt(c,'root root-alter')||0),
-          suffix:(ktext? ktext : (KIND_SUF[kind]??'')),rawKind:kind,hasText:!!ktext,
+          suffix:suf0,rawKind:kind,hasText:!!ktext,
           bassStep:txt(c,'bass bass-step'),bassAlter:+(txt(c,'bass bass-alter')||0)});
       } else if(tag==='backup'){ pos-=(+txt(c,'duration')||0)/divisions; }
       else if(tag==='forward'){ pos+=(+txt(c,'duration')||0)/divisions; maxPos=Math.max(maxPos,pos); }
@@ -1834,7 +1845,7 @@ function renderStaff(){
   const box=$('staff'); box.innerHTML=''; staffMap=null; const _stCh=[];
   if(!VF||!song) return;
   const m=song.measures[curM], mis=staffMeasures();
-  const cw=box.clientWidth||600, z=+S.zoom;
+  const cw=box.clientWidth||600, z=+S.zoom; renderStaff._cw=box.clientWidth;
   const wf=writtenFifths(), key=VF_KEYS[wf]||'C';
   const tsOf=mi=>mi===0||song.measures[mi-1].beats!==song.measures[mi].beats||song.measures[mi-1].beatType!==song.measures[mi].beatType;
   const needs=mis.map((mi,j)=>(j===0?70+Math.abs(wf)*10:24)+(tsOf(mi)||j===0&&false?25:0)+song.measures[mi].noteIdx.length*30);
@@ -3528,5 +3539,8 @@ $('secPill').onclick=()=>openGo('sec'); $('mPillBtn').onclick=()=>openGo('mes');
 })();
 
 $('nMesM').onclick=()=>setNMes(-1); $('nMesP').onclick=()=>setNMes(1);
+
+// the score is drawn for the width it has at that moment: redraw it as soon as its box gets its real width (song just loaded, panel shown, fonts…)
+try{ let rsT=null; new ResizeObserver(()=>{ const w=$('staff').clientWidth; if(!song||S.view!=='staff'||!w||Math.abs(w-(renderStaff._cw||0))<4) return; clearTimeout(rsT); rsT=setTimeout(()=>{ try{ renderStaff(); }catch(e){} },60); }).observe($('staff')); }catch(e){}
 </script>
 </body></html>
