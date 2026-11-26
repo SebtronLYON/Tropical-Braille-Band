@@ -2215,7 +2215,8 @@ function playOrder(){
     out.push(i);
     if(jumped&&hasFine&&m.fine) break;
     if(jumped&&hasToCoda&&m.tocoda){ let k=i+1; while(k<n&&!M[k].coda)k++; if(k>=n) break; i=k; continue; }
-    if(m.bwd&&!jumped){ if(pass<(m.times||2)){pass++; i=repStart; continue;} pass=1; repStart=i+1; }
+    // inside numbered endings (1, 2, 3, 4…), repeat until the last number of the group is reached
+    if(m.bwd&&!jumped){ const lim=gmax[i]?Math.max(gmax[i],m.times>2?m.times:0):(m.times||2); if(pass<lim){pass++; i=repStart; continue;} pass=1; repStart=i+1; }
     if((m.dc||m.ds)&&!jumped){ jumped=true; pass=1; let k=0; if(m.ds){k=M.findIndex(x=>x.segno); if(k<0)k=0;} i=k; continue; }
     i++;
     if(i<n&&M[i].fwd&&!jumped){repStart=i;pass=1;}
@@ -2224,7 +2225,9 @@ function playOrder(){
 }
 function makeOrder(){
   const last=song.measures.length-1; let idx=[];
-  if(S.loop){ const sc=S.loopN==='all'?{a:0,b:last}:S.loopN==='sec'?secOf(curM):null; const a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last); for(let i=a;i<=b;i++) idx.push(i); }
+  if(S.loop){ const sc=S.loopN==='all'?{a:0,b:last}:S.loopN==='sec'?secOf(curM):null; const a=sc?sc.a:curM, b=sc?sc.b:Math.min(curM+(+S.loopN||1)-1,last);
+    if(sc&&S.repeats&&hasRepeats()){ const po=playOrder(); idx=po.filter(i=>i>=a&&i<=b); let k=idx.indexOf(curM); if(k>0) idx=idx.slice(k).concat(idx.slice(0,k)); }
+    if(!idx.length) for(let i=a;i<=b;i++) idx.push(i); }
   else { const po=playOrder(); let k=(resumeK!=null&&po[resumeK]===curM)?resumeK:po.indexOf(curM); if(k<0){for(let i=curM;i<=last;i++)idx.push(i);} else idx=po.slice(k); P.k0=k<0?0:k; }
   resumeK=null;
   const order=[];
