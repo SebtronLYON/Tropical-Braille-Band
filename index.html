@@ -1358,9 +1358,11 @@ const TRANSP={Bb:{semi:2,steps:1,label:'trompette en si♭'},C:{semi:0,steps:0,l
 
 /* ---------- Settings ---------- */
 const S={view:'staff',metroVol:'100',metroAcc:true,metroSnd:'click',sub:'1',staffCol:'white',sound:'real',profile:'',transp:'Bb',naming:'fr',labels:'on',loopN:'all',ramp:false,echo:false,echoMic:false,repeats:true,acc:false,zoom:'1',theme:'tbb',voice:true,rate:'1',voiceName:'',alt:false,ref:'440',
-  melody:true,metro:true,chords:false,countIn:true,loop:true,stepSound:true,follow:false,tunerSpeak:true,readFing:false};
+  melody:true,metro:true,chords:true,countIn:true,loop:true,stepSound:true,follow:false,tunerSpeak:true,readFing:false};
 try{Object.assign(S,JSON.parse(localStorage.getItem('tbb-settings')||'{}'))}catch(e){}
 if(S.subV!==3){S.sub='1';S.subV=3;if(S.mfV!==2){delete S.mf;S.mfV=2;}try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
+// 2026-11-27: chords are played by default (once: also for songs already opened)
+if(S.chV!==1){S.chords=true;S.chV=1;try{localStorage.setItem('tbb-settings',JSON.stringify(S));const a=JSON.parse(localStorage.getItem('tbb-lib')||'[]');a.forEach(e=>{if(e&&e.prefs)e.prefs.chords=true;});localStorage.setItem('tbb-lib',JSON.stringify(a));}catch(e){}}
 if(S.loopV!==1){S.loop=true;S.loopN='all';S.loopV=1;try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
 function saveS(){try{localStorage.setItem('tbb-settings',JSON.stringify(S))}catch(e){}}
 
